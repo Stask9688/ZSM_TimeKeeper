@@ -16,8 +16,10 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from timekeeper import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^home/', views.home)
-]
+                  url(r'^admin/', admin.site.urls),
+                  url(r'^home/', views.home)
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
