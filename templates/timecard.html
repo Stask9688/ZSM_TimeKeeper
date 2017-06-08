@@ -2,9 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ZSM Timecard</title>
+    <title>TimeKeeper TimeCard</title>
+
+    {% load static %}
+    <script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-theme.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
+
+    <link rel="stylesheet" type="text/css" href="{% static "css/sidebar.css" %}"/>
+    <script type="text/javascript" src="{% static "js/test.js" %}"></script>
 </head>
 <body>
+<div class="container">
+    <div class="row">
+        <nav id="header" class="col-md-12 navbar navbar-default">
+            <div class="navbar-header row">
+                <a class="navbar-brand col-md-3" href="#">
+                    <img id="brand" alt="Brand" src="{% static "img/monster.png" %}">
+                </a>
+                <h4 class="col-md-6">ZSM TimeKeeper</h4>
 
+            </div>
+        </nav>
+    </div>
+    <div class="row">
+        <div id="wrapper" class="col-md-2 toggled">
+
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper" class="col-md-12">
+                <ul class="sidebar-nav">
+                    <li class="sidebar-brand">
+                        <a href="#">
+                            John Doe
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/home">Home</a>
+                    </li>
+                    <li>
+                        <a href="/projects">Projects</a>
+                    </li>
+                    <li>
+                        <a href="/clients">Clients</a>
+                    </li>
+                    <li>
+                        <a href="/timecard">Timecard</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <form>
+                <label for="Project">Select project:</label>
+                <select class="form-control" id="Project">
+                    <option>Alamo Renewal Project</option>
+                    <option>Mayson Tree Removal</option>
+                    <option>Important Project</option>
+                    <option>More stuff</option>
+                </select>
+                <div class="form-group">
+                    <label for="InputDate">Input Date</label>
+                    <input type="date" class="form-control" id="InputDate" placeholder="Date">
+                </div>
+                <div class="form-group">
+                    <label for="InputHours">Input Hours</label>
+                    <input type="number" class="form-control" id="InputHours" placeholder="Hours">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- /#wrapper -->
+{% comment %}<script>
+    $("#menu-toggle").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+</script>{% endcomment %}
 </body>
 </html>
