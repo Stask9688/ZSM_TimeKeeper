@@ -23,8 +23,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
                   url(r'^admin/', admin.site.urls),
                   url(r'^home/', views.home),
-    url(r'^projects/',views.projects),
-    url(r'^clients/',views.clients),
-    url(r'^timecard/',views.timecard)
+                  url(r'^projects/', views.projects),
+                  url(r'^clients/', views.clients),
+                  url(r'^timecard/', views.timecard),
+                  url(r'^project_data', views.project_data)
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
               staticfiles_urlpatterns()

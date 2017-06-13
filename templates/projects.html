@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
 
     <link rel="stylesheet" type="text/css" href="{% static "css/sidebar.css" %}"/>
-    <script type="text/javascript" src="{% static "js/test.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
 </head>
 <body>
 <div class="container">
@@ -65,9 +65,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>Alamo Renewal Project</td>
+                    <td id="test_name">Alamo Renewal Project</td>
                     <td>5</td>
-                    <td>Renovating historical sites downtown</td>
+                    <td id="test_description">Renovating historical sites downtown</td>
                 </tr>
                 <tr>
                     <td>Mayson Tree Removal</td>
@@ -89,6 +89,25 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    //Example of an ajax query to get data from the database
+    //the get request is sent to url /project_data, which in turn gets sent
+    // to the callback listed in the views.
+    // The callback in the views queries the database, gets the object with the
+    // project_name "Test project", and returns the request.
+    // Then, using Jquery, selects the elements with ids "test_name" and "test_description"
+    // and changes their text to the value of the data sent back.
+
+    // Very basic example, javascript inlined with html is discouraged.
+    $.get("/project_data", {name: "Test project"}).done(function (data) {
+        data_object = JSON.parse(data);
+        console.log(data_object[0].fields);
+        return_data = data_object[0].fields;
+        console.log("Data loaded: ", data_object[0].fields.project_description);
+        $("#test_name").text(data_object[0].fields.project_name);
+        $("#test_description").text(data_object[0].fields.project_description)
+    });
+</script>
 <!-- /#wrapper -->
 {% comment %}<script>
     $("#menu-toggle").click(function (e) {
