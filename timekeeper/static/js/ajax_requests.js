@@ -1,19 +1,13 @@
 /**
  * Created by Stas on 6/6/2017.
  */
+import React from "react"
+import ReactDOM from "react-dom"
 
+let HelloMessage = React.createClass({
+    render: function () {
+        return <h1>Hello {this.props.message}! </h1>;
+    }
+});
 
-function success(){
-
-}
-
-function project_data_request(return_data){
-    $.get("/project_data",{name:"Test project"}).
-        done(function(data){
-            data_object=JSON.parse(data);
-            console.log(data_object[0].fields);
-            return_data = data_object[0].fields;
-       console.log("Data loaded: ",data)
-    });
-
-}
+React.render(<HelloMessage message="World" /> , document.getElementById('container'));
