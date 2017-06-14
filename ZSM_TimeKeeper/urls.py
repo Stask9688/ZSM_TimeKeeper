@@ -26,6 +26,7 @@ urlpatterns = [
                   url(r'^projects/', views.projects),
                   url(r'^clients/', views.clients),
                   url(r'^timecard/', views.timecard),
-                  url(r'^project_data', views.project_data)
+                  url(r'^project_data', views.project_data),
+                  url(r'^user', views.user)
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
               staticfiles_urlpatterns()

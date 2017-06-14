@@ -25,3 +25,7 @@ def project_data(request):
     project = serializers.serialize("json", project_object)
     print(project[0])
     return HttpResponse(project, content_type="text")
+
+
+def user(request):
+    return render(request, "user.html")
