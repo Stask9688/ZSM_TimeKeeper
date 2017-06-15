@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from .models import Project
+from .models import Project, Client
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
 
@@ -31,6 +31,12 @@ def project_data(request):
     print(project[0])
     return HttpResponse(project, content_type="text")
 
+@login_required
+def client_data(request):
+    client_object = Client.objects.filter(last_name = request.GET["name"])
+    client = serializers.serialize("json", client_object)
+    print(client[0])
+    return HttpResponse(client, content_type="text")
 
 @login_required
 def user(request):

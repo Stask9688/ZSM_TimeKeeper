@@ -23,4 +23,21 @@ class AjaxRequest {
             }
         });
     }
+
+    static get_clients() {
+        $.get("/client_data", {name: "Lahav"}).done(function(data) {
+            let data_object = JSON.parse(data);
+            console.log(data_object);
+            let index = 0;
+            for (index; index < data_object.length; ++index) {
+                let first_name = data_object[index].fields.first_name;
+                let last_name = data_object[index].fields.last_name;
+                let email = data_object[index].fields.email;
+                let phone_number = data_object[index].fields.phone_number;
+                $("#client_table").append("<tr><td>" + first_name + "</td>" + last_name +"<td>" + email + "</td>" + phone_number + "</td></tr>");
+            }
+        });
+    }
 }
+
+
