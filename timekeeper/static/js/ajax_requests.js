@@ -34,7 +34,7 @@ class AjaxRequest {
                 let last_name = data_object[index].fields.last_name;
                 let email = data_object[index].fields.email;
                 let phone_number = data_object[index].fields.phone_number;
-                $("#client_table").append("<tr><td>" + first_name + "</td>" + last_name +"<td>" + email + "</td>" + phone_number + "</td></tr>");
+                $("#client_table").append("<td><td>" + first_name + "</td>" + "<td>" + last_name + "</td>" + "<td>" + email + "</td>" + "<td>" + phone_number + "</td></tr>");
             }
         });
     }
