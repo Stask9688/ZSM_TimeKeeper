@@ -14,13 +14,33 @@ class AjaxRequest {
     static get_projects() {
         $.get("/project_data", {name: "Test project"}).done(function (data) {
             let data_object = JSON.parse(data);
-            console.log(data_object);
-            let index = 0;
-            for (index; index < data_object.length; ++index) {
-                let project_name = data_object[index].fields.project_name;
-                let project_description = data_object[index].fields.project_description;
-                $("#project_table").append("<tr><td>" + project_name + "</td>" + "<td>" + project_description + "</td></tr>");
+            let parsed_data = [];
+            for (let index = 0; index < data_object.length; index++) {
+                parsed_data.push(data_object[index]["fields"]);
             }
+            let project_filter = new DataVisualization(parsed_data);
+            project_filter.generateDimension("project_name");
+            project_filter.generateDimension("project_description");
+            let tableChart = dc.dataTable("#project_table");
+            project_filter.ndx.groupAll();
+            tableChart.width(768).height(480)
+                .dimension(project_filter.dimension["project_name"])
+                .group(function () {
+                    return "";
+                }).columns([
+                {
+                    label: "Project Name",
+                    format: function (d) {
+                        return d.project_name;
+                    }
+                }, {
+                    label: "Project Description",
+                    format: function (d) {
+                        return d.project_description;
+                    }
+                }]);
+            dc.renderAll();
         });
+
     }
 }

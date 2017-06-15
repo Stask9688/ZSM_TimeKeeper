@@ -26,7 +26,7 @@ def projects(request):
 
 @login_required
 def project_data(request):
-    project_object = Project.objects.filter(project_name=request.GET["name"])
+    project_object = Project.objects.all()
     project = serializers.serialize("json", project_object)
     print(project[0])
     return HttpResponse(project, content_type="text")
