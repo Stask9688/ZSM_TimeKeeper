@@ -1,55 +1,22 @@
 {% extends "base.html" %}
+{% load static %}
 {%  block content %}
 <div class="col-md-6">
     <table class="table table-striped table-bordered">
         <thead>
         <tr>
             <th>Project Name</th>
+{% comment %}
             <th>Hours Charged</th>
+{% endcomment %}
             <th>Project Description</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td id="test_name">Alamo Renewal Project</td>
-            <td>5</td>
-            <td id="test_description">Renovating historical sites downtown</td>
-        </tr>
-        <tr>
-            <td>Mayson Tree Removal</td>
-            <td>11</td>
-            <td>Removing trees on the Mayson compound</td>
-        </tr>
-        <tr>
-            <td>Ran out of names already</td>
-            <td>3</td>
-            <td>Doing work</td>
-        </tr>
-        <tr>
-            <td>More projects</td>
-            <td>20</td>
-            <td>Really exciting stuff over here</td>
-        </tr>
+        <tbody id="project_table">
         </tbody>
     </table>
 </div>
+    <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
+    <script>AjaxRequest.get_projects()</script>
 {% endblock %}
-{% comment %}<script type="text/javascript">
-    //Example of an ajax query to get data from the database
-    //the get request is sent to url /project_data, which in turn gets sent
-    // to the callback listed in the views.
-    // The callback in the views queries the database, gets the object with the
-    // project_name "Test project", and returns the request.
-    // Then, using Jquery, selects the elements with ids "test_name" and "test_description"
-    // and changes their text to the value of the data sent back.
 
-    // Very basic example, javascript inlined with html is discouraged.
-    $.get("/project_data", {name: "Test project"}).done(function (data) {
-        data_object = JSON.parse(data);
-        console.log(data_object[0].fields);
-        return_data = data_object[0].fields;
-        console.log("Data loaded: ", data_object[0].fields.project_description);
-        $("#test_name").text(data_object[0].fields.project_name);
-        $("#test_description").text(data_object[0].fields.project_description)
-    });
-</script>{% endcomment %}
