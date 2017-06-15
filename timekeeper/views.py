@@ -1,12 +1,15 @@
 from django.shortcuts import render, HttpResponse
-from .models import Project
+from .models import Project, Timecard
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
+import logging
 
 
 @login_required
 def home(request):
-    return render(request, "home.html")
+    latest_timecards = Timecard.objects.order_by('timecard_date')[:7]
+    context = {'latest_timecards': latest_timecards}
+    return render(request, "home.html", context)
 
 
 @login_required
@@ -16,7 +19,14 @@ def clients(request):
 
 @login_required
 def timecard(request):
-    return render(request, "timecard.html")
+    if 'submit' in request.GET:
+        logging.debug(request.GET.get('project'))
+        logging.debug(request.GET.get('date'))
+        logging.debug(request.GET.get('hours'))
+        timecard = Timecard.create("USER", request.GET.get('project'),
+                                   request.GET.get('date'), request.GET.get('hours'))
+        timecard.save()
+    return render(request,"timecard.html")
 
 
 @login_required
