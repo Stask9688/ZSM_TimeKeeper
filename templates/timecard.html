@@ -3,7 +3,7 @@
 <div class="col-md-4">
     <form>
         <label for="Project">Select project:</label>
-        <select class="form-control" id="Project">
+        <select class="form-control" id="Project" name = "project">
             <option>Alamo Renewal Project</option>
             <option>Mayson Tree Removal</option>
             <option>Important Project</option>
@@ -11,13 +11,13 @@
         </select>
         <div class="form-group">
             <label for="InputDate">Input Date</label>
-            <input type="date" class="form-control" id="InputDate" placeholder="Date">
+            <input type="date" name = "date" class="form-control" id="InputDate" placeholder="Date">
         </div>
         <div class="form-group">
             <label for="InputHours">Input Hours</label>
-            <input type="number" class="form-control" id="InputHours" placeholder="Hours">
+            <input type="number" name = "hours" class="form-control" id="InputHours" placeholder="Hours">
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
+                <input type ="submit" name="submit" value="Submit">
     </form>
 </div>
 {% endblock %}

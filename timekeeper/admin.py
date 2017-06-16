@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Client
+from .models import Project, Client, Timecard
 
 
 class ProjectDetail(admin.ModelAdmin):
@@ -9,6 +9,11 @@ class ProjectDetail(admin.ModelAdmin):
 class ClientDetail(admin.ModelAdmin):
     list_display = ("last_name", "first_name", "email", "phone_number")
 
+class TimecardDetail(admin.ModelAdmin):
+    list_display = ("timecard_owner", "timecard_project",
+                    "timecard_date", "timecard_hours")
+
 
 admin.site.register(Project, ProjectDetail)
 admin.site.register(Client, ClientDetail)
+admin.site.register(Timecard, TimecardDetail)
