@@ -16,31 +16,64 @@ class AjaxRequest {
             let data_object = JSON.parse(data);
             let parsed_data = [];
             for (let index = 0; index < data_object.length; index++) {
+                data_object[index]["fields"].pk = data_object[index].pk;
                 parsed_data.push(data_object[index]["fields"]);
             }
             let project_filter = new DataVisualization(parsed_data);
             project_filter.generateDimension("project_name");
             project_filter.generateDimension("project_description");
+            project_filter.generateDimension("project_hours");
+            project_filter.generateDimension("pk");
             let tableChart = dc.dataTable("#project_table");
             project_filter.ndx.groupAll();
             tableChart.width(768).height(480)
                 .dimension(project_filter.dimension["project_name"])
                 .group(function () {
                     return "";
-                }).columns([
+                }).columns([{
+                label: "ID",
+                format: function (d) {
+                    return d.pk;
+                }
+            },
                 {
                     label: "Project Name",
                     format: function (d) {
                         return d.project_name;
                     }
                 }, {
+                    label: "Hours spent",
+                    format: function (d) {
+                        return d.project_hours;
+                    }
+                },
+                {
                     label: "Project Description",
                     format: function (d) {
                         return d.project_description;
                     }
                 }]);
+            let hoursGroup = project_filter.dimension["pk"].group().reduceSum(
+                function (d) {
+                    console.log(d);
+                    return d["project_hours"];
+                }
+            );
+            console.log(parsed_data);
+            let barChart = dc.barChart(" #bar_chart");
+            barChart
+                .x(d3.scale.ordinal())
+                .xUnits(dc.units.ordinal)
+                .brushOn(false)
+                .xAxisLabel('Project ID')
+                .yAxisLabel('Hours Worked')
+                .dimension(project_filter.dimension["pk"])
+                .group(hoursGroup);
             dc.renderAll();
+            $(".dc-table-group").remove();
         });
 
     }
+
 }
+

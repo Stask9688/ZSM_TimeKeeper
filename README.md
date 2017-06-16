@@ -66,3 +66,22 @@ Quit the server with CTRL-BREAK.
  ```
   Open a browser, and enter http://127.0.0.1:8000/admin to take you to the
   default administrator page. You can log in with the credentials created in step 2.
+
+ 4. Populating database via fixtures:
+
+  Fixture files are included in the Fixtures folder of the the top most directory. These
+  contain JSON formatted files which may be used to populate the database models with test
+  data. The default fixture directory is the Fixtures folder, any time you specify a
+  fixture file to load, that folder will be checked for the name of the file.
+  To apply the fixtures run the following command:
+  ```
+    C:\PathToProject > python manage.py loaddata <name of fixture file>
+  ```
+
+  Example to populate timecard:
+  ```
+  C:\PathToProject > python manage.py loaddate timecard_fixture.json
+  Installed 36 object(s) from 1 fixture(s)
+  ```
+
+  The new data items should now be available in the database.

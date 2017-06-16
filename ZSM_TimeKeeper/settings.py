@@ -118,3 +118,4 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "timekeeper", "static")]
 LOGIN_URL = 'login'
+FIXTURE_DIRS = [os.path.join(BASE_DIR, 'Fixtures')]
