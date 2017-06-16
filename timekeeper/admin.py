@@ -9,6 +9,7 @@ class ProjectDetail(admin.ModelAdmin):
 class ClientDetail(admin.ModelAdmin):
     list_display = ("last_name", "first_name", "email", "phone_number")
 
+
 class TimecardDetail(admin.ModelAdmin):
     list_display = ("timecard_owner", "timecard_project",
                     "timecard_date", "timecard_hours")
