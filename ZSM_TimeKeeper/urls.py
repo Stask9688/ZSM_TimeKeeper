@@ -19,7 +19,7 @@ from timekeeper import views
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib.auth.views import login,logout
+from django.contrib.auth.views import login, logout
 
 urlpatterns = [
                   url(r'^$', views.home),
@@ -31,5 +31,6 @@ urlpatterns = [
                   url(r'^clients/', views.clients),
                   url(r'^timecard/', views.timecard),
                   url(r'^project_data', views.project_data),
+                  url(r'^timecard_data', views.timecard_data),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
               staticfiles_urlpatterns()

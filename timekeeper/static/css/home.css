@@ -21,3 +21,17 @@
 table{
     margin-top:10px;
 }
+
+#project_table .x.axis text {
+    text-anchor: end !important;
+    transform: rotate(-45deg);
+}
+
+.bar:hover{
+    cursor:pointer;
+}
+
+#timecard_table{
+    overflow:auto;
+    height:400px;
+}

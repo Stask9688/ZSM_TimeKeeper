@@ -1,37 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="col-md-6">
-    <table class="table table-striped table-bordered">
-        <thead>
-        <tr>
-            <th>Client Names</th>
-            <th>Contact Information</th>
-            <th>Related Projects</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>City of San Antonio</td>
-            <td>city@sanantonio.gov</td>
-            <td>Alamo Renewal Project</td>
-        </tr>
-        <tr>
-            <td>Mayson Estate</td>
-            <td>groundskeeper@maysonestate.com</td>
-            <td>Mayson Tree Removal</td>
-        </tr>
-        <tr>
-            <td>Some people</td>
-            <td>some@people.meh</td>
-            <td>Doing work</td>
-        </tr>
-        <tr>
-            <td>A client</td>
-            <td>client@place.org</td>
-            <td>Really exciting stuff over here</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-{% endblock%}
+    <div class="col-md-6">
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Client Names</th>
+                <th>Email</th>
+                <th>Phone number</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in clients %}
+                <tr>
+                    <td>{{ item.first_name }} {{ item.last_name }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.phone_number }}</td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
 

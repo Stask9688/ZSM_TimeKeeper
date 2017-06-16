@@ -1,23 +1,46 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
-<div class="col-md-4">
-    <form>
-        <label for="Project">Select project:</label>
-        <select class="form-control" id="Project" name = "project">
-            <option>Alamo Renewal Project</option>
-            <option>Mayson Tree Removal</option>
-            <option>Important Project</option>
-            <option>More stuff</option>
-        </select>
-        <div class="form-group">
-            <label for="InputDate">Input Date</label>
-            <input type="date" name = "date" class="form-control" id="InputDate" placeholder="Date">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+            <form>
+                <label for="Project">Select project:</label>
+                <select class="form-control" id="Project" name="project">
+                    {% for item in project %}
+                        <option>{{ item.project_name }}</option>
+
+                    {% endfor %}
+                </select>
+                <div class="form-group">
+                    <label for="InputDate">Input Date</label>
+                    <input type="date" name="date" class="form-control" id="InputDate" placeholder="Date">
+                </div>
+                <div class="form-group">
+                    <label for="InputHours">Input Hours</label>
+                    <input type="number" name="hours" class="form-control" id="InputHours" placeholder="Hours">
+                </div>
+                <input type="submit" name="submit" value="Submit">
+            </form>
         </div>
-        <div class="form-group">
-            <label for="InputHours">Input Hours</label>
-            <input type="number" name = "hours" class="form-control" id="InputHours" placeholder="Hours">
+    </div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-3">
+            <div id="timecard_table" class=" col-md-12 table table-striped table-bordered"></div>
         </div>
-                <input type ="submit" name="submit" value="Submit">
-    </form>
-</div>
+        <div class="col-md-3">
+            <div id="timecard_graph" class="col-md-12"></div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-5"></div>
+        <button class="button" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
+    </div>
+    <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>
+    <script>AjaxRequest.get_timecard();
+    </script>
+
 {% endblock %}
