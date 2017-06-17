@@ -3,9 +3,14 @@ from .models import Project, Timecard, Client
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 import logging
 import simplejson
 
+
+def logout_view(request):
+    logout(request)
+    return render(request, "admin/logged_out.html")
 
 @login_required
 def home(request):

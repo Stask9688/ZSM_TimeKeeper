@@ -40,7 +40,7 @@
                     </li>
                     <li class="sidebar-brand col-md-12">
                         <a href="#">
-                            John Doe
+                            {{ user.first_name }} {{user.last_name}}
                         </a>
                     </li>
                     {% if request.user.is_superuser %}
@@ -61,7 +61,7 @@
                         <a href="/timecard">Timecard</a>
                     </li>
                     <li class="col-md-12">
-                        <a href="/admin/logout">Log Out</a>
+                        <a href="/logout">Log Out</a>
                     </li>
                 </ul>
             </div>
