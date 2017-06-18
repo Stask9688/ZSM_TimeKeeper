@@ -14,8 +14,9 @@ def logout_view(request):
 
 @login_required
 def home(request):
-    latest_timecards = Timecard.objects.order_by('timecard_date')[:7]
-    context = {'latest_timecards': latest_timecards}
+    latest_timecards = Timecard.objects.order_by('-timecard_date')[:7]
+    projects = Project.objects.all().order_by('pk')
+    context = {'latest_timecards': latest_timecards,'projects':projects}
     return render(request, "home.html", context)
 
 

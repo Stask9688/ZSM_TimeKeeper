@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="col-md-2">
+        <h5>List of active projects</h5>
         <table class="table table-bordered table-striped">
             <thead>
             <tr>
@@ -9,46 +10,34 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th>1</th>
-                <td>Alamo Renewal Project</td>
-            </tr>
-            <tr>
-                <th>2</th>
-                <td>Mayson Tree Removal</td>
-            </tr>
-            <tr>
-                <th>3</th>
-                <td>Ran out of names already</td>
-            </tr>
-            <tr>
-                <th>4</th>
-                <td>More projects</td>
-            </tr>
+            {% for project in projects %}
+                <tr>
+                    <th>{{ project.pk }}</th>
+                    <td>{{ project.project_name }}</td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
-    <div class="col-md-6">
-        <h3>Productivity Charts</h3>
-         <table class="table table-bordered table-striped">
-                <thead>
+    <div class="col-md-2">
+    <h5>List of newest timecard entries</h5>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Dates</th>
+                <th>Hours</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in latest_timecards %}
+
                 <tr>
-                    <th>#</th>
-                    <th>Dates</th>
-                    <th>Hours</th>
+                    <td>{{ item.timecard_date }}</td>
+                    <td>{{ item.timecard_hours }}</td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for item in latest_timecards %}
 
-                    <tr>
-                        <td></td>
-                        <td>{{ item.timecard_date }}</td>
-                        <td>{{ item.timecard_hours }}</td>
-                    </tr>
-
-                {% endfor %}
-             </tbody>>
-         </table>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
