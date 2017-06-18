@@ -1,11 +1,15 @@
+{% extends "base.html" %}
 
+{% block admin_content %}
 {% load i18n static %}<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{% endblock %}</title>
+
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
-{% block extrastyle %}{% endblock %}
+
+    {% block extrastyle %}{% endblock %}
 {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
 {% block extrahead %}{% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
@@ -20,6 +24,8 @@
 
     {% if not is_popup %}
     <!-- Header -->
+                    {% if '/admin/' not in request.path%}
+
     <div id="header">
         <div id="branding">
         {% block branding %}{% endblock %}
@@ -51,6 +57,7 @@
         {% endblock %}
         {% block nav-global %}{% endblock %}
     </div>
+                        {% endif %}
     <!-- END Header -->
     {% block breadcrumbs %}
     <div class="breadcrumbs">
@@ -87,3 +94,4 @@
 
 </body>
 </html>
+{% endblock %}

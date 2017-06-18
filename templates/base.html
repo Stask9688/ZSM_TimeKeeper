@@ -18,11 +18,9 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/sidebar.css" %}"/>
 </head>
 <body>
-<div class="container">
-    <div class="row">
+<div class="container-fluid">
+    {% if 'login' not in request.path and 'logout' not in request.path %}
 
-
-    </div>
     <div class="row">
         <div id="wrapper" class="col-md-2 toggled">
 
@@ -31,7 +29,7 @@
 
                 <ul class="sidebar-nav">
                     <li class="sidebar-brand">
-                        <nav id="header">
+                        <nav id="sidebar_header">
                             <a class="navbar-brand" href="#">
                                 <img id="brand" alt="Brand" src="{% static "img/monster.png" %}">
                             </a>
@@ -40,7 +38,7 @@
                     </li>
                     <li class="sidebar-brand col-md-12">
                         <a href="#">
-                            {{ user.first_name }} {{user.last_name}}
+                            {{ user.first_name }} {{ user.last_name }}
                         </a>
                     </li>
                     {% if request.user.is_superuser %}
@@ -67,8 +65,17 @@
             </div>
 
         </div>
-        {% block content %}
-        {% endblock %}
+    {% endif %}
+        <div class="col-md-10">
+            {% if '/admin/' in request.path or 'login' in request.path or 'logout' in request.path %}
+                {% block admin_content %}
+                {% endblock %}
+            {% else %}
+                {% block content %}
+                {% endblock %}
+            {% endif %}
+        </div>
+
     </div>
 </div>
 </body>
