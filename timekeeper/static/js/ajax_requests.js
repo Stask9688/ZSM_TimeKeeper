@@ -13,53 +13,71 @@
 class AjaxRequest {
     static get_projects() {
         $.get("/project_data", {name: "Test project"}).done(function (data) {
+            // Unparse serialized data into json format
             let data_object = JSON.parse(data);
             let parsed_data = [];
+
+            //Move pk value into crossfilterable space, move it to working object "parsed_data"
             for (let index = 0; index < data_object.length; index++) {
                 data_object[index]["fields"].pk = data_object[index].pk;
                 parsed_data.push(data_object[index]["fields"]);
             }
+
+            // Create crossfilter for project data
             let project_filter = new DataVisualization(parsed_data);
-            project_filter.generateDimension("project_name");
-            project_filter.generateDimension("project_description");
-            project_filter.generateDimension("project_hours");
+
+            //Create dimension for which we will group
+            // Example: we pick dimension pk (x-axis), for which values will be grouped
             project_filter.generateDimension("pk");
+
+            //Initialize table chart to be rendered on component with id=project_table
             let tableChart = dc.dataTable("#project_table");
-            project_filter.ndx.groupAll();
             tableChart.order(d3.ascending).width(768).height(480)
-                .dimension(project_filter.dimension["project_name"])
+                .dimension(project_filter.dimension["pk"])
                 .group(function (d) {
+                    //Tables don't need groups like other charts,
+                    //you can filter on a value, but the table looks ugly.
+                    //Returning empty string instead
                     return "";
-                }).columns([{
-                label: "ID",
-                format: function (d) {
-                    return d.pk;
-                }
-            },
-                {
-                    label: "Project Name",
-                    format: function (d) {
-                        return d.project_name;
-                    }
-                }, {
-                    label: "Hours spent",
-                    format: function (d) {
-                        return d.project_hours;
-                    }
-                },
-                {
-                    label: "Project Description",
-                    format: function (d) {
-                        return d.project_description;
-                    }
-                }]);
+                })
+                //c
+                .columns([
+                    //Create the columns, specifying the table label
+                    //as well as the value to display
+                    {
+                        label: "ID",
+                        format: function (d) {
+                            return d.pk;
+                        }
+                    },
+                    {
+                        label: "Project Name",
+                        format: function (d) {
+                            return d.project_name;
+                        }
+                    }, {
+                        label: "Hours spent",
+                        format: function (d) {
+                            return d.project_hours;
+                        }
+                    },
+                    {
+                        label: "Project Description",
+                        format: function (d) {
+                            return d.project_description;
+                        }
+                    }]);
+
+            //Create a reduce sum group out of the pk dimension.
+            //This effectively adds up values for data items which share the same
+            //dimension value
+            //Example: data object with pk of 1 has project_hours value of 50.
+            //         Resulting graph will have x value 1 with a bar of value 50
             let hoursGroup = project_filter.dimension["pk"].group().reduceSum(
                 function (d) {
-                    console.log(d);
                     return d["project_hours"];
                 }
             );
-            console.log(parsed_data);
             let barChart = dc.barChart(" #bar_chart");
             barChart
                 .x(d3.scale.ordinal())
@@ -69,6 +87,9 @@ class AjaxRequest {
                 .yAxisLabel('Hours Worked')
                 .dimension(project_filter.dimension["pk"])
                 .group(hoursGroup);
+
+            //Dcjs tables add a row on render, we'll remove it
+            //via jquery
             tableChart.on('postRender', function () {
                 $(".dc-table-group").remove()
             });
@@ -80,16 +101,15 @@ class AjaxRequest {
 
     static get_timecard() {
         $.get("/timecard_data", {name: "Test project"}).done(function (data) {
-
-            console.log(data)
             let data_object = JSON.parse(data.timecard);
             let projects = JSON.parse(data.project)
-            console.log(data_object);
+
             let parsed_data = [];
             for (let index = 0; index < data_object.length; index++) {
                 data_object[index]["fields"].pk = data_object[index].pk;
                 parsed_data.push(data_object[index]["fields"]);
             }
+
             let timecard_filter = new DataVisualization(parsed_data);
             timecard_filter.generateDimension("timecard_date");
 
@@ -128,14 +148,17 @@ class AjaxRequest {
             barChart
                 .x(d3.scale.ordinal())
                 .xUnits(dc.units.ordinal)
-                .xAxis().tickFormat(function(d){return d.substr(8)});
-                barChart
+                .xAxis().tickFormat(function (d) {
+                return d.substr(8)
+            });
+
+            barChart
                 .brushOn(true)
                 .xAxisLabel('Date')
                 .yAxisLabel('Hours Worked')
                 .dimension(timecard_filter.dimension["timecard_date"])
                 .group(hoursGroup).width(768).height(480);
-                    barChart.render()
+            barChart.render()
 
 
         });

@@ -12,11 +12,12 @@ def logout_view(request):
     logout(request)
     return render(request, "admin/logged_out.html")
 
+
 @login_required
 def home(request):
     latest_timecards = Timecard.objects.order_by('-timecard_date')[:7]
     projects = Project.objects.all().order_by('pk')
-    context = {'latest_timecards': latest_timecards,'projects':projects}
+    context = {'latest_timecards': latest_timecards, 'projects': projects}
     return render(request, "home.html", context)
 
 
@@ -28,8 +29,8 @@ def clients(request):
 
 @login_required
 def timecard(request):
-    user = User.objects.filter(username=request.user.get_username())
-    timecard_object = Timecard.objects.filter(timecard_owner=user)
+    user_object = User.objects.filter(username=request.user.get_username())
+    timecard_object = Timecard.objects.filter(timecard_owner=user_object)
     project_object = Project.objects.all().order_by('pk')
     if 'submit' in request.GET:
         user = User.objects.get(username=request.user.get_username())
@@ -39,9 +40,10 @@ def timecard(request):
         print(request.GET)
         project = Project.objects.get(project_name=request.GET.get('project'))
 
-        timecard = Timecard(timecard_owner=user, timecard_project=project,
-                            timecard_date=request.GET.get('date'), timecard_hours=request.GET.get('hours'))
-        timecard.save()
+        temp_card = Timecard(timecard_owner=user, timecard_project=project,
+                             timecard_date=request.GET.get('date'),
+                             timecard_hours=request.GET.get('hours'))
+        temp_card.save()
     return render(request, "timecard.html", {'project': project_object, "timecard": timecard_object})
 
 
@@ -66,10 +68,8 @@ def timecard_data(request):
 
     timecard_object = Timecard.objects.filter(timecard_owner=user)
 
-    timecard = serializers.serialize("json", timecard_object)
-    project = serializers.serialize("json", project_object)
-    test = {"timecard": timecard, "project": project}
-    print(test)
+    test = {"timecard": serializers.serialize("json", timecard_object),
+            "project": serializers.serialize("json", project_object)}
     return HttpResponse(simplejson.dumps(test), content_type="json")
 
 
