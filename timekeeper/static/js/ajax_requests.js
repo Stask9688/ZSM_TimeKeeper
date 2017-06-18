@@ -93,6 +93,28 @@ class AjaxRequest {
             tableChart.on('postRender', function () {
                 $(".dc-table-group").remove()
             });
+
+            tableChart.on('postRedraw', function () {
+            console.log("nah")
+                $(".dc-table-row>td:first-child").each(function () {
+                    let detail = $(this).html();
+                    console.log($(this).text());
+                    $(this).parent().attr("onclick", "window.location = '/project_detail/" + detail + "'")
+                });
+
+                $("td>a").attr("href",);
+            });
+            tableChart.on('postRender', function () {
+            console.log("nah")
+                $(".dc-table-row>td:first-child").each(function () {
+                    let detail = $(this).html();
+                    console.log($(this).text());
+                    $(this).parent().attr("onclick", "window.location = '/project_detail/" + detail + "'")
+                });
+
+                $("td>a").attr("href",);
+            });
+
             tableChart.render();
             barChart.render();
         });

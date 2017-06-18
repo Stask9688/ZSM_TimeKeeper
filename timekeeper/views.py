@@ -67,6 +67,18 @@ def timecard(request):
 
 
 @login_required
+def project_detail(request, project_pk):
+    project = Project.objects.get(pk=project_pk)
+    return render(request, "temp_project_detail.html", {"project": project})
+
+
+@login_required
+def client_detail(request, client_pk):
+    client = Client.objects.get(pk=client_pk)
+    return render(request, "client_detail.html", {"client": client})
+
+
+@login_required
 def projects(request):
     if False is check_permission(request.user):
         return redirect("/home")
@@ -90,8 +102,10 @@ def timecard_data(request):
 
     timecard_object = Timecard.objects.filter(timecard_owner=user)
 
+    project_object = Project.objects.all()
     test = {"timecard": serializers.serialize("json", timecard_object),
-            "project": serializers.serialize("json", project_object)}
+            "project": serializers.serialize("json", project_object),
+            "client": serializers.serialize("json", project_object)}
     return HttpResponse(simplejson.dumps(test), content_type="json")
 
 
