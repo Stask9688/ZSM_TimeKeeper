@@ -18,6 +18,8 @@ class Project(models.Model):
     project_description = models.TextField(max_length=200)
     project_hours = models.IntegerField(default=0)
     client = models.ForeignKey(Client, null=True)
+    flat_rate = models.BooleanField(default=False)
+    running_cost = models.FloatField(default=0)
 
     def __str__(self):
         return self.project_name
@@ -32,3 +34,4 @@ class Timecard(models.Model):
     timecard_project = models.ForeignKey(Project, null=True)
     timecard_date = models.DateField()
     timecard_hours = models.IntegerField(default=0)
+    timecard_charge = models.FloatField(default=0)

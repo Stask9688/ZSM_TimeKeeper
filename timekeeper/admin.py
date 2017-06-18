@@ -3,7 +3,8 @@ from .models import Project, Client, Timecard
 
 
 class ProjectDetail(admin.ModelAdmin):
-    list_display = ("project_name", "project_description", "client")
+    list_display = ("project_name", "project_description", "client",
+                    "running_cost", "flat_rate")
 
 
 class ClientDetail(admin.ModelAdmin):

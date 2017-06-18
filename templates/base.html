@@ -21,7 +21,7 @@
 <div class="container-fluid">
     {% if 'login' not in request.path and 'logout' not in request.path %}
 
-    <div class="row">
+        <div class="row">
         <div id="wrapper" class="col-md-2 toggled">
 
             <!-- Sidebar -->
@@ -49,12 +49,18 @@
                     <li class="col-md-12">
                         <a href="/home">Home</a>
                     </li>
-                    <li class="col-md-12">
-                        <a href="/projects">Projects</a>
-                    </li>
-                    <li class="col-md-12">
-                        <a href="/clients">Clients</a>
-                    </li>
+                    {% if request.user.is_superuser %}
+
+                        <li class="col-md-12">
+                            <a href="/projects">Projects</a>
+                        </li>
+                        <li class="col-md-12">
+                            <a href="/clients">Clients</a>
+                        </li>
+                        <li class="col-md-12">
+                            <a href="#">Employees</a>
+                        </li>
+                    {% endif %}
                     <li class="col-md-12">
                         <a href="/timecard">Timecard</a>
                     </li>
@@ -66,15 +72,15 @@
 
         </div>
     {% endif %}
-        <div class="col-md-10">
-            {% if '/admin/' in request.path or 'login' in request.path or 'logout' in request.path %}
-                {% block admin_content %}
-                {% endblock %}
-            {% else %}
-                {% block content %}
-                {% endblock %}
-            {% endif %}
-        </div>
+    <div class="col-md-10">
+        {% if '/admin/' in request.path or 'login' in request.path or 'logout' in request.path %}
+            {% block admin_content %}
+            {% endblock %}
+        {% else %}
+            {% block content %}
+            {% endblock %}
+        {% endif %}
+    </div>
 
     </div>
 </div>

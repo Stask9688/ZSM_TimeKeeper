@@ -12,7 +12,7 @@
     // Very basic example, javascript inlined with html is discouraged.
 class AjaxRequest {
     static get_projects() {
-        $.get("/project_data", {name: "Test project"}).done(function (data) {
+        $.get("/project_data").done(function (data) {
             // Unparse serialized data into json format
             let data_object = JSON.parse(data);
             let parsed_data = [];
@@ -100,7 +100,7 @@ class AjaxRequest {
     }
 
     static get_timecard() {
-        $.get("/timecard_data", {name: "Test project"}).done(function (data) {
+        $.get("/timecard_data").done(function (data) {
             let data_object = JSON.parse(data.timecard);
             let projects = JSON.parse(data.project)
 
@@ -117,18 +117,13 @@ class AjaxRequest {
             timecard_filter.ndx.groupAll();
             tableChart.order(d3.ascending).width(768).height(480)
                 .dimension(timecard_filter.dimension["timecard_date"])
-                .group(function () {
-                    return "";
+                .group(function (d) {
+                    return d.timecard_date;
                 }).columns([
                 {
                     label: "Project Name",
                     format: function (d) {
                         return projects[d.timecard_project - 1].fields.project_name;
-                    }
-                }, {
-                    label: "Timecard Date",
-                    format: function (d) {
-                        return d.timecard_date;
                     }
                 },
                 {
@@ -161,6 +156,19 @@ class AjaxRequest {
             barChart.render()
 
 
+        });
+    }
+
+    static get_clients() {
+        $.get("/client_data").done(function (data) {
+            let data_object = JSON.parse(data.timecard);
+            let projects = JSON.parse(data.project)
+
+            let parsed_data = [];
+            for (let index = 0; index < data_object.length; index++) {
+                data_object[index]["fields"].pk = data_object[index].pk;
+                parsed_data.push(data_object[index]["fields"]);
+            }
         });
     }
 
