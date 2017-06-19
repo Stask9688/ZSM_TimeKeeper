@@ -18,12 +18,10 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/sidebar.css" %}"/>
 </head>
 <body>
-<div class="container">
-    <div class="row">
+<div class="container-fluid">
+    {% if 'login' not in request.path and 'logout' not in request.path %}
 
-
-    </div>
-    <div class="row">
+        <div class="row">
         <div id="wrapper" class="col-md-2 toggled">
 
             <!-- Sidebar -->
@@ -31,7 +29,7 @@
 
                 <ul class="sidebar-nav">
                     <li class="sidebar-brand">
-                        <nav id="header">
+                        <nav id="sidebar_header">
                             <a class="navbar-brand" href="#">
                                 <img id="brand" alt="Brand" src="{% static "img/monster.png" %}">
                             </a>
@@ -40,7 +38,7 @@
                     </li>
                     <li class="sidebar-brand col-md-12">
                         <a href="#">
-                            John Doe
+                            {{ user.first_name }} {{ user.last_name }}
                         </a>
                     </li>
                     {% if request.user.is_superuser %}
@@ -51,24 +49,39 @@
                     <li class="col-md-12">
                         <a href="/home">Home</a>
                     </li>
-                    <li class="col-md-12">
-                        <a href="/projects">Projects</a>
-                    </li>
-                    <li class="col-md-12">
-                        <a href="/clients">Clients</a>
-                    </li>
+                    {% if request.user.is_superuser %}
+
+                        <li class="col-md-12">
+                            <a href="/projects">Projects</a>
+                        </li>
+                        <li class="col-md-12">
+                            <a href="/clients">Clients</a>
+                        </li>
+                        <li class="col-md-12">
+                            <a href="#">Employees</a>
+                        </li>
+                    {% endif %}
                     <li class="col-md-12">
                         <a href="/timecard">Timecard</a>
                     </li>
                     <li class="col-md-12">
-                        <a href="/admin/logout">Log Out</a>
+                        <a href="/logout">Log Out</a>
                     </li>
                 </ul>
             </div>
 
         </div>
-        {% block content %}
-        {% endblock %}
+    {% endif %}
+    <div class="col-md-10">
+        {% if '/admin/' in request.path or 'login' in request.path or 'logout' in request.path %}
+            {% block admin_content %}
+            {% endblock %}
+        {% else %}
+            {% block content %}
+            {% endblock %}
+        {% endif %}
+    </div>
+
     </div>
 </div>
 </body>
