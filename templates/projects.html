@@ -1,23 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <div class="col-md-6">
-    <div id="bar_chart"></div>
-            <div class="row">
-        <div class="col-md-5"></div>
-        <button class="button" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
-    </div>
-        <table  id="project_table" class="table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Project Name</th>
-                <th>Project Description</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
+    <div id="bar_chart" class="col-md-12"></div>
+
+    <button class="button col-md-offset-6 btn btn-primary" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
+    <table id="project_table" class="table table-striped table-bordered col-md-12"></table>
+
     <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
     <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>
     <script>AjaxRequest.get_projects()</script>

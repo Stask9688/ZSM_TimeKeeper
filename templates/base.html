@@ -22,18 +22,18 @@
     {% if 'login' not in request.path and 'logout' not in request.path %}
 
         <div class="row">
-        <div id="wrapper" class="col-md-2 toggled">
+        <div id="wrapper" class="col-md-2 col-sm-2 col-xs-2">
 
             <!-- Sidebar -->
-            <div id="sidebar-wrapper" class="col-md-12">
+            <div id="sidebar-wrapper" class="col-sm-2 col-xs-2 col-md-2">
 
                 <ul class="sidebar-nav">
-                    <li class="sidebar-brand">
+                    <li class="sidebar-brand col-md-12">
                         <nav id="sidebar_header">
                             <a class="navbar-brand" href="#">
                                 <img id="brand" alt="Brand" src="{% static "img/monster.png" %}">
                             </a>
-                            <h4 class="col-md-6">ZSM TimeKeeper</h4>
+                            <h4 class="col-md-6 hidden-xs hidden-sm">ZSM TimeKeeper</h4>
                         </nav>
                     </li>
                     <li class="sidebar-brand col-md-12">
@@ -72,7 +72,7 @@
 
         </div>
     {% endif %}
-    <div class="col-md-10">
+    <div id="content-pane" class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
         {% if '/admin/' in request.path or 'login' in request.path or 'logout' in request.path %}
             {% block admin_content %}
             {% endblock %}
