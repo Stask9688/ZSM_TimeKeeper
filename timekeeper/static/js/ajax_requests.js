@@ -95,7 +95,7 @@ class AjaxRequest {
             });
 
             tableChart.on('postRedraw', function () {
-            console.log("nah")
+                console.log("nah")
                 $(".dc-table-row>td:first-child").each(function () {
                     let detail = $(this).html();
                     console.log($(this).text());
@@ -105,7 +105,7 @@ class AjaxRequest {
                 $("td>a").attr("href",);
             });
             tableChart.on('postRender', function () {
-            console.log("nah")
+                console.log("nah")
                 $(".dc-table-row>td:first-child").each(function () {
                     let detail = $(this).html();
                     console.log($(this).text());
@@ -117,6 +117,11 @@ class AjaxRequest {
 
             tableChart.render();
             barChart.render();
+            $(window).resize(function () {
+                barChart.resetSvg();
+                barChart.render()
+            })
+
         });
 
     }
@@ -176,9 +181,12 @@ class AjaxRequest {
                 .yAxisLabel('Hours Worked')
                 .dimension(timecard_filter.dimension["timecard_date"])
                 .group(hoursGroup);
-            barChart.render()
+            barChart.render();
 
-
+            $(window).resize(function () {
+                barChart.resetSvg();
+                barChart.render()
+            })
         });
     }
 

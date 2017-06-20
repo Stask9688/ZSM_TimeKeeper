@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>ZSM TimeKeeper</title>
-
+    <link rel="icon" href="{% static "img/monster.png" %}"/>
     <script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/d3.min.js" %}"></script>
@@ -33,12 +33,12 @@
                             <a class="navbar-brand" href="#">
                                 <img id="brand" alt="Brand" src="{% static "img/monster.png" %}">
                             </a>
-                            <h4 class="col-md-6 hidden-xs hidden-sm">ZSM TimeKeeper</h4>
+                            <h4 class="col-md-6 hidden-md hidden-xs hidden-sm">ZSM TimeKeeper</h4>
                         </nav>
                     </li>
-                    <li class="sidebar-brand col-md-12">
+                    <li class="sidebar-brand col-md-12 hidden-sm hidden-xs ">
                         <a href="#">
-                            {{ user.first_name }} {{ user.last_name }}
+                            <span>{{ user.first_name }}</span><span> {{ user.last_name }}</span>
                         </a>
                     </li>
                     {% if request.user.is_superuser %}
