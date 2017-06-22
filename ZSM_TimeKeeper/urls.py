@@ -34,7 +34,9 @@ urlpatterns = [
                   url(r'^user/', views.user),
                   url(r'^project_data', views.project_data),
                   url(r'^project_detail/(?P<project_pk>\d+)$', views.project_detail),
-                  url(r'^client_detail/(?P<client_pk>[\d+])$', views.client_detail),
+                  url(r'^client_detail/(?P<client_pk>\d+)$', views.client_detail),
+                  url(r'^project_from_client/(?P<client_pk>\d+)$', views.project_from_client),
+                  url(r'^project_detail_dcjs/(?P<project_pk>\d+)$', views.project_detail_dcjs),
                   url(r'^timecard_data', views.timecard_data),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
               staticfiles_urlpatterns()

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="col-md-12">
+        <h2>{{ client.first_name }} {{ client.last_name }}</h2>
+        <h4> {{ client.phone_number }}</h4>
+        <h4> {{ client.email }}</h4>
+
+    </div>
+    <script>AjaxRequest.get_projects_by_client("{{ client.pk}}");</script>
+
+{% endblock %}

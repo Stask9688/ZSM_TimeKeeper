@@ -1,9 +1,24 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div>
-    <div>Project Name: {{ project.project_name}}</div>
-    <div>Project Description: {{ project.project_description}}</div>
-    <div>Project Hours: {{ project.project_name}}</div>
-</div>
+    <div class="col-md-12">
+        <h2>{{ project.project_name }}</h2>
+        <h4>{{ project.project_description }}</h4>
+        <h4>{{ project.project_name }}</h4>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-4">
+            <table id="project_employee_detail" class="table table-striped table-bordered"></table>
+        </div>
+        <div class="col-md-6">
+            <div id="project_progress_chart"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="perPersonHours" class="col-md-6"></div>
+                <h1 id="total_hours">Total hours: </h1>
+                <h1 id="total_charges">Total charges: </h1>
+        </div>
+    </div>
+    <script>AjaxRequest.get_data_for_project_detail("{{ project.pk }}")</script>
+
 {% endblock %}

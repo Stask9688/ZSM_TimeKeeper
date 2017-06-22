@@ -5,7 +5,7 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 import logging
-
+import simplejson
 
 
 def check_permission(user):
@@ -83,6 +83,41 @@ def projects(request):
     if False is check_permission(request.user):
         return redirect("/home")
     return render(request, "projects.html")
+
+
+@login_required
+def project_from_client(request, client_pk):
+    projects_for_client = Project.objects.filter(client=client_pk)
+
+    return HttpResponse(serializers.serialize("json", projects_for_client), content_type="json")
+
+
+@login_required
+def project_detail_dcjs(request, project_pk):
+    timecards_for_project = Timecard.objects.filter(timecard_project=project_pk)
+    users_on_project = []
+    for timecard in timecards_for_project:
+        if timecard.timecard_owner.pk not in users_on_project:
+            users_on_project.append(timecard.timecard_owner)
+
+    users_for_project = User.objects.filter(username__in=users_on_project).order_by("pk")
+    project_detail = Project.objects.filter(pk=project_pk)
+    client_info = Client.objects.filter(pk=project_detail[0].client.pk)
+    print(client_info)
+    print(project_detail[0].client.last_name)
+    temp = {"timecards": serializers.serialize("json", timecards_for_project),
+            "users": serializers.serialize("json", users_for_project),
+            "project": serializers.serialize("json", project_detail),
+            "client":serializers.serialize("json",client_info)}
+
+    return HttpResponse(simplejson.dumps(temp), content_type="json")
+
+
+@login_required
+def timecards_by_project(request, project_pk):
+    timecards_for_project = Timecard.objects.filter(timecard_project=project_pk)
+    temp = {"timecards": serializers.serialize("json", timecards_for_project)}
+    return HttpResponse(serializers.serialize("json", timecards_for_project), content_type="json")
 
 
 @login_required
