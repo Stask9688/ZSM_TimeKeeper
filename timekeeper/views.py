@@ -5,7 +5,7 @@ from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 import logging
-import simplejson
+import json
 
 
 def check_permission(user):
@@ -111,7 +111,7 @@ def project_detail_dcjs(request, project_pk):
             "project": serializers.serialize("json", project_detail),
             "client":serializers.serialize("json",client_info)}
 
-    return HttpResponse(simplejson.dumps(temp), content_type="json")
+    return HttpResponse(json.dumps(temp), content_type="json")
 
 
 @login_required
@@ -142,7 +142,7 @@ def timecard_data(request):
     test = {"timecard": serializers.serialize("json", timecard_object),
             "project": serializers.serialize("json", project_object),
             "client": serializers.serialize("json", project_object)}
-    return HttpResponse(simplejson.dumps(test), content_type="json")
+    return HttpResponse(json.dumps(test), content_type="json")
 
 
 @login_required
