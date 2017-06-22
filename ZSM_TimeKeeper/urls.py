@@ -31,6 +31,7 @@ urlpatterns = [
                   url(r'^projects/', views.projects),
                   url(r'^clients/', views.clients),
                   url(r'^timecard/', views.timecard),
+                  url(r'^user/', views.user),
                   url(r'^project_data', views.project_data),
                   url(r'^project_detail/(?P<project_pk>\d+)$', views.project_detail),
                   url(r'^client_detail/(?P<client_pk>[\d+])$', views.client_detail),

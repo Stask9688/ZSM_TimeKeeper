@@ -2,60 +2,51 @@
 {% load static %}
 {% block content %}
     <div class="row">
-        <div class="col-md-3">
+    <div class="col-md-12">
+        <form class="col-md-4">
+            <div class="form-group">
+                <label for="Project">Select project:</label>
+                <select class="form-control" id="Project" name="project">
+                    {% for item in project %}
+                        <option>{{ item.project_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="InputDate">Input Date</label>
+                <input type="date" name="date" class="form-control" id="InputDate" placeholder="Date">
+            </div>
+            <div class="form-group">
+                <label for="InputHours">Input Hours</label>
+                <input type="number" name="hours" class="form-control" id="InputHours" placeholder="Hours">
+            </div>
+            <div class="form-group">
+                <label for="InputCharge">Input Hourly Charge</label>
+                <input type="number" name="charge" class="form-control" id="InputCharge" placeholder="Charge">
+            </div>
+            {% if invalid_charge == True %}
+                <div class="alert alert-danger">
+                    Error: Charge entered for flat rate project, timecard not submitted
+                </div>
+            {% elif invalid_charge == False %}
 
-            <form>
-                <div class="form-group">
-                    <label for="Project">Select project:</label>
-                    <select class="form-control" id="Project" name="project">
-                        {% for item in project %}
-                            <option>{{ item.project_name }}</option>
+                <div class="alert alert-success">
+                    Success: Timecard submitted
+                </div>
+            {% else %}
+                <div class="alert">
+                </div>
+            {% endif %}
+            <input class="col-md-offset-6 col-sm-offset-6 col-xs-offset-6 btn btn-primary" type="submit" name="submit" value="Submit">
 
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="InputDate">Input Date</label>
-                    <input type="date" name="date" class="form-control" id="InputDate" placeholder="Date">
-                </div>
-                <div class="form-group">
-                    <label for="InputHours">Input Hours</label>
-                    <input type="number" name="hours" class="form-control" id="InputHours" placeholder="Hours">
-                </div>
-                <div class="form-group">
-                    <label for="InputCharge">Input Hourly Charge</label>
-                    <input type="number" name="charge" class="form-control" id="InputCharge" placeholder="Charge">
-                </div>
-                {% if invalid_charge == True %}
-                    <div class="alert alert-danger">
-                        Error: Charge entered for flat rate project, timecard not submitted
-                    </div>
-                {% elif invalid_charge == False %}
-
-                    <div class="alert alert-success">
-                        Success: Timecard submitted
-                    </div>
-                {% else %}
-                    <div class="alert">
-                    </div>
-                {% endif %}
-                <input type="submit" name="submit" value="Submit">
-            </form>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-3">
-            <div id="timecard_table" class=" col-md-12 table table-striped table-bordered"></div>
-        </div>
-        <div class="col-md-3">
-            <div id="timecard_graph" class="col-md-12"></div>
-        </div>
+        </form>
+        <div id="timecard_table" class="col-md-6 table table-striped table-bordered"></div>
 
     </div>
+    </div>
     <div class="row">
-        <div class="col-md-5"></div>
-        <button class="button" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
+        <div id="timecard_graph" class="col-md-12"></div>
+        <button class="button btn btn-info col-md-offset-6" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
     </div>
     <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
     <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>

@@ -8,6 +8,7 @@ import logging
 import simplejson
 
 
+
 def check_permission(user):
     if user.groups.filter(name="Employee").exists():
         return False

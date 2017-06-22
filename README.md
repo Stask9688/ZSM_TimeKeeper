@@ -80,7 +80,7 @@ Quit the server with CTRL-BREAK.
 
   Example to populate timecard:
   ```
-  C:\PathToProject > python manage.py loaddate timecard_fixture.json
+  C:\PathToProject > python manage.py loaddata timecard_fixture.json
   Installed 36 object(s) from 1 fixture(s)
   ```
 

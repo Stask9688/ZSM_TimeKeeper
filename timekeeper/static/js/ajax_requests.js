@@ -32,7 +32,7 @@ class AjaxRequest {
 
             //Initialize table chart to be rendered on component with id=project_table
             let tableChart = dc.dataTable("#project_table");
-            tableChart.order(d3.ascending).width(768).height(480)
+            tableChart.order(d3.ascending)
                 .dimension(project_filter.dimension["pk"])
                 .group(function (d) {
                     //Tables don't need groups like other charts,
@@ -95,7 +95,7 @@ class AjaxRequest {
             });
 
             tableChart.on('postRedraw', function () {
-            console.log("nah")
+                console.log("nah")
                 $(".dc-table-row>td:first-child").each(function () {
                     let detail = $(this).html();
                     console.log($(this).text());
@@ -105,7 +105,7 @@ class AjaxRequest {
                 $("td>a").attr("href",);
             });
             tableChart.on('postRender', function () {
-            console.log("nah")
+                console.log("nah")
                 $(".dc-table-row>td:first-child").each(function () {
                     let detail = $(this).html();
                     console.log($(this).text());
@@ -117,6 +117,11 @@ class AjaxRequest {
 
             tableChart.render();
             barChart.render();
+            $(window).resize(function () {
+                barChart.resetSvg();
+                barChart.render()
+            })
+
         });
 
     }
@@ -137,7 +142,7 @@ class AjaxRequest {
 
             let tableChart = dc.dataTable("#timecard_table");
             timecard_filter.ndx.groupAll();
-            tableChart.order(d3.ascending).width(768).height(480)
+            tableChart.order(d3.ascending)
                 .dimension(timecard_filter.dimension["timecard_date"])
                 .group(function (d) {
                     return d.timecard_date;
@@ -154,8 +159,9 @@ class AjaxRequest {
                         return d.timecard_hours;
                     }
                 }]);
-
+            let height = $(".col-md-12 > form").height();
             tableChart.render();
+            $("#timecard_table").height(height);
             let barChart = dc.barChart("#timecard_graph");
             let hoursGroup = timecard_filter.dimension["timecard_date"].group().reduceSum(
                 function (d) {
@@ -174,10 +180,13 @@ class AjaxRequest {
                 .xAxisLabel('Date')
                 .yAxisLabel('Hours Worked')
                 .dimension(timecard_filter.dimension["timecard_date"])
-                .group(hoursGroup).width(768).height(480);
-            barChart.render()
+                .group(hoursGroup);
+            barChart.render();
 
-
+            $(window).resize(function () {
+                barChart.resetSvg();
+                barChart.render()
+            })
         });
     }
 

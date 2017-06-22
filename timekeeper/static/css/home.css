@@ -26,12 +26,24 @@ table{
     text-anchor: end !important;
     transform: rotate(-45deg);
 }
+#timecard_table{
+    max-width:50%;
+    overflow:auto;
+}
+
+#timecard_graph{
+    margin-top: 50px;
+}
 
 .bar:hover{
     cursor:pointer;
 }
 
-#timecard_table{
-    overflow:auto;
-    height:400px;
+#content-pane{
+    margin-top:20px;
+}
+
+.container-fluid{
+    padding-left:0;
+    padding-right:0;
 }
