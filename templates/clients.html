@@ -12,15 +12,21 @@
                 <th>Client Names</th>
                 <th>Email</th>
                 <th>Phone number</th>
+                <th>Detail</th>
             </tr>
             </thead>
             <tbody>
 
             {% for item in clients %}
-                <tr onclick="window.location = '/client_detail/{{ item.pk }}'">
+
+
                     <td>{{ item.first_name }} {{ item.last_name }}</td>
                     <td>{{ item.email }}</td>
-                    <td>{{ item.phone_number }}</td>
+                    <td>{{ item.phone_number }}
+                    </td>
+                <td>
+                                     <button type="button" ><a onclick="window.location = '/client_detail/{{ item.pk }}'">Detail</a></button>
+                </td>
                 </tr>
             {% endfor %}
             </tbody>
