@@ -139,7 +139,7 @@ class AjaxRequest {
 
                 return d.tot;
             };
-let totalHoursWorked = dc.numberDisplay("#total_hours");
+            let totalHoursWorked = dc.numberDisplay("#total_hours");
             totalHoursWorked.group(timecardHoursGroup).dimension(project_filter.dimension["timecard_date"]).valueAccessor(total);
             totalHoursWorked.render();
 
@@ -161,7 +161,11 @@ let totalHoursWorked = dc.numberDisplay("#total_hours");
             let chargesTotal = dc.numberDisplay("#total_charges");
             chargesTotal.group(timecardChargeGroup).dimension(project_filter.dimension["timecard_date"]).valueAccessor(total);
             chargesTotal.render();
-
+            $(window).resize(function () {
+                hoursPerPerson.resetSvg();
+                hoursWorked.resetSvg();
+                dc.renderAll()
+            })
         })
     }
 

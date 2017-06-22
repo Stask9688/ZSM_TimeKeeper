@@ -9,7 +9,7 @@ import simplejson
 
 
 def check_permission(user):
-    if user.groups.filter(name="Employee").exists():
+    if user.groups.filter(name="Employee").exists() or len(user.groups.all()) == 0:
         return False
     return True
 
@@ -57,7 +57,8 @@ def timecard(request):
         else:
             temp_card = Timecard(timecard_owner=user, timecard_project=project,
                                  timecard_date=request.GET.get('date'),
-                                 timecard_hours=request.GET.get('hours'))
+                                 timecard_hours=request.GET.get('hours'),
+                                 timecard_charge=request.GET.get('charge'))
             temp_card.save()
             return render(request, "timecard.html", {'invalid_charge': invalid_charge, 'project': project_object,
                                                      "timecard": timecard_object})
