@@ -22,7 +22,7 @@
             <tbody>
 
             {% for item in projects %}
-                <tr onclick="window.location = '/client_detail/{{ item.pk }}'">
+                <tr onclick="window.location = '/project_detail/{{ item.pk }}'">
                     <td>{{ item.project_name }}</td>
                     <td>{{ item.project_description}}</td>
                     <td>{{ item.running_cost }}</td>
