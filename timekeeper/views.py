@@ -44,9 +44,6 @@ def timecard(request):
     invalid_charge = False
     if 'submit' in request.GET:
         user = User.objects.get(username=request.user.get_username())
-        logging.debug(request.GET.get('project'))
-        logging.debug(request.GET.get('date'))
-        logging.debug(request.GET.get('hours'))
         print(request.GET)
         project = Project.objects.get(project_name=request.GET.get('project'))
         print("Charge", request.GET.get('charge'))
@@ -76,7 +73,9 @@ def project_detail(request, project_pk):
 @login_required
 def client_detail(request, client_pk):
     client = Client.objects.get(pk=client_pk)
-    return render(request, "client_detail.html", {"client": client})
+    projects = Project.objects.filter(client = client_pk)
+    print(projects)
+    return render(request, "client_detail.html", {"client": client, "projects":projects})
 
 
 @login_required
