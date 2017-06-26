@@ -2,20 +2,37 @@
 
 {% block content %}
     <div class="col-md-12">
-        <h1>Client Detail Page</h1>
         <h2>{{ client.first_name }} {{ client.last_name }}</h2>
-        <h4>Phone Number: <a href="tel: {{ client.phone_number }}">{{ client.phone_number }}</a></h4>
-        <h4>Email: <a href="mailto:{{ client.email }}">{{ client.email }}</a></h4>
+        <h4> {{ client.phone_number }}</h4>
+        <h4> {{ client.email }}</h4>
 
-    <h1>Project List:</h1>
-    <ul>
-        <li>Project 1</li>
-        <li>Project 2</li>
-        <li>Project 3</li>
-    </ul>
+
     </div>
+     <div class="col-md-12">
+        <table class="table table-striped table-bordered">
+            <thead>
+
+
+            <tr>
+                <th>Project Name</th>
+                <th>Project Description</th>
+                <th>Running Cost</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for item in projects %}
+                <tr onclick="window.location = '/client_detail/{{ item.pk }}'">
+                    <td>{{ item.project_name }}</td>
+                    <td>{{ item.project_description}}</td>
+                    <td>{{ item.running_cost }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
     <script>AjaxRequest.get_projects_by_client("{{ client.pk}}");</script>
-    <script>AjaxRequest.get_projects()</script>
-    <script>AjaxRequest.get_data_for_project_detail("{{ project.pk }}")</script>
 
 {% endblock %}
