@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title> User Profile</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/global.css" %}"/>
+</head>
+
+<body>
+<header>
+    <div class="wrapper">
+        <a href="#">
+{% comment %}            <img src="{% static "img/monster.png" %}" alt="" title=""
+                 style=""/>{% endcomment %}
+        </a>
+
+        <span id="usernav"><a href="#">Logout</a> - <a href="#">Settings</a> - <a href="#">My Profile<span><img
+                src="{% static "img/user_avatar.png " %}" style="width:20px;height:20px;"/></span></a></span>
+    </div>
+</header>
+
+<nav>
+    <ul id="n" class="clearfix">
+        <li><a href="/home">Home</a></li>
+        <li class="sel"><a href="#">Profile</a></li>
+        <li><a href="/projects">Projects</a></li>
+
+        <li><a href="#">Search Project</a></li>
+        <li><a href="#"></a></li>
+    </ul>
+</nav>
+
+<div id="content" class="clearfix">
+    <section id="left">
+        <div id="userStats" class="clearfix">
+            <div class="pic">
+                <a href="#"><img src="{% static "img/user_avatar.png" %}" width="150" height="150"/></a>
+            </div>
+
+            <div class="data">
+
+                <h1> Darcel Brekke</h1>
+                <h3>Hong Kong, China</h3>
+                <h4><a href="http://www.utsa.edu">utsa.edu</a></h4>
+                <div class="socialMediaLinks">
+                    <a href="http://linkedin.com/" rel="me" target="_blank">
+                        <img src="{% static "img/linkedin.png" %}" alt="@hilclin"/>
+                    </a>
+
+                </div>
+                <div class="sep" style="font-size:15px"></div>
+                <ul class="numbers clearfix">
+                    <li>Open Project<strong>2</strong></li>
+                    <li>In Progress<strong>10</strong></li>
+                    <li class="nobrdr">Completed<strong>2</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <h1>Current Project</h1>
+
+    </section>
+
+
+</div>
+</body>
+</html>

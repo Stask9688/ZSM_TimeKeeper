@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'timekeeper.apps.TimekeeperConfig',
+    'timekeeper.static'
 ]
 
 MIDDLEWARE = [
@@ -116,3 +117,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "timekeeper", "static")]
+LOGIN_URL = 'login'
+FIXTURE_DIRS = [os.path.join(BASE_DIR, 'Fixtures')]

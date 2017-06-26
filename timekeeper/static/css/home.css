@@ -1,8 +1,10 @@
 #brand{
     height:100%;
 }
-#header{
+#sidebar_header{
     margin-bottom:0;
+    padding-top:1em;
+    color:whitesmoke;
 }
 
 .navbar-brand{
@@ -18,4 +20,33 @@
 
 table{
     margin-top:10px;
+}
+
+#project_table .x.axis text {
+    text-anchor: end !important;
+    transform: rotate(-45deg);
+}
+#timecard_table{
+    max-width:50%;
+    overflow:auto;
+}
+
+#timecard_graph{
+    margin-top: 50px;
+}
+
+.bar:hover{
+    cursor:pointer;
+}
+
+#content-pane{
+    margin-top:20px;
+}
+
+.container-fluid{
+    padding-left:0;
+    padding-right:0;
+}
+.dc-table-row, .pie-slice{
+    cursor:pointer;
 }

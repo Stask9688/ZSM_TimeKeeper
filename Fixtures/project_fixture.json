@@ -1,0 +1,132 @@
+[
+  {
+    "model": "timekeeper.project",
+    "pk": 1,
+    "fields": {
+      "project_name": "Red flag",
+      "project_description": "Installing red flags on buildings in Castle Hills",
+      "project_hours": 20,
+      "client": 1
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 2,
+    "fields": {
+      "project_name": "Bitter Proton",
+      "project_description": "Repairing physics lab electron microscopes",
+      "project_hours": 8,
+      "client": 2
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 3,
+    "fields": {
+      "project_name": "Straw Fist",
+      "project_description": "Upgrading scarecrows to better ward off crows",
+      "project_hours": 7,
+      "client": 3
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 4,
+    "fields": {
+      "project_name": "Weeknight Eastern",
+      "project_description": "Installing streetlights on Wurzbach Pkwy",
+      "project_hours": 9,
+      "client": 4
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 5,
+    "fields": {
+      "project_name": "Liquid Fogger",
+      "project_description": "Conducting pest control services at San Antonio Aquarium",
+      "project_hours": 22,
+      "client": 5
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 6,
+    "fields": {
+      "project_name": "Bleeding Boomerang",
+      "project_description": "I don't know, something about Australia",
+      "project_hours": 17,
+      "client": 6
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 7,
+    "fields": {
+      "project_name": "Early Coffin",
+      "project_description": "Trimming hedges for a group of San Antonio mortuaries",
+      "project_hours": 9,
+      "client": 7
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 8,
+    "fields": {
+      "project_name": "Heavy Tuba",
+      "project_description": "Re-paving the sidewalk in front of local bandhall",
+      "project_hours": 25,
+      "client": 8
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 9,
+    "fields": {
+      "project_name": "Brutal fish",
+      "project_description": "Conducting survey of San Antonio river goldfish populations",
+      "project_hours": 26,
+      "client": 9
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 10,
+    "fields": {
+      "project_name": "Endless Accidentally Knife",
+      "project_description": "Self explanatory",
+      "project_hours": 28,
+      "client": 10
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 11,
+    "fields": {
+      "project_name": "Supersonic Ruby",
+      "project_description": "something something something fast",
+      "project_hours": 2,
+      "client": 1
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 12,
+    "fields": {
+      "project_name": "Sane trombone",
+      "project_description": "Removing asbestos from local bandhall",
+      "project_hours": 15,
+      "client": 2
+    }
+  },
+  {
+    "model": "timekeeper.project",
+    "pk": 13,
+    "fields": {
+      "project_name": "Gold Kangaroo",
+      "project_description": "Something else about Australia, just with more gold",
+      "project_hours": 25,
+      "client": 3
+    }
+  }
+]
