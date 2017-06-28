@@ -20,6 +20,7 @@ class Project(models.Model):
     client = models.ForeignKey(Client, null=True)
     flat_rate = models.BooleanField(default=False)
     running_cost = models.FloatField(default=0)
+    employees = models.ManyToManyField(User, related_name="employees")
 
     def __str__(self):
         return self.project_name

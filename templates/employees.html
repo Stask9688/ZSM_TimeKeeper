@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load custom_tags %}
+{% block content %}
+    <script>
+        var x = {{ employees|json_safe }}
+            console.log(x);
+    </script>
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Email</th>
+                <th>Detail</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for item in employees %}
+                <tr>
+                    <td>{{ item.first_name }} {{ item.last_name }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>
+                        <button type="button">
+                            <a onclick="window.location = '/employee_detail/{{ item.pk }}'">Detail</a>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
