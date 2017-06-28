@@ -42,7 +42,7 @@ def clients(request):
 def timecard(request):
     user_object = User.objects.filter(username=request.user.get_username())
     timecard_object = Timecard.objects.filter(timecard_owner=user_object)
-    project_object = Project.objects.all().order_by('pk')
+    project_object = Project.objects.filter(employees__username=request.user).order_by('pk')
     invalid_charge = False
     if 'submit' in request.GET:
         user = User.objects.get(username=request.user.get_username())
