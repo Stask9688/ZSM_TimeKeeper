@@ -22,6 +22,26 @@
             <h1 id="total_charges" class="col-md-offset-1 col-md-3">Total charges: </h1>
         </div>
     </div>
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Task Title</th>
+                <th>Task Description</th>
+                <th>Hours Remaining</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.project_task_title }}</td>
+                    <td>{{ task.project_task_description }}</td>
+                    <td>{{ task.project_task_hours_remaining }} </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <script>AjaxRequest.get_data_for_project_detail("{{ project.pk }}")</script>
 
 {% endblock %}
