@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Project, Timecard, Client
+from .models import Project, Timecard, Client, ProjectTasks
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
@@ -70,7 +70,9 @@ def timecard(request):
 @login_required
 def project_detail(request, project_pk):
     project = Project.objects.get(pk=project_pk)
-    return render(request, "temp_project_detail.html", {"project": project})
+    tasks = ProjectTasks.objects.filter(project_task_link=project)
+    print(tasks)
+    return render(request, "temp_project_detail.html", {"project": project, "tasks":tasks})
 
 
 @login_required

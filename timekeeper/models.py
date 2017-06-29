@@ -13,6 +13,9 @@ class Client(models.Model):
         return self.first_name + " " + self.last_name
 
 
+
+
+
 class Project(models.Model):
     project_name = models.CharField(max_length=30)
     project_description = models.TextField(max_length=200)
@@ -23,6 +26,12 @@ class Project(models.Model):
 
     def __str__(self):
         return self.project_name
+
+class ProjectTasks(models.Model):
+    project_task_link = models.ForeignKey(Project, related_name="tasks")
+    project_task_title = models.CharField(max_length=50)
+    project_task_description = models.CharField(max_length=200)
+    project_task_hours_remaining = models.IntegerField()
 
 
 # Timecard object contains the owner(a.k.a current user),
