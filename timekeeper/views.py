@@ -161,15 +161,21 @@ def user(request):
 @login_required
 @user_passes_test(check_permission)
 def employees(request):
-    user_projects = Project.objects.filter(employees__username=request.user)
-    user_employees = ()
-    if user_projects:
-        for project in user_projects:
-            user_employees = list(chain(project.employees.all(), user_employees))
-    else:
-        user_employees = User.objects.none()
+    this_user = User.objects.get(username=request.user)
+    print(this_user.groups.filter(name="Owner"))
+    if this_user.groups.filter(name="Owner").exists():
+        user_employees = User.objects.all()
 
-    return render(request, "employees.html", {"employees": set(user_employees)})
+    else:
+        user_projects = Project.objects.filter(employees__username=request.user)
+        user_employees = ()
+        if user_projects:
+            for project in user_projects:
+                user_employees = list(chain(project.employees.all(), user_employees))
+        else:
+            user_employees = User.objects.none()
+        user_employees=set(user_employees)
+    return render(request, "employees.html", {"employees": user_employees})
 
 
 @login_required
