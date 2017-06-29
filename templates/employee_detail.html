@@ -2,8 +2,8 @@
 {% load custom_tags %}
 {% block content %}
     <div class="col-md-12">
-        <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-        <h4> {{ user.email }}</h4>
+        <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+        <h4> {{ employee.email }}</h4>
     </div>
                 <div id="timecard_graph" class="col-md-6"></div>
             <button class="button btn btn-info col-md-offset-6" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
