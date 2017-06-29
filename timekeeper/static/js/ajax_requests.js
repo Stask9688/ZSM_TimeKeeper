@@ -9,8 +9,173 @@
     // Then, using Jquery, selects the elements with ids "test_name" and "test_description"
     // and changes their text to the value of the data sent back.
 
-    // Very basic example, javascript inlined with html is discouraged.
 class AjaxRequest {
+    static get_data_for_project_detail(pk) {
+        $.get("/project_detail_dcjs/" + pk).done(function (data) {
+
+            let timecard_data = JSON.parse(data.timecards);
+            let client_data = JSON.parse(data.client);
+            var user_data = JSON.parse(data.users);
+            let project_data = JSON.parse(data.project);
+
+            // for(let i =0;i<timecard_data.length;i++ ){
+            //     timecard_data[i].fields.timecard_owner = user_data[timecard_data[i].fields.timecard_owner];
+            // }
+            console.log(timecard_data);
+            let master_timecard = []
+            for (let i = 0; i < timecard_data.length; i++) {
+                master_timecard[i] = timecard_data[i].fields;
+                master_timecard[i].pk = timecard_data[i].pk;
+            }
+            console.log(master_timecard)
+            // Create crossfilter for project data
+            let project_filter = new DataVisualization(master_timecard);
+
+            //Create dimension for which we will group
+            // Example: we pick dimension pk (x-axis), for which values will be grouped
+            project_filter.generateDimension("timecard_date");
+            project_filter.generateDimension("timecard_owner");
+
+            let custom_dimension = project_filter.ndx.dimension(function (d) {
+                return user_data[d.timecard_owner - 1].fields.first_name;
+            });
+
+
+            let tableChart = dc.dataTable("#project_employee_detail");
+            tableChart.order(d3.ascending)
+                .dimension(project_filter.dimension["timecard_date"])
+                .group(function (d) {
+                    //Tables don't need groups like other charts,
+                    //you can filter on a value, but the table looks ugly.
+                    //Returning empty string instead
+                    return "";
+                })
+                //c
+                .columns([
+                    //Create the columns, specifying the table label
+                    //as well as the value to display
+                    {
+                        label: "Employee",
+                        format: function (d) {
+                            console.log(d);
+                            return user_data[d.timecard_owner - 1].fields.first_name + " " +
+                                user_data[d.timecard_owner - 1].fields.last_name;
+                        }
+                    },
+                    {
+                        label: "Date Worked",
+                        format: function (d) {
+                            return d.timecard_date;
+                        }
+                    },
+                    {
+                        label: "Hours Worked",
+                        format: function (d) {
+                            return d.timecard_hours;
+                        }
+                    },
+                    {
+                        label: "Day Charge",
+                        format: function (d) {
+                            return d.timecard_charge * d.timecard_hours;
+                        }
+                    }
+                ]);
+            tableChart.render();
+
+            let hoursWorked = dc.barChart("#project_progress_chart");
+            let hoursWorkedPerDay = project_filter.dimension["timecard_date"].group().reduceSum(
+                function (d) {
+                    return d.timecard_hours;
+                }
+            );
+            hoursWorked
+                .x(d3.scale.ordinal())
+                .xUnits(dc.units.ordinal)
+                .xAxis().tickFormat(function (d) {
+                return d.substr(8)
+            });
+
+            hoursWorked
+                .brushOn(true)
+                .xAxisLabel('Date')
+                .yAxisLabel('Hours Worked')
+                .dimension(project_filter.dimension["timecard_date"])
+                .group(hoursWorkedPerDay);
+            hoursWorked.render();
+
+            let hoursPerPerson = dc.pieChart("#perPersonHours");
+            let hoursPerPersonGroup = custom_dimension.group().reduceSum(
+                function (d) {
+                    return d.timecard_charge;
+                }
+            );
+            hoursPerPerson
+
+                .dimension(custom_dimension)
+                .group(hoursPerPersonGroup)
+                .legend(dc.legend());
+
+            hoursPerPerson.render();
+
+            let timecardHoursGroup = project_filter.ndx.groupAll().reduce(
+                function (p, v) {
+                    ++p.n;
+                    p.tot += v.timecard_hours ;
+                    return p;
+                },
+                function (p, v) {
+                    --p.n;
+                    p.tot -= v.timecard_hours;
+                    return p;
+                },
+                function () {
+                    return {n: 0, tot: 0};
+                }
+            );
+            let total = function (d) {
+
+                console.log(d)
+
+                return d.tot;
+            };
+            let totalHoursWorked = dc.numberDisplay("#total_hours");
+            totalHoursWorked.group(timecardHoursGroup).dimension(project_filter.dimension["timecard_date"]).valueAccessor(total);
+            totalHoursWorked.render();
+
+            let timecardChargeGroup = project_filter.ndx.groupAll().reduce(
+                function (p, v) {
+                    ++p.n;
+                    p.tot += v.timecard_charge *v.timecard_hours;
+                    return p;
+                },
+                function (p, v) {
+                    --p.n;
+                    p.tot -= v.timecard_charge *v.timecard_hours;
+                    return p;
+                },
+                function () {
+                    return {n: 0, tot: 0};
+                }
+            );
+            let chargesTotal = dc.numberDisplay("#total_charges");
+            chargesTotal.group(timecardChargeGroup).dimension(project_filter.dimension["timecard_date"]).valueAccessor(total);
+            chargesTotal.render();
+            $(window).resize(function () {
+                hoursPerPerson.resetSvg();
+                hoursWorked.resetSvg();
+                dc.renderAll()
+            })
+        })
+    }
+
+    static get_projects_by_client(pk) {
+        $.get("/project_from_client/" + pk).done(function (data) {
+
+
+        })
+    }
+
     static get_projects() {
         $.get("/project_data").done(function (data) {
             // Unparse serialized data into json format
