@@ -75,7 +75,7 @@ def project_detail(request, project_pk):
     project = Project.objects.get(pk=project_pk)
     tasks = ProjectTasks.objects.filter(project_task_link=project)
     print(tasks)
-    return render(request, "project_detail.html", {"project": project, "tasks", tasks})
+    return render(request, "project_detail.html", {"project": project, "tasks": tasks})
 
 
 @user_passes_test(check_permission)
