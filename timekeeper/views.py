@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Project, Timecard, Client, ProjectTasks
+from .models import Project, Timecard, Client, ProjectTask
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
 from django.core import serializers
@@ -47,7 +47,9 @@ def clients(request):
 def timecard(request):
     user_object = User.objects.filter(username=request.user.get_username())
     timecard_object = Timecard.objects.filter(timecard_owner=user_object)
-    project_object = Project.objects.filter(employees__username=request.user).order_by('pk')
+    #project_object = Project.objects.filter(employees__username=request.user).order_by('pk')
+    project_object = Project.objects.all()
+    #project_task_object = ProjectTasks.objects.all()
     invalid_charge = False
     if 'submit' in request.GET:
         user = User.objects.get(username=request.user.get_username())
@@ -75,7 +77,7 @@ def timecard(request):
 @login_required
 def project_detail(request, project_pk):
     project = Project.objects.get(pk=project_pk)
-    tasks = ProjectTasks.objects.filter(project_task_link=project)
+    tasks = ProjectTask.objects.filter(project_task_link=project)
     print(tasks)
     return render(request, "project_detail.html", {"project": project, "tasks": tasks})
 

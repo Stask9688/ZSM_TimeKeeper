@@ -28,7 +28,7 @@ class Project(models.Model):
     def __str__(self):
         return self.project_name
 
-class ProjectTasks(models.Model):
+class ProjectTask(models.Model):
     project_task_link = models.ForeignKey(Project, related_name="tasks")
     project_task_title = models.CharField(max_length=50)
     project_task_description = models.CharField(max_length=200)

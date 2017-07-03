@@ -1,6 +1,6 @@
 [
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 1,
     "fields": {
       "project_task_link": 1,
@@ -10,7 +10,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 2,
     "fields": {
       "project_task_link": 1,
@@ -20,7 +20,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 3,
     "fields": {
       "project_task_link": 2,
@@ -30,7 +30,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 4,
     "fields": {
       "project_task_link": 2,
@@ -40,7 +40,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 5,
     "fields": {
       "project_task_link": 3,
@@ -50,7 +50,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 6,
     "fields": {
       "project_task_link": 3,
@@ -60,7 +60,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 7,
     "fields": {
       "project_task_link": 4,
@@ -70,7 +70,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 8,
     "fields": {
       "project_task_link": 4,
@@ -80,7 +80,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 9,
     "fields": {
       "project_task_link": 5,
@@ -90,7 +90,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 10,
     "fields": {
       "project_task_link": 5,
@@ -100,7 +100,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 11,
     "fields": {
       "project_task_link": 6,
@@ -110,7 +110,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 12,
     "fields": {
       "project_task_link": 6,
@@ -120,7 +120,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 13,
     "fields": {
       "project_task_link": 7,
@@ -130,7 +130,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 14,
     "fields": {
       "project_task_link": 7,
@@ -140,7 +140,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 15,
     "fields": {
       "project_task_link": 8,
@@ -150,7 +150,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 16,
     "fields": {
       "project_task_link": 8,
@@ -160,7 +160,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 17,
     "fields": {
       "project_task_link": 9,
@@ -170,7 +170,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 18,
     "fields": {
       "project_task_link": 9,
@@ -180,7 +180,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 19,
     "fields": {
       "project_task_link": 10,
@@ -190,7 +190,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 20,
     "fields": {
       "project_task_link": 10,
@@ -200,7 +200,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 21,
     "fields": {
       "project_task_link": 11,
@@ -210,7 +210,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 22,
     "fields": {
       "project_task_link": 11,
@@ -220,7 +220,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 23,
     "fields": {
       "project_task_link": 12,
@@ -230,7 +230,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 24,
     "fields": {
       "project_task_link": 12,
@@ -240,7 +240,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 25,
     "fields": {
       "project_task_link": 13,
@@ -250,7 +250,7 @@
     }
   },
   {
-    "model": "timekeeper.projecttasks",
+    "model": "timekeeper.projecttask",
     "pk": 26,
     "fields": {
       "project_task_link": 13,
