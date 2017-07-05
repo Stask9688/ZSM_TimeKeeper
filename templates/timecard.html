@@ -1,9 +1,122 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <form class="col-md-4">
+    <link rel="stylesheet" type="text/css" href="{% static "css/global.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "css/timecard.css" %}"/>
+    {% comment %}    <div class="col-md-5">
+        <form class="col-md-12">
+            <div class="form-group">
+                <label for="Project">Select project:</label>
+                <select class="form-control" id="Project" name="project">
+                    {% for item in project %}
+                        <option>{{ item.project_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="InputDate">Input Date</label>
+                <input type="date" name="date" class="form-control" id="InputDate" placeholder="Date">
+            </div>
+            <div class="form-group">
+                <label for="InputHours">Input Hours</label>
+                <input type="number" name="hours" class="form-control" id="InputHours" placeholder="Hours">
+            </div>
+            <div class="form-group">
+                <label for="InputCharge">Input Hourly Charge</label>
+                <input type="number" name="charge" class="form-control" id="InputCharge" placeholder="Charge">
+            </div>
+            {% if invalid_charge == True %}
+                <div class="alert alert-danger">
+                    Error: Charge entered for flat rate project, timecard not submitted
+                </div>
+            {% elif invalid_charge == False %}
+
+                <div class="alert alert-success">
+                    Success: Timecard submitted
+                </div>
+            {% else %}
+                <div class="alert">
+                </div>
+            {% endif %}
+            <input class="col-md-offset-6 col-sm-offset-6 col-xs-offset-6 btn btn-primary" type="submit"
+                   name="submit" value="Submit">
+
+        </form>
+    </div>{% endcomment %}
+
+
+    <div id="timecard_table" class="col-md-offset-3 col-md-7">
+    <div>Add timecard <button onclick="$('#timecard_edit_0').toggleClass('hidden');">Add</button></div>
+                <form id="timecard_edit_0" class="col-md-12 hidden">
+                <div class="form-group">
+                    <label for="Project">Select project:</label>
+                    <select class="form-control" id="Project" name="project">
+                        {% for item in project %}
+                            <option>{{ item.project_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="InputDate">Input Date</label>
+                    <input type="date" name="date" class="form-control" id="InputDate" placeholder="Date">
+                </div>
+                <div class="form-group">
+                    <label for="InputHours">Input Hours</label>
+                    <input type="number" name="hours" class="form-control" id="InputHours" placeholder="Hours">
+                </div>
+                <div class="form-group">
+                    <label for="InputCharge">Input Hourly Charge</label>
+                    <input type="number" name="charge" class="form-control" id="InputCharge" placeholder="Charge">
+                </div>
+                {% if invalid_charge == True %}
+                    <div class="alert alert-danger">
+                        Error: Charge entered for flat rate project, timecard not submitted
+                    </div>
+                {% elif invalid_charge == False %}
+
+                    <div class="alert alert-success">
+                        Success: Timecard submitted
+                    </div>
+                {% else %}
+                    <div class="alert">
+                    </div>
+                {% endif %}
+                <input class="col-md-offset-6 col-sm-offset-6 col-xs-offset-6 btn btn-primary" type="submit"
+                       name="submit" value="Submit">
+
+            </form>
+        {% for card in timecard %}
+            <div class="timecard-submission col-md-12">
+            <div class="submission-entry">
+                <div class="submission-header">
+                    <span class="col-md-4">Project</span>
+                    <span class="col-md-2">Hours</span>
+                    <span class="col-md-2">Charge</span>
+                    <span class="col-md-3">Status</span>
+                </div>
+                <div class="submission-date col-md-12">
+                    <span> {{ card.timecard_date }}</span>
+                </div>
+                <div class="submission-body">
+                    <span class="col-md-4">{{ card.timecard_project }}</span>
+                    <span class="col-md-2">{{ card.timecard_hours }}</span>
+                    <span class="col-md-2">{{ card.timecard_charge }}</span>
+                    <span class="col-md-3">Pending</span>
+                    <span class="col-md-12">{{ card.timecard_project.project_description }}</span>
+                </div>
+                <div class="submission-footer col-md-12">
+                    <span class="col-md-6">
+                        <button type="button" class="btn btn-default"
+                                onclick="$('#timecard_edit_{{ card.pk }}').toggleClass('hidden');">Edit</button>
+                    </span>
+                    <span class="col-md-3">Total Hours: <span class="total_hours"></span></span>
+                    <span class="col-md-3">Total Charges: <span class="total_charges"></span></span>
+                </div>
+            </div>
+
+
+            <form id="timecard_edit_{{ card.pk }}" class="col-md-12 hidden">
                 <div class="form-group">
                     <label for="Project">Select project:</label>
                     <select class="form-control" id="Project" name="project">
@@ -49,11 +162,14 @@
                        name="submit" value="Submit">
 
             </form>
+            <div class="col-md-12" style="background-color:white;color:white"> d</div>
+
         </div>
+            {% endfor %}
+
     </div>
-    <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>
-    <script>AjaxRequest.get_timecard();
+    <script>OnloadProcessing.processTimecardData({{ timecard | json_safe }});
+    $()
     </script>
 
 {% endblock %}

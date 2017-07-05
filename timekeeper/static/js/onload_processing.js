@@ -66,4 +66,11 @@ var OnloadProcessing = class {
         })
     }
 
+    static processTimecardData(data){
+        console.log(data);
+
+
+
+    }
+
 };
