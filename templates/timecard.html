@@ -12,14 +12,14 @@
                         {% endfor %}
                     </select>
                 </div>
-{#                <div class="form-group">#}
-{#                    <label for="ProjectTask">Select task:</label>#}
-{#                    <select class="form-control" id="Project" name="project">#}
-{#                        {% for task in tasks %}#}
-{#                            <option>{{ task.project_task_title }}</option>#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-{#                </div>#}
+                <div class="form-group">
+                    <label for="ProjectTask">Select task:</label>
+                    <select class="form-control" id="Project" name="project">
+                        {% for task in tasks %}
+                            <option>{{ task.project_task_title }} {{ "(" }}{{  task.project_task_link }}{{ ")" }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="InputDate">Input Date</label>
                     <input type="date" name="date" class="form-control" id="InputDate" placeholder="Date">
