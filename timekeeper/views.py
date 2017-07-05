@@ -56,7 +56,7 @@ def timecard(request):
     timecard_object = Timecard.objects.filter(timecard_owner=user_object)
     #project_object = Project.objects.filter(employees__username=request.user).order_by('pk')
     project_object = Project.objects.all()
-    #project_task_object = ProjectTasks.objects.all()
+    project_task_object = ProjectTask.objects.all()
     invalid_charge = False
     if 'submit' in request.GET:
         user = User.objects.get(username=request.user.get_username())
@@ -77,7 +77,8 @@ def timecard(request):
                                                      "timecard": timecard_object})
 
     return render(request, "timecard.html", {'project': project_object,
-                                             "timecard": timecard_object})
+                                             "timecard": timecard_object,
+                                             "tasks": project_task_object})
 
 
 @user_passes_test(check_permission)
