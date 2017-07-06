@@ -5,8 +5,9 @@ from reportlab.pdfgen import canvas
 from django.core import serializers
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
-import logging
+
 from io import BytesIO
+
 
 
 from itertools import chain
@@ -191,19 +192,48 @@ def employee_detail(request, employee_pk):
                   {"employee": employee, "timecard": employee_timecard, "project": project_object})
 
 
-def pdfgenerate(request):
+def pdfgenerate(request, project_pk):
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
-
+    response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
+    project = Project.objects.get(pk=project_pk)
+    tasks = ProjectTasks.objects.filter(project_task_link=project)
     buffer = BytesIO()
 
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)
+    i = 0
+    totaltasks = 0
+    #keeps counter of tasks
+    while i < len(tasks):
+        i += 1
+        totaltasks += 1
 
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, "Hello world.")
+    p.line(0, 800, 800, 800)
+    p.line(0, 50, 800, 50)
+    p.drawInlineImage("timekeeper\static\img\header.jpg", 5, 805, 30, 30)
+    p.drawString(40, 815, "ZSM Timekeeper Sample Project Detail Form")
+    p.drawString(25, 750, "Project: " + project.project_name)
+    p.drawString(25, 735, "Project Description: " + project.project_description)
+    p.drawString(25, 720, "Total Hours Remaining: " + str(project.project_hours))
+    p.drawString(25, 695, "Client: " + str(project.client))
+    p.drawString(25, 680, "Client Email: " + str(project.client.email))
+    p.drawString(25, 665, "Client Phone Number: " + str(project.client.phone_number))
+    i = 0
+    position = 640
+    p.drawString(25, position, "Remaining Tasks: ")
+    while i != totaltasks:
+        position = position - 20
+        p.drawString(40, position, "Task Title: " + str(tasks[i].project_task_title))
+        position = position - 20
+        p.drawString(50, position, "Task Description: " + str(tasks[i].project_task_description))
+        position = position - 20
+        p.drawString(50, position, "Task Hours Remaining: " + str(tasks[i].project_task_hours_remaining))
+        i += 1
+    pnum = p.getPageNumber()
+    p.drawString(500, 25, "Page " + str(pnum))
 
     # Close the PDF object cleanly.
     p.showPage()
