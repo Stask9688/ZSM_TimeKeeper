@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Client, Timecard, ProjectTasks
+from .models import Project, Client, Timecard, ProjectTask
 
 
 class ProjectDetail(admin.ModelAdmin):
@@ -16,12 +16,12 @@ class TimecardDetail(admin.ModelAdmin):
     list_display = ("timecard_owner", "timecard_project",
                     "timecard_date", "timecard_hours")
 
-class ProjectTasksDetail(admin.ModelAdmin):
-    list_display = ("project_task_link", "project_task_description",
-                    "project_task_title", "project_task_hours_remaining")
+class ProjectTaskDetail(admin.ModelAdmin):
+    list_display = ("project_task_link", "project_task_title",
+                    "project_task_description", "project_task_hours_remaining")
 
 
 admin.site.register(Project, ProjectDetail)
 admin.site.register(Client, ClientDetail)
 admin.site.register(Timecard, TimecardDetail)
-admin.site.register(ProjectTasks, ProjectTasksDetail)
+admin.site.register(ProjectTask, ProjectTaskDetail)

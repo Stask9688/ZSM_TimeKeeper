@@ -1,0 +1,41 @@
+.submission-header {
+
+}
+
+.submission-header > span {
+    background-color: #dee5f2;
+    color: #6c6c6d;
+    border-bottom: 1px solid;
+    border-color: white;
+    margin: 1px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.submission-body > span:last-child {
+    background-color: #dee5f2;
+    color: black;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    border-bottom: 1px solid;
+    border-color: white;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.submission-date {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.submission-footer {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.timecard-submission {
+    padding: 0;
+    margin: 1px;
+    background-color: #dee5f2;
+}
+
