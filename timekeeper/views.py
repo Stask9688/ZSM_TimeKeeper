@@ -137,6 +137,13 @@ def timecards_by_project(request, project_pk):
 @login_required
 def project_data(request):
     project_object = Project.objects.all()
+    for project in project_object:
+        project_total_time = 0
+        timecard_for_project = Timecard.objects.filter(timecard_project=project)
+        tasks = ProjectTask.objects.filter(project_task_link=project)
+        for timecard in timecard_for_project:
+            project_total_time += timecard.timecard_hours
+        Project.objects.filter(project_name = project).update(project_hours= project_total_time)
     project = serializers.serialize("json", project_object)
     return HttpResponse(project, content_type="text")
 

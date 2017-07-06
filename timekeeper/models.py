@@ -42,6 +42,7 @@ class ProjectTask(models.Model):
 class Timecard(models.Model):
     timecard_owner = models.ForeignKey(User, null=True)
     timecard_project = models.ForeignKey(Project, null=True)
+    timecard_task = models.ForeignKey(ProjectTask, null=True)
     timecard_date = models.DateField()
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)
