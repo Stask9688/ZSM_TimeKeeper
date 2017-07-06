@@ -41,7 +41,13 @@
             {% endfor %}
             </tbody>
         </table>
+    <button type = button>
+    <h4>
+        <a onclick="window.location='/pdfgenerate/{{ project.pk }}';">Generate PDF</a>
+    </h4>
+    </button>
     </div>
+
     <script>AjaxRequest.get_data_for_project_detail("{{ project.pk }}")</script>
 
 {% endblock %}

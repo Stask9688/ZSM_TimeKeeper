@@ -1,4 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
+from reportlab.lib.utils import ImageReader
+
 from .models import Project, Timecard, Client, ProjectTask
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
@@ -7,8 +9,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 import logging
 from io import BytesIO
-
-
+import time
+from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from timekeeper import static
 from itertools import chain
 import json
 
@@ -200,20 +207,28 @@ def employee_detail(request, employee_pk):
     return render(request, "employee_detail.html",
                   {"employee": employee, "timecard": employee_timecard, "project": project_object})
 
+@login_required
 
-def pdfgenerate(request):
+def pdfgenerate(request, project_pk):
     # Create the HttpResponse object with the appropriate PDF headers.
+    project = Project.objects.get(pk=project_pk)
+    tasks = ProjectTask.objects.filter(project_task_link=project)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
 
     buffer = BytesIO()
-
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)
-
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, "Hello world.")
+    p.drawInlineImage("timekeeper\static\img\header.jpg", 5, 805, 30, 30)
+    p.drawString(40, 815, "ZSM TimeKeeper Project Invoice")
+    p.line(0, 800, 650 , 800)
+    p.drawString(50, 750, "Project Name: " + project.project_name)
+    p.drawString(50, 725, "Total Hours Worked: " + str(project.project_hours))
+    p.drawString(50, 700, "Project Description: " + project.project_description)
+    p.drawString(50, 675, "Client: " + str(project.client))
+    p.line(0, 50, 650, 50)
 
     # Close the PDF object cleanly.
     p.showPage()
@@ -224,3 +239,4 @@ def pdfgenerate(request):
     buffer.close()
     response.write(pdf)
     return response
+
