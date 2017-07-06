@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Project, Timecard, Client, ProjectTasks
+from .models import Project, Timecard, Client, ProjectTask
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
 from django.core import serializers
@@ -76,7 +76,7 @@ def timecard(request):
 @login_required
 def project_detail(request, project_pk):
     project = Project.objects.get(pk=project_pk)
-    tasks = ProjectTasks.objects.filter(project_task_link=project)
+    tasks = ProjectTask.objects.filter(project_task_link=project)
     print(tasks)
     return render(request, "project_detail.html", {"project": project, "tasks": tasks})
 
@@ -191,13 +191,14 @@ def employee_detail(request, employee_pk):
     return render(request, "employee_detail.html",
                   {"employee": employee, "timecard": employee_timecard, "project": project_object})
 
-
+@login_required
+@user_passes_test(check_permission)
 def pdfgenerate(request, project_pk):
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
     project = Project.objects.get(pk=project_pk)
-    tasks = ProjectTasks.objects.filter(project_task_link=project)
+    tasks = ProjectTask.objects.filter(project_task_link=project)
     buffer = BytesIO()
 
     # Create the PDF object, using the BytesIO object as its "file."
