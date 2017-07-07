@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Project, Client, Timecard, ProjectTask
+from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 
 
@@ -14,8 +15,9 @@ class ClientDetail(admin.ModelAdmin):
 
 
 class TimecardDetail(admin.ModelAdmin):
-    list_display = ("timecard_owner", "timecard_project",
+    list_display = ("timecard_owner", "timecard_project", 'project_task',
                     "timecard_date", "timecard_hours", "timecard_approved")
+
 
     def has_change_permission(self, request, obj=None):
         if obj is None:
@@ -30,11 +32,22 @@ class TimecardDetail(admin.ModelAdmin):
         return True
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "timecard_owner":
+            if request.user.groups.filter(name="Employee").exists():
+                print(request.user)
+                kwargs["queryset"] = \
+                    User.objects.filter(username=request.user)
+
         if db_field.name == "project_task":
             print(resolve(request.path_info).args)
+            print(resolve(request.path_info).args is ())
+            if resolve(request.path_info).args is ():
+                return super(TimecardDetail, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
             timecard_object = Timecard.objects.get(pk=resolve(request.path_info).args[0])
-            kwargs["queryset"] = \
-                ProjectTask.objects.filter(project_task_link=timecard_object.timecard_project)
+            project_task_object = ProjectTask.objects.filter(project_task_link=timecard_object.timecard_project)
+
+            kwargs["queryset"] = project_task_object
 
         return super(TimecardDetail, self).formfield_for_foreignkey(db_field, request, **kwargs)
 

@@ -44,7 +44,7 @@
                             <span>{{ user.first_name }}</span><span> {{ user.last_name }}</span>
                         </a>
                     </li>
-                    {% if request.user.is_staff %}
+                    {% if request.user|has_group:"Owner" or request.user|has_group:"Manager" %}
                         <li class="col-md-12">
                             <a href="/admin">Admin</a>
                         </li>
@@ -65,7 +65,7 @@
                         </li>
                     {% endif %}
                     <li class="col-md-12">
-                        <a href="/timecard">Timecard</a>
+                        <a href="/admin/timekeeper/timecard">Timecard</a>
                     </li>
                     <li class="col-md-12">
                         <a href="/logout">Log Out</a>
