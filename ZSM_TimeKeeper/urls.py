@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from timekeeper import views
 from django.conf.urls.static import static
@@ -41,5 +41,6 @@ urlpatterns = [
                   url(r'^project_detail_dcjs/(?P<project_pk>\d+)$', views.project_detail_dcjs),
                   url(r'^timecard_data', views.timecard_data),
                   url(r'^pdfgenerate/(?P<project_pk>\d+)$', views.pdfgenerate),
+                  url(r'^chaining/', include('smart_selects.urls')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
               staticfiles_urlpatterns()

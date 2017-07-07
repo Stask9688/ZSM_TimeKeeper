@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from smart_selects.db_fields import ChainedForeignKey
 
 
 # Create your models here.
@@ -35,6 +36,7 @@ class ProjectTask(models.Model):
     def __str__(self):
         return self.project_task_title
 
+
 # Timecard object contains the owner(a.k.a current user),
 # the project of the timecard, the date of the timecard,
 # and the amount of hours worked. Create instantiates
@@ -45,8 +47,13 @@ class Timecard(models.Model):
     R = "Rejected"
     approval_choices = ((P, "Pending"), (A, "Approved"), (R, "Rejected"),)
     timecard_owner = models.ForeignKey(User, null=True)
-    timecard_project = models.ForeignKey(Project, null=False, default =1 )
-    project_task = models.ForeignKey(ProjectTask, null=False,default=1)
+    timecard_project = models.ForeignKey(Project, null=False, default=1)
+    project_task = ChainedForeignKey(ProjectTask,
+                                     chained_field="timecard_project",
+                                     chained_model_field="project_task_link",
+                                     show_all=False,
+                                     auto_choose=True,
+                                     sort=True)
     timecard_date = models.DateField()
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)

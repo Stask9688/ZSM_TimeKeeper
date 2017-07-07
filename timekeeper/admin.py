@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Project, Client, Timecard, ProjectTask
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
+from django.db.models import Q
 
 
 class ProjectDetail(admin.ModelAdmin):
@@ -18,7 +19,6 @@ class TimecardDetail(admin.ModelAdmin):
     list_display = ("timecard_owner", "timecard_project", 'project_task',
                     "timecard_date", "timecard_hours", "timecard_approved")
 
-
     def has_change_permission(self, request, obj=None):
         if obj is None:
             return True
@@ -31,7 +31,14 @@ class TimecardDetail(admin.ModelAdmin):
             return False
         return True
 
+    def formfield_for_choice_field(self, db_field, request, **kwargs):
+
+        print(db_field.name)
+        if db_field.name == "timecard_approved" and request.user.groups.filter(name="Employee").exists():
+            return
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+
         if db_field.name == "timecard_owner":
             if request.user.groups.filter(name="Employee").exists():
                 print(request.user)
@@ -53,8 +60,14 @@ class TimecardDetail(admin.ModelAdmin):
 
     def get_queryset(self, request):
         print(request.user)
-        if not request.user.is_superuser:
+        if request.user.groups.filter(name="Employee").exists():
             return Timecard.objects.filter(timecard_owner=request.user)
+        if request.user.groups.filter(name="Manager").exists():
+            project_object = Project.objects.filter(employees__username=request.user)
+            project_names = []
+            for project in project_object:
+                project_names.append(project)
+            return Timecard.objects.filter(Q(timecard_owner=request.user) | Q(timecard_project__in=project_names))
         return Timecard.objects.all()
 
 
@@ -62,6 +75,15 @@ class ProjectTaskDetail(admin.ModelAdmin):
     list_display = ("project_task_link", "project_task_title",
                     "project_task_description", "project_task_hours_remaining")
 
+    def get_queryset(self, request):
+        project_object = Project.objects.filter(employees__username=request.user)
+        print(project_object)
+        project_name = []
+        for project in project_object:
+            project_name.append(project)
+        project_task_object = ProjectTask.objects.filter(project_task_link__in=project_name)
+        print(project_task_object)
+        return project_task_object
 
 admin.site.register(Project, ProjectDetail)
 admin.site.register(Client, ClientDetail)
