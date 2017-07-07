@@ -13,9 +13,6 @@ class Client(models.Model):
         return self.first_name + " " + self.last_name
 
 
-
-
-
 class Project(models.Model):
     project_name = models.CharField(max_length=30)
     project_description = models.TextField(max_length=200)
@@ -28,20 +25,29 @@ class Project(models.Model):
     def __str__(self):
         return self.project_name
 
+
 class ProjectTask(models.Model):
     project_task_link = models.ForeignKey(Project, related_name="tasks")
     project_task_title = models.CharField(max_length=50)
     project_task_description = models.CharField(max_length=200)
     project_task_hours_remaining = models.IntegerField()
 
+    def __str__(self):
+        return self.project_task_title
 
 # Timecard object contains the owner(a.k.a current user),
 # the project of the timecard, the date of the timecard,
 # and the amount of hours worked. Create instantiates
 # the timecard object.
 class Timecard(models.Model):
+    P = "Pending"
+    A = "Approved"
+    R = "Rejected"
+    approval_choices = ((P, "Pending"), (A, "Approved"), (R, "Rejected"),)
     timecard_owner = models.ForeignKey(User, null=True)
     timecard_project = models.ForeignKey(Project, null=True)
+    project_task = models.ForeignKey(ProjectTask, null=True)
     timecard_date = models.DateField()
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)
+    timecard_approved = models.CharField(max_length=8, choices=approval_choices, default="Pending")
