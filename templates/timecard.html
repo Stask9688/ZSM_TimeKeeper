@@ -137,7 +137,7 @@
                     <label for="ProjectTask">Select task:</label>
                     <select class="form-control" id="Project" name="project">
                         {% for task in tasks %}
-                            <option>{{ task.project_task_title }} {{ "(" }}{{  task.project_task_link }}{{ ")" }}</option>
+                            <option>{{ task.project_task_title }}</option>
                         {% endfor %}
                     </select>
                 </div>

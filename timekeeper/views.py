@@ -63,12 +63,14 @@ def timecard(request):
         print(request.GET)
         project = Project.objects.get(project_name=request.GET.get('project'))
         print("Charge", request.GET.get('charge'))
+        task = ProjectTask.objects.get(project_task_title=request.GET.get('task'))
         if request.GET.get('charge') and project.flat_rate is True:
             invalid_charge = True
             return render(request, "timecard.html", {'invalid_charge': invalid_charge, 'project': project_object,
                                                      "timecard": timecard_object})
         else:
             temp_card = Timecard(timecard_owner=user, timecard_project=project,
+                                 timecard_task=task,
                                  timecard_date=request.GET.get('date'),
                                  timecard_hours=request.GET.get('hours'),
                                  timecard_charge=request.GET.get('charge'))
@@ -94,8 +96,9 @@ def project_detail(request, project_pk):
                 tc.timecard_task.project_task_hours_remaining * tc.timecard_charge
         else:
             task_totals[tc.timecard_task] = 0
-    #print(tasks)
-    print(task_totals)
+    for task in tasks:
+        print(task_totals[task])
+    print('hello')
     return render(request, "project_detail.html", {"project": project, "tasks": tasks, "totals": task_totals})
 
 

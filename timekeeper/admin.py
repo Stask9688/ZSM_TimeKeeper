@@ -13,7 +13,7 @@ class ClientDetail(admin.ModelAdmin):
 
 
 class TimecardDetail(admin.ModelAdmin):
-    list_display = ("timecard_owner", "timecard_project",
+    list_display = ("timecard_owner", "timecard_project", "timecard_task",
                     "timecard_date", "timecard_hours")
 
 class ProjectTaskDetail(admin.ModelAdmin):

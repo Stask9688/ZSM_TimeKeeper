@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_tags %}
 {% block content %}
     <div class="col-md-12">
         <h2>{{ project.project_name }}</h2>
@@ -38,7 +39,7 @@
                     <td>{{ task.project_task_title }}</td>
                     <td>{{ task.project_task_description }}</td>
                     <td>{{ task.project_task_hours_remaining }} </td>
-                    <td>{{ totals.task }}</td>
+                    <td>{{ totals|get_by_index:task }}</td>
                 </tr>
             {% endfor %}
             </tbody>
