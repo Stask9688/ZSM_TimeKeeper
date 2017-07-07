@@ -86,8 +86,17 @@ def timecard(request):
 def project_detail(request, project_pk):
     project = Project.objects.get(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
-    print(tasks)
-    return render(request, "project_detail.html", {"project": project, "tasks": tasks})
+    timecards = Timecard.objects.all()
+    task_totals = {}
+    for tc in timecards:
+        if tc.timecard_task in tasks:
+            task_totals[tc.timecard_task] = \
+                tc.timecard_task.project_task_hours_remaining * tc.timecard_charge
+        else:
+            task_totals[tc.timecard_task] = 0
+    #print(tasks)
+    print(task_totals)
+    return render(request, "project_detail.html", {"project": project, "tasks": tasks, "totals": task_totals})
 
 
 @user_passes_test(check_permission)
