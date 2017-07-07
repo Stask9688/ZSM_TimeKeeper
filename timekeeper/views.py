@@ -46,8 +46,7 @@ def clients(request):
 @login_required
 def timecard(request):
     user_object = User.objects.filter(username=request.user.get_username())
-    timecard_object = Timecard.objects.filter(timecard_owner=user_object)
-    #project_object = Project.objects.filter(employees__username=request.user).order_by('pk')
+    timecard_object = Timecard.objects.filter(timecard_owner=user_object).order_by("-timecard_date")
     project_object = Project.objects.all()
     project_task_object = ProjectTask.objects.all()
     invalid_charge = False
