@@ -30,9 +30,6 @@ from django.db import transaction
 from django.contrib import messages
 
 
-
-
-
 def check_permission(user):
     if user.groups.filter(name="Employee").exists() or len(user.groups.all()) == 0:
         return False
@@ -113,7 +110,10 @@ def client_detail(request, client_pk):
 @user_passes_test(check_permission)
 @login_required
 def projects(request):
-    return render(request, "projects.html")
+    project_object = Project.objects.all()
+    timecard_object = Timecard.objects.all()
+    return render(request, "projects.html",
+                  {"projects": project_object, "timecards": timecard_object})
 
 
 @login_required
@@ -197,7 +197,7 @@ def employees(request):
                 user_employees = list(chain(project.employees.all(), user_employees))
         else:
             user_employees = User.objects.none()
-        user_employees=set(user_employees)
+        user_employees = set(user_employees)
     return render(request, "employees.html", {"employees": user_employees})
 
 
@@ -211,8 +211,8 @@ def employee_detail(request, employee_pk):
     return render(request, "employee_detail.html",
                   {"employee": employee, "timecard": employee_timecard, "project": project_object})
 
-@login_required
 
+@login_required
 def pdfgenerate(request, project_pk):
     # Create the HttpResponse object with the appropriate PDF headers.
     project = Project.objects.get(pk=project_pk)
@@ -227,7 +227,7 @@ def pdfgenerate(request, project_pk):
     # See the ReportLab documentation for the full list of functionality.
     p.drawInlineImage("timekeeper\static\img\header.jpg", 5, 805, 30, 30)
     p.drawString(40, 815, "ZSM TimeKeeper Project Invoice")
-    p.line(0, 800, 650 , 800)
+    p.line(0, 800, 650, 800)
     p.drawString(50, 750, "Project Name: " + project.project_name)
     p.drawString(50, 725, "Total Hours Worked: " + str(project.project_hours))
     p.drawString(50, 700, "Project Description: " + project.project_description)
