@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect
 from reportlab.lib.utils import ImageReader
 
-from .models import Project, Timecard, Client, ProjectTask
+from .models import Project, Timecard, Client, ProjectTask, Profile
+from .forms import UserProfileForm
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
 from django.core import serializers
@@ -9,6 +10,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 import logging
 from io import BytesIO
+from django.shortcuts import render, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import UserProfile
+from .forms import UserProfileForm
+from django.forms.models import inlineformset_factory
+from django.core.exceptions import PermissionDenied
 import time
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
@@ -18,6 +26,10 @@ from reportlab.lib.units import inch
 from timekeeper import static
 from itertools import chain
 import json
+from django.db import transaction
+from django.contrib import messages
+
+
 
 
 
@@ -232,3 +244,34 @@ def pdfgenerate(request, project_pk):
     response.write(pdf)
     return response
 
+
+@login_required
+def edit_user(request, pk):
+    user = User.objects.get(pk=pk)
+    user_form = UserProfileForm(instance=user)
+
+    ProfileInlineFormset = inlineformset_factory(User, UserProfile,
+                                                 fields=('phonenumber', 'ssn', 'birthdate'))
+    formset = ProfileInlineFormset(instance=user)
+
+    if request.user.is_authenticated() and request.user.id == user.id:
+        if request.method == "POST":
+            user_form = UserProfileForm(request.POST, request.FILES, instance=user)
+            formset = ProfileInlineFormset(request.POST, request.FILES, instance=user)
+
+            if user_form.is_valid():
+                created_user = user_form.save(commit=False)
+                formset = ProfileInlineFormset(request.POST, request.FILES, instance=created_user)
+
+                if formset.is_valid():
+                    created_user.save()
+                    formset.save()
+                    return HttpResponseRedirect('/accounts/profile/')
+
+        return render(request, "account_update.html", {
+            "noodle": pk,
+            "noodle_form": user_form,
+            "formset": formset,
+        })
+    else:
+        raise PermissionDenied

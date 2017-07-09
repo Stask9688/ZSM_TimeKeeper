@@ -20,6 +20,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth.views import login
+from django.views.generic import TemplateView
+
 
 urlpatterns = [
                   url(r'^$', views.home),
@@ -42,5 +44,9 @@ urlpatterns = [
                   url(r'^timecard_data', views.timecard_data),
                   url(r'^pdfgenerate/(?P<project_pk>\d+)$', views.pdfgenerate),
                   url(r'^chaining/', include('smart_selects.urls')),
+                  url(r'^accounts/update/(?P<pk>[\-\w]+)/$', views.edit_user, name='account_update'),
+                  url(r'^accounts/profile/$', TemplateView.as_view(template_name='profile.html'), name='user_profile'),
+
+
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \
               staticfiles_urlpatterns()

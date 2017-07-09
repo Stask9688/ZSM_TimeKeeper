@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from smart_selects.db_fields import ChainedForeignKey
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -58,3 +60,30 @@ class Timecard(models.Model):
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)
     timecard_approved = models.CharField(max_length=8, choices=approval_choices, default="Pending")
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    #profile = Profile.objects.create(user=request.user)
+    email = models.EmailField()
+    phonenumber = models.CharField(max_length=14)
+    ssn = models .CharField(max_length=11)
+    birthdate = models.DateField(null=True, blank=True)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, related_name='user')
+    #email = models.EmailField()
+    phonenumber = models.CharField(max_length=14)
+    ssn = models.CharField(max_length=11)
+    birthdate = models.DateField(null=True, blank=True)
+
+
+def create_profile(sender, **kwargs):
+    user = kwargs["instance"]
+    if kwargs["created"]:
+        user_profile = UserProfile(user=user)
+        user_profile.save()
+
+
+post_save.connect(create_profile, sender=User)
+
