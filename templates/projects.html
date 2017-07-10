@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_tags %}
 {% load static %}
 {% block content %}
     <div id="bar_chart" class="col-md-12"></div>
@@ -6,7 +7,7 @@
     <button class="button col-md-offset-6 btn btn-primary" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
     <table id="project_table" class="table table-striped table-bordered col-md-12"></table>
 
-    <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
     <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>
-    <script>AjaxRequest.get_projects()</script>
+    <script>OnloadProcessing.get_projects({{ projects|json_safe }},{{ timecards|json_safe }})</script>
 {% endblock %}
+

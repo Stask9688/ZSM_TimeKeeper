@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect
 from reportlab.lib.utils import ImageReader
 
-from .models import Project, Timecard, Client, ProjectTask
+from .models import Project, Timecard, Client, ProjectTask, Profile
+from .forms import UserProfileForm
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
 from django.core import serializers
@@ -9,6 +10,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 import logging
 from io import BytesIO
+from django.shortcuts import render, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import UserProfile
+from .forms import UserProfileForm
+from django.forms.models import inlineformset_factory
+from django.core.exceptions import PermissionDenied
 import time
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
@@ -18,7 +26,8 @@ from reportlab.lib.units import inch
 from timekeeper import static
 from itertools import chain
 import json
-
+from django.db import transaction
+from django.contrib import messages
 
 
 def check_permission(user):
@@ -53,8 +62,7 @@ def clients(request):
 @login_required
 def timecard(request):
     user_object = User.objects.filter(username=request.user.get_username())
-    timecard_object = Timecard.objects.filter(timecard_owner=user_object)
-    #project_object = Project.objects.filter(employees__username=request.user).order_by('pk')
+    timecard_object = Timecard.objects.filter(timecard_owner=user_object).order_by("-timecard_date")
     project_object = Project.objects.all()
     project_task_object = ProjectTask.objects.all()
     invalid_charge = False
@@ -114,7 +122,10 @@ def client_detail(request, client_pk):
 @user_passes_test(check_permission)
 @login_required
 def projects(request):
-    return render(request, "projects.html")
+    project_object = Project.objects.all()
+    timecard_object = Timecard.objects.all()
+    return render(request, "projects.html",
+                  {"projects": project_object, "timecards": timecard_object})
 
 
 @login_required
@@ -205,7 +216,7 @@ def employees(request):
                 user_employees = list(chain(project.employees.all(), user_employees))
         else:
             user_employees = User.objects.none()
-        user_employees=set(user_employees)
+        user_employees = set(user_employees)
     return render(request, "employees.html", {"employees": user_employees})
 
 
@@ -219,8 +230,8 @@ def employee_detail(request, employee_pk):
     return render(request, "employee_detail.html",
                   {"employee": employee, "timecard": employee_timecard, "project": project_object})
 
-@login_required
 
+@login_required
 def pdfgenerate(request, project_pk):
     # Create the HttpResponse object with the appropriate PDF headers.
     project = Project.objects.get(pk=project_pk)
@@ -235,7 +246,7 @@ def pdfgenerate(request, project_pk):
     # See the ReportLab documentation for the full list of functionality.
     p.drawInlineImage("timekeeper\static\img\header.jpg", 5, 805, 30, 30)
     p.drawString(40, 815, "ZSM TimeKeeper Project Invoice")
-    p.line(0, 800, 650 , 800)
+    p.line(0, 800, 650, 800)
     p.drawString(50, 750, "Project Name: " + project.project_name)
     p.drawString(50, 725, "Total Hours Worked: " + str(project.project_hours))
     p.drawString(50, 700, "Project Description: " + project.project_description)
@@ -252,3 +263,34 @@ def pdfgenerate(request, project_pk):
     response.write(pdf)
     return response
 
+
+@login_required
+def edit_user(request, pk):
+    user = User.objects.get(pk=pk)
+    user_form = UserProfileForm(instance=user)
+
+    ProfileInlineFormset = inlineformset_factory(User, UserProfile,
+                                                 fields=('phonenumber', 'ssn', 'birthdate'))
+    formset = ProfileInlineFormset(instance=user)
+
+    if request.user.is_authenticated() and request.user.id == user.id:
+        if request.method == "POST":
+            user_form = UserProfileForm(request.POST, request.FILES, instance=user)
+            formset = ProfileInlineFormset(request.POST, request.FILES, instance=user)
+
+            if user_form.is_valid():
+                created_user = user_form.save(commit=False)
+                formset = ProfileInlineFormset(request.POST, request.FILES, instance=created_user)
+
+                if formset.is_valid():
+                    created_user.save()
+                    formset.save()
+                    return HttpResponseRedirect('/accounts/profile/')
+
+        return render(request, "account_update.html", {
+            "noodle": pk,
+            "noodle_form": user_form,
+            "formset": formset,
+        })
+    else:
+        raise PermissionDenied
