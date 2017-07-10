@@ -24,33 +24,37 @@
         </div>
     </div>
     <div class="col-md-12">
-        <table class="table table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Task Title</th>
-                <th>Task Description</th>
-                <th>Running Hours</th>
-                <th>Running Cost</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for task in tasks %}
-                <tr>
-                    <td>{{ task.project_task_title }}</td>
-                    <td>{{ task.project_task_description }}</td>
-                    <td>{{ hours|get_by_index:task }}</td>
-                    <td>{{ totals|get_by_index:task }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    <button type = button>
-    <h4>
-        <a onclick="window.location='/pdfgenerate/{{ project.pk }}';">Generate PDF</a>
-    </h4>
-    </button>
+        <table id="task_detail_table" class="table table-striped table-bordered"></table>
     </div>
-
-    <script>AjaxRequest.get_data_for_project_detail("{{ project.pk }}")</script>
+{#    <div class="col-md-12">#}
+        {#        <table class="table table-striped table-bordered">#}
+        {#            <thead>#}
+        {#            <tr>#}
+        {#                <th>Task Title</th>#}
+        {#                <th>Task Description</th>#}
+        {#                <th>Running Hours</th>#}
+        {#                <th>Running Cost</th>#}
+        {#            </tr>#}
+        {#            </thead>#}
+        {#            <tbody>#}
+        {#            {% for task in tasks %}#}
+        {#                <tr>#}
+        {#                    <td>{{ task.project_task_title }}</td>#}
+        {#                    <td>{{ task.project_task_description }}</td>#}
+        {#                    <td>{{ hours|get_by_index:task }}</td>#}
+        {#                    <td>{{ totals|get_by_index:task }}</td>#}
+        {#                </tr>#}
+        {#            {% endfor %}#}
+        {#            </tbody>#}
+        {#        </table>#}
+{##}
+{#    </div>#}
+    <button type=button class="btn btn-default">
+        <h4>
+            <a onclick="window.location='/pdfgenerate/{{ project.pk }}';">Generate PDF</a>
+        </h4>
+    </button>
+    {#    <script>AjaxRequest.get_data_for_project_detail("{{ project.pk }}")</script>#}
+    <script>OnloadProcessing.get_data_for_project_detail({{ timecards|json_safe }}, {{ users|json_safe }}, {{ tasks|json_safe }})</script>
 
 {% endblock %}

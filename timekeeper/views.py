@@ -99,21 +99,29 @@ def project_detail(request, project_pk):
     timecards = Timecard.objects.filter(timecard_project=project)
     task_totals = {}
     task_total_hours = {}
+    relevant_users = []
     for tc in timecards:
-            if tc.project_task not in task_totals.keys():
-                task_totals[tc.project_task] = tc.timecard_hours * \
-                tc.timecard_charge
-                task_total_hours[tc.project_task] = tc.timecard_hours
-            else:
-                task_totals[tc.project_task] = \
-                task_totals[tc.project_task] + tc.timecard_hours*tc.timecard_charge
-                task_total_hours[tc.project_task] = \
-                task_total_hours[tc.project_task]+tc.timecard_hours
+        if tc.project_task not in task_totals.keys():
+            task_totals[tc.project_task] = tc.timecard_hours * \
+                                           tc.timecard_charge
+            task_total_hours[tc.project_task] = tc.timecard_hours
+        else:
+            task_totals[tc.project_task] = \
+                task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_charge
+            task_total_hours[tc.project_task] = \
+                task_total_hours[tc.project_task] + tc.timecard_hours
+        relevant_users.append(tc.timecard_owner)
+    relevant_users = set(relevant_users)
     for task in tasks:
         if task not in task_totals.keys():
             task_totals[task] = 0
             task_total_hours[task] = 0
-    return render(request, "project_detail.html", {"project": project, "tasks": tasks, "totals": task_totals, "hours": task_total_hours})
+    return render(request, "project_detail.html", {"project": project,
+                                                   "tasks": tasks,
+                                                   "totals": task_totals,
+                                                   "hours": task_total_hours,
+                                                   "timecards": timecards,
+                                                   "users": relevant_users})
 
 
 @user_passes_test(check_permission)
@@ -129,8 +137,9 @@ def client_detail(request, client_pk):
                 projects_running_cost[project] = tc.timecard_hours * tc.timecard_charge
             else:
                 projects_running_cost[project] = projects_running_cost[project] + \
-                    tc.timecard_hours * tc.timecard_charge
-    return render(request, "client_detail.html", {"client": client, "projects": projects, "charges": projects_running_cost})
+                                                 tc.timecard_hours * tc.timecard_charge
+    return render(request, "client_detail.html",
+                  {"client": client, "projects": projects, "charges": projects_running_cost})
 
 
 @user_passes_test(check_permission)
@@ -187,7 +196,7 @@ def project_data(request):
         tasks = ProjectTask.objects.filter(project_task_link=project)
         for timecard in timecard_for_project:
             project_total_time += timecard.timecard_hours
-        Project.objects.filter(project_name = project).update(project_hours= project_total_time)
+        Project.objects.filter(project_name=project).update(project_hours=project_total_time)
     project = serializers.serialize("json", project_object)
     return HttpResponse(project, content_type="text")
 
