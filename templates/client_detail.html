@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load custom_tags %}
 {% block content %}
     <div class="col-md-12">
         <h2>{{ client.first_name }} {{ client.last_name }}</h2>
@@ -25,7 +25,7 @@
                 <tr onclick="window.location = '/project_detail/{{ item.pk }}'">
                     <td>{{ item.project_name }}</td>
                     <td>{{ item.project_description}}</td>
-                    <td>{{ item.running_cost }}</td>
+                    <td>{{ charges|get_by_index:item }}</td>
                 </tr>
             {% endfor %}
             </tbody>

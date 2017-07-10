@@ -121,8 +121,16 @@ def project_detail(request, project_pk):
 def client_detail(request, client_pk):
     client = Client.objects.get(pk=client_pk)
     projects = Project.objects.filter(client=client_pk)
-    print(projects)
-    return render(request, "client_detail.html", {"client": client, "projects": projects})
+    projects_running_cost = {}
+    for project in projects:
+        timecards = Timecard.objects.filter(timecard_project=project)
+        for tc in timecards:
+            if project not in projects_running_cost.keys():
+                projects_running_cost[project] = tc.timecard_hours * tc.timecard_charge
+            else:
+                projects_running_cost[project] = projects_running_cost[project] + \
+                    tc.timecard_hours * tc.timecard_charge
+    return render(request, "client_detail.html", {"client": client, "projects": projects, "charges": projects_running_cost})
 
 
 @user_passes_test(check_permission)
