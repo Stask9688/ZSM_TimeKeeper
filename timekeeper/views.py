@@ -96,18 +96,24 @@ def timecard(request):
 def project_detail(request, project_pk):
     project = Project.objects.get(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
-    timecards = Timecard.objects.all()
+    timecards = Timecard.objects.filter(timecard_project=project)
     task_totals = {}
+    task_total_hours = {}
     for tc in timecards:
-        if tc.timecard_task in tasks:
-            task_totals[tc.timecard_task] = \
-                tc.timecard_task.project_task_hours_remaining * tc.timecard_charge
-        else:
-            task_totals[tc.timecard_task] = 0
+            if tc.project_task not in task_totals.keys():
+                task_totals[tc.project_task] = tc.timecard_hours * \
+                tc.timecard_charge
+                task_total_hours[tc.project_task] = tc.timecard_hours
+            else:
+                task_totals[tc.project_task] = \
+                task_totals[tc.project_task] + tc.timecard_hours*tc.timecard_charge
+                task_total_hours[tc.project_task] = \
+                task_total_hours[tc.project_task]+tc.timecard_hours
     for task in tasks:
-        print(task_totals[task])
-    print('hello')
-    return render(request, "project_detail.html", {"project": project, "tasks": tasks, "totals": task_totals})
+        if task not in task_totals.keys():
+            task_totals[task] = 0
+            task_total_hours[task] = 0
+    return render(request, "project_detail.html", {"project": project, "tasks": tasks, "totals": task_totals, "hours": task_total_hours})
 
 
 @user_passes_test(check_permission)

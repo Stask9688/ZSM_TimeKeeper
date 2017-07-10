@@ -38,7 +38,7 @@
                 <tr>
                     <td>{{ task.project_task_title }}</td>
                     <td>{{ task.project_task_description }}</td>
-                    <td>{{ task.project_task_hours_remaining }} </td>
+                    <td>{{ hours|get_by_index:task }}</td>
                     <td>{{ totals|get_by_index:task }}</td>
                 </tr>
             {% endfor %}
