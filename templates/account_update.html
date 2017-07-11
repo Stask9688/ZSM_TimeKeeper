@@ -1,23 +1,25 @@
 {% extends "base.html" %}
-{% block content %}
+{% load static %}
 {% csrf_token %}
 {% load material_form %}
-<!-- Material form is just a materialize thing for django forms -->
-<div class="col s12 m8 offset-m2">
-      <div class="card">
-        <div class="card-content">
-        <h2 class="flow-text">Update your Personal Information</h2>
-            <p>Select 'Delete', then 'Done' to clear your info</p>
-          <form action="." method="POST" class="padding">
-            {% csrf_token %} {{ noodle_form.as_p }}
-            <div class="divider"></div>
-            {{ formset.management_form }}
-                {{ formset.as_p }}
-            <button type="submit" class="btn-floating btn-large waves-light waves-effect"><i class="large material-icons">done</i></button>
-            <a href="#" onclick="window.history.back(); return false;" title="Cancel" class="btn-floating waves-effect waves-light red"><i class="material-icons">Cancel</i></a>
+{% block content %}
 
+
+    <!-- Material form is just a materialize thing for django forms -->
+    <div class="col-md-12">
+        <h2 class="flow-text">Update your Personal Information</h2>
+        <p>Select 'Delete', then 'Done' to clear your info</p>
+        <form action="." method="POST">
+            <div class="form-group">
+                {% csrf_token %}
+                {{ noodle_form.as_p }}
+                {{ formset.management_form }}
+                {{ formset.as_p }}
+                <button type="submit" class="btn btn-debtn-floating btn-large waves-light waves-effect"><i
+                        class="large material-icons">Submit</i></button>
+                <a href="#" onclick="window.history.back(); return false;" title="Cancel"
+                   class="btn btn-default"><i class="material-icons">Cancel</i></a>
+            </div>
         </form>
-        </div>
     </div>
-</div>
 {% endblock %}
