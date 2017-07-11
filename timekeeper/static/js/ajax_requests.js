@@ -169,13 +169,6 @@ class AjaxRequest {
         })
     }
 
-    static get_projects_by_client(pk) {
-        $.get("/project_from_client/" + pk).done(function (data) {
-
-
-        })
-    }
-
     static get_projects() {
         $.get("/project_data").done(function (data) {
             // Unparse serialized data into json format

@@ -16,3 +16,7 @@ def has_group(user, group_name):
 @register.filter(name="json_safe")
 def as_json(data):
     return mark_safe(serializers.serialize("json", data))
+
+@register.filter(name='get_by_index')
+def get_by_index(l,i):
+    return l[i]
