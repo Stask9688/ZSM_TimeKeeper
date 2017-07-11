@@ -3,8 +3,10 @@
  */
 var OnloadProcessing = class {
 
-    static generateEmployeeDetail(timecard_data, project_data) {
+    static generateEmployeeDetail(timecard_data, project_data, task_data) {
+        console.log(project_data);
         console.log(timecard_data);
+        console.log(task_data);
         let data_object = timecard_data;
         let projects = project_data;
 
@@ -27,7 +29,16 @@ var OnloadProcessing = class {
             {
                 label: "Project Name",
                 format: function (d) {
+                    console.log(d);
                     return projects[d.timecard_project - 1].fields.project_name;
+                }
+            },
+            {
+                label: "Task Name",
+                format: function (d) {
+                    console.log(d);
+                    console.log(task_data[d.project_task - 1]);
+                    return task_data[d.project_task - 1].fields.project_task_title;
                 }
             },
             {
@@ -35,10 +46,16 @@ var OnloadProcessing = class {
                 format: function (d) {
                     return d.timecard_hours;
                 }
+            },
+            {
+                label: "Charged",
+                format: function (d) {
+                    return "$ " + (d.timecard_charge * d.timecard_hours).toFixed(2);
+                }
             }]);
-        let height = $(".col-md-12 > form").height();
+        let height = $(window).height();
         tableChart.render();
-        $("#timecard_table").height(height);
+        $("#timecard_table").height(height-200);
         let barChart = dc.barChart("#timecard_graph");
         let hoursGroup = timecard_filter.dimension["timecard_date"].group().reduceSum(
             function (d) {
@@ -210,6 +227,7 @@ var OnloadProcessing = class {
     static get_data_for_project_detail(timecard_data, user_data, task_data) {
         console.log(timecard_data);
         console.log(task_data);
+        console.log(user_data);
         let taskDataHash = {};
         for (let i = 0; i < task_data.length; i++) {
             taskDataHash[task_data[i].pk] = task_data[i].fields;
@@ -234,54 +252,61 @@ var OnloadProcessing = class {
         });
 
 
-        let tableChart = dc.dataTable("#project_employee_detail");
-        tableChart.order(d3.ascending)
-            .dimension(project_filter.dimension["timecard_date"])
-            .group(function (d) {
-                //Tables don't need groups like other charts,
-                //you can filter on a value, but the table looks ugly.
-                //Returning empty string instead
-                return "";
-            })
-            //c
-            .columns([
-                //Create the columns, specifying the table label
-                //as well as the value to display
-                {
-                    label: "Employee",
-                    format: function (d) {
-                        console.log(d);
-                        return user_data[d.timecard_owner - 1].fields.first_name + " " +
-                            user_data[d.timecard_owner - 1].fields.last_name;
-                    }
-                },
-                {
-                    label: "Date Worked",
-                    format: function (d) {
-                        return d.timecard_date;
-                    }
-                },
-                {
-                    label: "Hours Worked",
-                    format: function (d) {
-                        return d.timecard_hours;
-                    }
-                },
-                {
-                    label: "Day Charge",
-                    format: function (d) {
-                        return d.timecard_charge * d.timecard_hours;
-                    }
-                }
-            ]);
-        tableChart.render();
+        // let tableChart = dc.dataTable("#project_employee_detail");
+        // tableChart.order(d3.ascending)
+        //     .dimension(project_filter.dimension["timecard_date"])
+        //     .group(function (d) {
+        //         //Tables don't need groups like other charts,
+        //         //you can filter on a value, but the table looks ugly.
+        //         //Returning empty string instead
+        //         return "";
+        //     })
+        //     //c
+        //     .columns([
+        //         //Create the columns, specifying the table label
+        //         //as well as the value to display
+        //         {
+        //             label: "Employee",
+        //             format: function (d) {
+        //                 console.log(d);
+        //                 return user_data[d.timecard_owner - 1].fields.first_name + " " +
+        //                     user_data[d.timecard_owner - 1].fields.last_name;
+        //             }
+        //         },
+        //         {
+        //             label: "Date Worked",
+        //             format: function (d) {
+        //                 return d.timecard_date;
+        //             }
+        //         },
+        //         {
+        //             label: "Hours Worked",
+        //             format: function (d) {
+        //                 return d.timecard_hours;
+        //             }
+        //         },
+        //         {
+        //             label: "Day Charge",
+        //             format: function (d) {
+        //                 return d.timecard_charge * d.timecard_hours;
+        //             }
+        //         }
+        //     ]);
+        // tableChart.render();
 
 
         let taskTableChart = dc.dataTable("#task_detail_table");
         taskTableChart.order(d3.ascending).dimension(project_filter.dimension["timecard_task"])
             .group(function (d) {
-                return "";
-            }).columns([
+                console.log(user_data[d.timecard_owner - 1].fields);
+                return user_data[d.timecard_owner - 1].fields.first_name + " " +
+                    user_data[d.timecard_owner - 1].fields.last_name;
+            }).columns([{
+            label: "Date",
+            format: function (d) {
+                return d.timecard_date;
+            }
+        },
             {
                 label: "Task Name",
                 format: function (d) {
@@ -300,7 +325,7 @@ var OnloadProcessing = class {
                     return d.timecard_hours;
                 }
             },
-                        {
+            {
                 label: "Running Cost",
                 format: function (d) {
                     return d.timecard_hours * d.timecard_charge;

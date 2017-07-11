@@ -147,6 +147,8 @@ def client_detail(request, client_pk):
 def projects(request):
     project_object = Project.objects.all()
     timecard_object = Timecard.objects.all()
+    if request.user.groups.filter(name="Manager").exists():
+        project_object = project_object.filter(employees__username=request.user)
     return render(request, "projects.html",
                   {"projects": project_object, "timecards": timecard_object})
 
@@ -249,9 +251,11 @@ def employee_detail(request, employee_pk):
     print(request.user)
     employee = User.objects.get(pk=employee_pk)
     employee_timecard = Timecard.objects.filter(timecard_owner=employee)
+    task_data = ProjectTask.objects.all()
     project_object = Project.objects.all().order_by('pk')
     return render(request, "employee_detail.html",
-                  {"employee": employee, "timecard": employee_timecard, "project": project_object})
+                  {"employee": employee, "timecard": employee_timecard,
+                   "project": project_object, "task": task_data})
 
 
 @login_required
