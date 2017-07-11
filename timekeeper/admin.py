@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Client, Timecard, ProjectTask
+from .models import Project, Client, Timecard, ProjectTask, UserProfile
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.db.models import Q
@@ -10,6 +10,8 @@ class ProjectDetail(admin.ModelAdmin):
                     "running_cost", "flat_rate")
     filter_horizontal = ('employees',)
 
+class UserProfileDetail(admin.ModelAdmin):
+    list_display = ("user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing")
 
 class ClientDetail(admin.ModelAdmin):
     list_display = ("last_name", "first_name", "email", "phone_number")
@@ -89,3 +91,4 @@ admin.site.register(Project, ProjectDetail)
 admin.site.register(Client, ClientDetail)
 admin.site.register(Timecard, TimecardDetail)
 admin.site.register(ProjectTask, ProjectTaskDetail)
+admin.site.register(UserProfile, UserProfileDetail)
