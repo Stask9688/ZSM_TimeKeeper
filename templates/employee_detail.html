@@ -5,6 +5,51 @@
         <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
         <h4> {{ employee.email }}</h4>
     </div>
+    <div>
+    <table id="project_table" class="table table-striped table-bordered col-md-12">
+        <thead>
+        <tr>
+                <th>Birthdate</th>
+                <td>{{ employee.profile.birthdate }}</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ employee.profile.address }}</td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ employee.profile.city }}</td>
+            </tr>
+            <tr>
+                <th>State</th>
+                <td>{{ employee.profile.state }}</td>
+            </tr>
+            <tr>
+                <th>Zip</th>
+                <td>{{ employee.profile.zip }}</td>
+            </tr>
+            <tr>
+                <th>Phone</th>
+                <td>{{ employee.profile.phone }}</td>
+            </tr>
+            <tr>
+                <th>SSN</th>
+                <td>{{ employee.profile.ssn }}</td>
+            </tr>
+            <tr>
+                <th>Bank</th>
+                <td>{{ employee.profile.bank }}</td>
+            </tr>
+            <tr>
+                <th>Account</th>
+                <td>{{ employee.profile.account }}</td>
+            </tr>
+            <tr>
+                <th>Routing</th>
+                 <td>{{ employee.profile.routing }}</td>
+            </tr>
+    </table>
+    </div>
     <div class="col-md-5">
         <div id="timecard_table" class="col-md-2 table table-striped table-bordered"></div>
     </div>

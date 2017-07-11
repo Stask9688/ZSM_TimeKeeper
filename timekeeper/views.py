@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from reportlab.lib.utils import ImageReader
 
-from .models import Project, Timecard, Client, ProjectTask, Profile
+from .models import Project, Timecard, Client, ProjectTask, UserProfile
 from .forms import UserProfileForm
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
@@ -322,8 +322,9 @@ def edit_user(request, pk):
     user = User.objects.get(pk=pk)
     user_form = UserProfileForm(instance=user)
 
-    ProfileInlineFormset = inlineformset_factory(User, UserProfile,
-                                                 fields=('phonenumber', 'ssn', 'birthdate'))
+
+    ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('birthdate', 'address', 'city', 'state'
+                                                            , 'zip', 'phone', 'ssn','bank', 'account', 'routing'))
     formset = ProfileInlineFormset(instance=user)
 
     if request.user.is_authenticated() and request.user.id == user.id:
