@@ -8,31 +8,37 @@
 
 
     </div>
-     <div class="col-md-12">
-        <table class="table table-striped table-bordered">
-            <thead>
+    <div class="col-md-12">
+        <div id="total_owed" class="col-md-12">
 
+        </div>
+        <table id = "client_detail" class="table table-striped table-bordered">
 
-            <tr>
-                <th>Project Name</th>
-                <th>Project Description</th>
-                <th>Running Cost</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            {% for item in projects %}
-                <tr onclick="window.location = '/project_detail/{{ item.pk }}'">
-                    <td>{{ item.project_name }}</td>
-                    <td>{{ item.project_description}}</td>
-                    <td>{{ charges|get_by_index:item }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
         </table>
+{#        <table class="table table-striped table-bordered">#}
+{#            <thead>#}
+{##}
+{##}
+{#            <tr>#}
+{#                <th>Project Name</th>#}
+{#                <th>Project Description</th>#}
+{#                <th>Running Cost</th>#}
+{#            </tr>#}
+{#            </thead>#}
+{#            <tbody>#}
+{##}
+{#            {% for item in projects %}#}
+{#                <tr onclick="window.location = '/project_detail/{{ item.pk }}'">#}
+{#                    <td>{{ item.project_name }}</td>#}
+{#                    <td>{{ item.project_description }}</td>#}
+{#                    <td>{{ charges|get_by_index:item }}</td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+{#            </tbody>#}
+{#        </table>#}
     </div>
 
 
-    <script>AjaxRequest.get_projects_by_client("{{ client.pk}}");</script>
+    <script>OnloadProcessing.getClientData({{ timecards|json_safe }}, {{ projects|json_safe }});</script>
 
 {% endblock %}

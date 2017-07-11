@@ -55,7 +55,7 @@ var OnloadProcessing = class {
             }]);
         let height = $(window).height();
         tableChart.render();
-        $("#timecard_table").height(height-200);
+        $("#timecard_table").height(height - 200);
         let barChart = dc.barChart("#timecard_graph");
         let hoursGroup = timecard_filter.dimension["timecard_date"].group().reduceSum(
             function (d) {
@@ -421,7 +421,77 @@ var OnloadProcessing = class {
             .yAxisLabel('Hours Worked')
             .dimension(project_filter.dimension["timecard_date"])
             .group(hoursWorkedPerDay);
+
         hoursWorked.render();
+    }
+
+
+    static getClientData(timecard_data, project_data) {
+        console.log(timecard_data);
+        console.log(project_data);
+        let master_timecard = [];
+        for (let i = 0; i < timecard_data.length; i++) {
+            master_timecard[i] = timecard_data[i].fields;
+            master_timecard[i].pk = timecard_data[i].pk;
+        }
+
+        let projectDataHash = {};
+        for (let i = 0; i < project_data.length; i++) {
+            projectDataHash[project_data[i].pk] = project_data[i].fields;
+        }
+        console.log(projectDataHash);
+        let timecard_filter = new DataVisualization(master_timecard);
+        timecard_filter.generateDimension("timecard_date");
+        timecard_filter.generateDimension("timecard_project");
+
+        let barChart = dc.barChart("#total_owed");
+        let hoursGroup = timecard_filter.dimension["timecard_date"].group().reduceSum(
+            function (d) {
+                return d["timecard_charge"] * d.timecard_hours;
+            }
+        );
+        barChart
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .xAxis().tickFormat(function (d) {
+            return d.substr(8)
+        });
+
+        barChart
+            .brushOn(true)
+            .xAxisLabel('Date')
+            .yAxisLabel('Hours Worked')
+            .dimension(timecard_filter.dimension["timecard_date"])
+            .group(hoursGroup);
+        barChart.render();
+
+        let taskTableChart = dc.dataTable("#client_detail");
+        taskTableChart.order(d3.ascending).dimension(timecard_filter.dimension["timecard_project"])
+            .group(function (d) {
+                return ""
+            }).columns([{
+            label: "Project Name",
+            format: function (d) {
+                console.log(d);
+                return projectDataHash[d.timecard_project].project_name;
+            }
+        },
+            {
+            label: "Hours Worked",
+            format: function (d) {
+                console.log(d);
+                return d.timecard_hours;
+            }
+        },
+            {
+            label: "Hours Charged",
+            format: function (d) {
+                console.log(d);
+                return d.timecard_charge;
+            }
+        }
+        ]);
+        taskTableChart.render();
     }
 
     static processTimecardData(data) {
