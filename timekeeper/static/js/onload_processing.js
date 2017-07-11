@@ -460,7 +460,7 @@ var OnloadProcessing = class {
         barChart
             .brushOn(true)
             .xAxisLabel('Date')
-            .yAxisLabel('Hours Worked')
+            .yAxisLabel('Total Charges')
             .dimension(timecard_filter.dimension["timecard_date"])
             .group(hoursGroup);
         barChart.render();
@@ -468,30 +468,44 @@ var OnloadProcessing = class {
         let taskTableChart = dc.dataTable("#client_detail");
         taskTableChart.order(d3.ascending).dimension(timecard_filter.dimension["timecard_project"])
             .group(function (d) {
-                return ""
+                return projectDataHash[d.timecard_project].project_name;
             }).columns([{
             label: "Project Name",
             format: function (d) {
-                console.log(d);
                 return projectDataHash[d.timecard_project].project_name;
             }
         },
             {
             label: "Hours Worked",
             format: function (d) {
-                console.log(d);
                 return d.timecard_hours;
             }
         },
             {
-            label: "Hours Charged",
+            label: "Hourly Charge",
             format: function (d) {
-                console.log(d);
                 return d.timecard_charge;
             }
         }
         ]);
+        let custom_dimension = timecard_filter.ndx.dimension(function (d) {
+            return projectDataHash[d.timecard_project].project_name;
+        });
         taskTableChart.render();
+        let hoursPerPerson = dc.pieChart("#client_projects");
+        let hoursPerPersonGroup = custom_dimension.group().reduceSum(
+            function (d) {
+                console.log(projectDataHash[d.timecard_project].project_name);
+                return d.timecard_project;
+            }
+        );
+        hoursPerPerson
+
+            .dimension(custom_dimension)
+            .group(hoursPerPersonGroup)
+            .legend(dc.legend());
+
+        hoursPerPerson.render();
     }
 
     static processTimecardData(data) {

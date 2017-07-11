@@ -268,7 +268,7 @@ def pdfgenerate(request, project_pk):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
     project = Project.objects.get(pk=project_pk)
-    tasks = ProjectTasks.objects.filter(project_task_link=project)
+    tasks = ProjectTask.objects.filter(project_task_link=project)
     buffer = BytesIO()
 
     # Create the PDF object, using the BytesIO object as its "file."
