@@ -61,6 +61,7 @@ class Timecard(models.Model):
     timecard_charge = models.FloatField(default=0)
     timecard_approved = models.CharField(max_length=8, choices=approval_choices, default="Pending")
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     birthdate = models.DateField(null=True, blank=True)
@@ -73,7 +74,13 @@ class UserProfile(models.Model):
     bank = models.CharField(max_length=20, null=True, blank=True)
     account = models.CharField(max_length=9, null=True, blank=True)
     routing = models.CharField(max_length=9, null=True, blank=True)
+    
 
+class ProjectExpenditure(models.Model):
+    project_task = models.ForeignKey(ProjectTask, related_name="task")
+    date = models.DateField(null=True, blank=True)
+    cost = models.FloatField(null=True)
+    description = models.TextField(null=True)
 
 def create_profile(sender, **kwargs):
     user = kwargs["instance"]
@@ -83,4 +90,3 @@ def create_profile(sender, **kwargs):
 
 
 post_save.connect(create_profile, sender=User)
-
