@@ -379,6 +379,35 @@ var OnloadProcessing = class {
             //     }
             // },
         ]);
+
+        taskTableChart.on("renderlet", function () {
+            let projects = $("tbody");
+            let overall_hours = 0;
+            let overall_labor = 0;
+            console.log(projects);
+            for (let i = 0; i < projects.length; i++) {
+                let total_hours = 0;
+                let total_labor = 0;
+                let row_list = $(projects[i]).find(".dc-table-row");
+                let hours_list = $(projects[i]).find(".dc-table-column._1");
+                for (let x = 0; x < row_list.length; x++) {
+                    console.log($(row_list[x]).children("._2"));
+                    total_hours += parseFloat($(row_list[x]).children("._2")[0].textContent);
+                    total_labor += parseFloat($(row_list[x]).children("._3")[0].textContent.substr(1));
+                }
+
+                $(projects[i]).append("<tr class='row_total'><td><b>Totals:</b></td><td><b class='_1'></b></td><td><b class='_2'>" + total_hours +
+                    "</b></td><td><b class='_3'>$" + total_labor + "</b></td></tr>")
+            }
+            let row_totals = $("#task_detail_table>tbody>.row_total");
+            console.log(row_totals.length)
+            for (let i = 0; i < row_totals.length; i++) {
+                overall_hours += parseFloat($(row_totals[i]).find("._2")[0].textContent);
+                overall_labor += parseFloat($(row_totals[i]).find("._3")[0].textContent.substr(1));
+            }
+            $("#task_detail_table > tbody:last").append("<tr class='row_total'><td><b>Overall:</b></td><td><b></b></td><td><b>" + overall_hours +
+                "</b></td><td><b>$" + overall_labor + "</b></td></tr>");
+        });
         taskTableChart.render();
 
         let materialCostTable = dc.dataTable("#material_cost_table");
@@ -472,11 +501,7 @@ var OnloadProcessing = class {
         let chargesTotal = dc.numberDisplay("#total_charges");
         chargesTotal.group(timecardChargeGroup).dimension(project_filter.dimension["timecard_date"]).valueAccessor(total);
         chargesTotal.render();
-        $(window).resize(function () {
-            hoursPerPerson.resetSvg();
-            hoursWorked.resetSvg();
-            dc.renderAll()
-        });
+
 
         let hoursWorked = dc.barChart("#project_progress_chart");
         let hoursWorkedPerDay = project_filter.dimension["timecard_date"].group().reduceSum(
@@ -530,6 +555,12 @@ var OnloadProcessing = class {
             .group(totalChargesGroup).renderArea(true);
 
         totalChargesChart.render();
+        $(window).resize(function () {
+            hoursPerPerson.resetSvg();
+            hoursWorked.resetSvg();
+            totalChargesChart.resetSvg();
+            dc.renderAll()
+        });
     }
 
     static getExpectedIncome(timecard_data, user_data, task_data,
@@ -602,6 +633,14 @@ var OnloadProcessing = class {
                     charge += charge * (project_data[0].fields.labor_markup / 100);
                     return "$" + charge;
                 }
+            },
+            {
+                label: "Expected Profit",
+                format: function (d) {
+                    let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                    charge += charge * (project_data[0].fields.labor_markup / 100);
+                    return "$" + (charge - (d.timecard_hours * profileHash[d.timecard_owner].hourly));
+                }
             }
         ]);
         taskIncomeTable.on("renderlet", function () {
@@ -611,16 +650,19 @@ var OnloadProcessing = class {
                 let total_charge = 0;
                 let total_hours = 0;
                 let total_labor = 0;
+                let total_profit = 0;
                 let row_list = $(projects[i]).find(".dc-table-row");
                 for (let x = 0; x < row_list.length; x++) {
                     console.log($(row_list[x]).children("._2")[0]);
                     total_labor += parseFloat($(row_list[x]).children("._2")[0].textContent.substr(1));
+                    total_profit += parseFloat($(row_list[x]).children("._3")[0].textContent.substr(1));
                 }
 
                 $(projects[i]).append("<tr><td><b>Totals:</b></td><td></td><td><b>$ " + total_labor +
-                    "</b></td></tr>")
+                    "</b></td><td><b>$" + total_profit + "</b></td></tr>")
 
             }
+
         });
         taskIncomeTable.render();
         let materialIncomeTable = dc.dataTable("#material_income_table");
@@ -674,7 +716,7 @@ var OnloadProcessing = class {
             .x(d3.scale.ordinal())
             .xUnits(dc.units.ordinal)
             .xAxis().tickFormat(function (d) {
-            return d.substr(8)
+            return d.substr(6).replace("-", "/");
         });
 
         hoursWorked
@@ -696,10 +738,11 @@ var OnloadProcessing = class {
             }
         );
         profitChart
+            .renderArea(true)
             .x(d3.scale.ordinal())
             .xUnits(dc.units.ordinal)
             .xAxis().tickFormat(function (d) {
-            return d.substr(8)
+            return d.substr(6).replace("-", "/");
         });
 
         profitChart
@@ -780,7 +823,7 @@ var OnloadProcessing = class {
             .renderArea(true)
             .brushOn(true)
             .xAxisLabel('Date')
-            .yAxisLabel('Total Cost')
+            .yAxisLabel('Labor Cost')
             .dimension(timecard_filter.dimension["timecard_date"])
             .group(totalCostGroup);
         totalCost.render();
@@ -807,7 +850,7 @@ var OnloadProcessing = class {
                 label: "Labor Cost",
                 format: function (d) {
                     let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
-                    return charge;
+                    return "$" + charge;
                 }
             }
             ,
@@ -816,7 +859,16 @@ var OnloadProcessing = class {
                 format: function (d) {
                     let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
                     charge += charge * (projectDataHash[d.timecard_project].labor_markup / 100);
-                    return charge;
+                    return "$" + charge;
+                }
+            }
+            ,
+            {
+                label: "Profit",
+                format: function (d) {
+                    let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                    charge += charge * (projectDataHash[d.timecard_project].labor_markup / 100);
+                    return "$" + parseFloat(charge - d.timecard_hours * profileHash[d.timecard_owner].hourly);
                 }
             }
         ]);
@@ -825,24 +877,41 @@ var OnloadProcessing = class {
         });
         taskTableChart.on("renderlet", function () {
             let projects = $("tbody");
+            let overall_hours = 0;
+            let overall_labor = 0;
+            let overall_charge = 0;
+            let overall_profit = 0;
             console.log(projects);
             for (let i = 0; i < projects.length; i++) {
                 let total_charge = 0;
                 let total_hours = 0;
                 let total_labor = 0;
+                let total_profit = 0;
                 let row_list = $(projects[i]).find(".dc-table-row");
                 let hours_list = $(projects[i]).find(".dc-table-column._1");
                 for (let x = 0; x < row_list.length; x++) {
                     console.log($(row_list[x]).children("._2"));
-                    total_charge += parseFloat($(row_list[x]).children("._3")[0].textContent);
+                    total_charge += parseFloat($(row_list[x]).children("._3")[0].textContent.substr(1));
                     total_hours += parseFloat($(row_list[x]).children("._1")[0].textContent);
-                    total_labor += parseFloat($(row_list[x]).children("._2")[0].textContent);
+                    total_labor += parseFloat($(row_list[x]).children("._2")[0].textContent.substr(1));
+                    total_profit += parseFloat($(row_list[x]).children("._4")[0].textContent.substr(1));
                 }
 
-                $(projects[i]).append("<tr><td><b>Totals:</b></td><td><b>" + total_hours + "</b></td><td><b>" + total_labor +
-                    "</b></td><td><b>" + total_charge + "</b></td></tr>")
-
+                $(projects[i]).append("<tr class='row_total'><td><b>Totals:</b></td><td><b class='_1'>" + total_hours + "</b></td><td><b class='_2'>$" + total_labor +
+                    "</b></td><td><b class='_3'>$" + total_charge + "</b></td><td><b class='_4'>$ " + total_profit + "</b></td></tr>")
             }
+            let row_totals = $(".row_total");
+            console.log(row_totals);
+            for (let i = 0; i < row_totals.length; i++) {
+                console.log(row_totals[i])
+                console.log($(row_totals[i]).find("._2")[0].textContent)
+                overall_charge += parseFloat($(row_totals[i]).find("._3")[0].textContent.substr(1));
+                overall_hours += parseFloat($(row_totals[i]).find("._1")[0].textContent);
+                overall_labor += parseFloat($(row_totals[i]).find("._2")[0].textContent.substr(1));
+                overall_profit += parseFloat($(row_totals[i]).find("._4")[0].textContent.substr(1));
+            }
+            $("tbody:last").append("<tr class='row_total'><td><b>Overall:</b></td><td><b>" + overall_hours + "</b></td><td><b>$" + overall_labor +
+                "</b></td><td><b>$" + overall_charge + "</b></td><td><b>$ " + overall_profit + "</b></td></tr>");
         });
         taskTableChart.render();
 

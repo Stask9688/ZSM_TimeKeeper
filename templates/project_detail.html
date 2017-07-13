@@ -2,30 +2,31 @@
 {% load static %}
 {% load custom_tags %}
 {% block content %}
-    <div class="col-md-12">
+    <div class="col-md-12" style="margin-bottom:10px">
         <h2>{{ project.first.project_name }}</h2>
         <h4>{{ project.first.project_description }}</h4>
         <h4>{{ project.first.supervisors }}</h4>
-                <button type=button class="btn btn-default" onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">
-                    Generate PDF
-                </button>
+        <button type=button class="btn btn-default" onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">
+            Generate PDF
+        </button>
     </div>
 
     <ul class="nav nav-tabs">
-        <li on><a onclick="dc.redrawAll()" data-toggle="tab" href="#spent_tab">Resource Spent</a></li>
-        <li class="active"><a onclick="dc.redrawAll()" data-toggle="tab" href="#income_tab">Expected Income</a></li>
+        <li class="active"><a data-toggle="tab" href="#spent_tab">Resource
+            Spent</a></li>
+        <li><a data-toggle="tab" href="#income_tab">Expected Income</a></li>
     </ul>
 
     <div class="tab-content">
-        <div id="spent_tab" class="tab-pane fade">
+        <div id="spent_tab" class="tab-pane fade in active">
             <div class="col-md-12">
 
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <table id="task_detail_table" class="table table-striped table-bordered"></table>
                 </div>
-                <div class="col-md-3">
-                    <table id="material_cost_table" class="table table-striped table-bordered"></table>
-                </div>
+{#                <div class="col-md-3">#}
+{#                    <table id="material_cost_table" class="table table-striped table-bordered"></table>#}
+{#                </div>#}
                 <div class="col-md-6">
                     <div class="col-md-12">
                         <div id="project_progress_chart" style="width:100%"></div>
@@ -43,15 +44,15 @@
 
             </div>
         </div>
-        <div id="income_tab" class="tab-pane fade in active">
+        <div id="income_tab" class="tab-pane fade">
             <div class="col-md-12">
 
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <table id="task_income_table" class="table table-striped table-bordered"></table>
                 </div>
-                <div class="col-md-3">
-                    <table id="material_income_table" class="table table-striped table-bordered"></table>
-                </div>
+{#                <div class="col-md-3">#}
+{#                    <table id="material_income_table" class="table table-striped table-bordered"></table>#}
+{#                </div>#}
                 <div class="col-md-6">
                     <div class="col-md-12">
                         <div id="income_chart" style="width:100%"></div>

@@ -26,7 +26,7 @@ from material.frontend import urls as frontend_urls
 
 urlpatterns = [
                   url(r'^$', views.home),
-                  url(r'^login$', login, kwargs={'template_name': 'admin/login.html'}, name="login"),
+                  url(r'^login', login, kwargs={'template_name': 'admin/login.html'}, name="login"),
                   url(r'^logout', views.logout_view),
 
                   url(r'^admin/', admin.site.urls),
@@ -46,7 +46,7 @@ urlpatterns = [
                   url(r'^pdfgenerate/(?P<project_pk>\d+)$', views.pdfgenerate),
                   url(r'^chaining/', include('smart_selects.urls')),
                   url(r'^accounts/update/(?P<pk>[\-\w]+)/$', views.edit_user, name='account_update'),
-                  url(r'^accounts/profile/$', TemplateView.as_view(template_name='profile.html'), name='user_profile'),
+                  url(r'^accounts/profile/', TemplateView.as_view(template_name='profile.html'), name='user_profile'),
                   url(r'', include(frontend_urls)),
 
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + \

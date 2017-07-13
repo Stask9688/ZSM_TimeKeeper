@@ -12,7 +12,7 @@
         <form action="." method="POST">
             <div class="form-group">
                 {% csrf_token %}
-                {{ noodle_form.as_p }}
+{#                {{ noodle_form.as_p }}#}
                 {{ formset.management_form }}
                 {{ formset.as_p }}
                 <button type="submit" class="btn btn-debtn-floating btn-large waves-light waves-effect"><i

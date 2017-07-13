@@ -45,7 +45,13 @@ def home(request):
     latest_timecards = Timecard.objects.order_by('-timecard_date')[:7]
     projects = Project.objects.all().order_by('pk')
     context = {'latest_timecards': latest_timecards, 'projects': projects}
-    return render(request, "home.html", context)
+    if request.user.groups.filter(name="Manager").exists() \
+            or request.user.groups.filter(name="Owner").exists():
+        return render(request, "projects.html", context)
+    if request.user.groups.filter(name="Employee").exists():
+        return HttpResponseRedirect(request, "/admin/timekeeper/timecard")
+    if request.user.groups.filter(name="HR").exists():
+        return HttpResponseRedirect(request, "/admin")
 
 
 @user_passes_test(check_permission)
@@ -125,8 +131,8 @@ def project_detail(request, project_pk):
                                                    "hours": task_total_hours,
                                                    "timecards": timecards,
                                                    "users": relevant_users,
-                                                   "profiles":user_profiles,
-                                                   "expenditures":expenditures})
+                                                   "profiles": user_profiles,
+                                                   "expenditures": expenditures})
 
 
 @user_passes_test(check_permission)
@@ -152,7 +158,7 @@ def client_detail(request, client_pk):
                                                  tc.timecard_hours * tc.timecard_charge
     return render(request, "client_detail.html",
                   {"client": client, "projects": projects, "charges": projects_running_cost,
-                   "timecards": project_timecards,"profile":user_profiles,"user":users_on_project})
+                   "timecards": project_timecards, "profile": user_profiles, "user": users_on_project})
 
 
 @user_passes_test(check_permission)
@@ -169,7 +175,7 @@ def projects(request):
     users_on_project = set(users_on_project)
     user_profile = UserProfile.objects.filter(user__in=users_on_project)
     return render(request, "projects.html",
-                  {"projects": project_object, "timecards": timecard_object,"profiles":user_profile})
+                  {"projects": project_object, "timecards": timecard_object, "profiles": user_profile})
 
 
 @login_required
@@ -276,7 +282,7 @@ def employee_detail(request, employee_pk):
     return render(request, "employee_detail.html",
                   {"employee": employee, "timecard": employee_timecard,
                    "project": project_object, "task": task_data,
-                   "profile":profile})
+                   "profile": profile})
 
 
 @login_required
@@ -294,7 +300,7 @@ def pdfgenerate(request, project_pk):
     p = canvas.Canvas(buffer)
     i = 0
     totaltasks = 0
-    #keeps counter of tasks
+    # keeps counter of tasks
     while i < len(tasks):
         i += 1
         totaltasks += 1
@@ -341,9 +347,9 @@ def edit_user(request, pk):
     user = User.objects.get(pk=pk)
     user_form = UserProfileForm(instance=user)
 
-
-    ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('birthdate', 'address', 'city', 'state'
-                                                            , 'zip', 'phone', 'ssn','bank', 'account', 'routing'))
+    ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('address', 'city', 'state'
+                                                                            , 'zip', 'phone', 'bank', 'account',
+                                                                            'routing'))
     formset = ProfileInlineFormset(instance=user)
 
     if request.user.is_authenticated() and request.user.id == user.id:
@@ -356,7 +362,7 @@ def edit_user(request, pk):
                 formset = ProfileInlineFormset(request.POST, request.FILES, instance=created_user)
 
                 if formset.is_valid():
-                    created_user.save()
+                    # created_user.save()
                     formset.save()
                     return HttpResponseRedirect('/accounts/profile/')
 

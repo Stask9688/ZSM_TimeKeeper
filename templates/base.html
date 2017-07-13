@@ -50,9 +50,6 @@
                             <a href="/admin">Admin</a>
                         </li>
                     {% endif %}
-                    <li class="col-md-12">
-                        <a href="/home">Home</a>
-                    </li>
                     {% if request.user|has_group:"Owner" or request.user|has_group:"Manager" %}
 
                         <li class="col-md-12">
