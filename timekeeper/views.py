@@ -264,11 +264,13 @@ def employee_detail(request, employee_pk):
     print(request.user)
     employee = User.objects.get(pk=employee_pk)
     employee_timecard = Timecard.objects.filter(timecard_owner=employee)
+    profile = UserProfile.objects.filter(user=employee)
     task_data = ProjectTask.objects.all()
     project_object = Project.objects.all().order_by('pk')
     return render(request, "employee_detail.html",
                   {"employee": employee, "timecard": employee_timecard,
-                   "project": project_object, "task": task_data})
+                   "project": project_object, "task": task_data,
+                   "profile":profile})
 
 
 @login_required

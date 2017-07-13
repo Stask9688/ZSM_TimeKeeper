@@ -9,13 +9,16 @@
 
     </div>
     <div class="col-md-12">
-        <div id="total_owed" class="col-md-8"></div>
-        <div id="client_projects" class="col-md-4"></div>
         <div class="col-md-6">
             <table id="client_detail" class="table table-striped table-bordered"></table>
         </div>
         <div class="col-md-6">
-            <table id="client_expected_charges" class="table table-striped table-bordered"></table>
+            <div id="total_owed" class="col-md-12"></div>
+            <div id="total_cost" class="col-md-12"></div>
+
+            <div id="client_projects" class="col-md-12"></div>
+            <button class="col-md-offset-6 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">Reset
+            </button>
         </div>
     </div>
 
