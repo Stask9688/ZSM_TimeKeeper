@@ -162,8 +162,14 @@ def projects(request):
     timecard_object = Timecard.objects.all()
     if request.user.groups.filter(name="Manager").exists():
         project_object = project_object.filter(employees__username=request.user)
+    users_on_project = []
+    for timecard in timecard_object:
+        if timecard.timecard_owner.pk not in users_on_project:
+            users_on_project.append(timecard.timecard_owner)
+    users_on_project = set(users_on_project)
+    user_profile = UserProfile.objects.filter(user__in=users_on_project)
     return render(request, "projects.html",
-                  {"projects": project_object, "timecards": timecard_object})
+                  {"projects": project_object, "timecards": timecard_object,"profiles":user_profile})
 
 
 @login_required

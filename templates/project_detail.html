@@ -6,9 +6,9 @@
         <h2>{{ project.first.project_name }}</h2>
         <h4>{{ project.first.project_description }}</h4>
         <h4>{{ project.first.supervisors }}</h4>
-        {#        <button type=button class="btn btn-default" onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">#}
-        {#            Generate PDF#}
-        {#        </button>#}
+                <button type=button class="btn btn-default" onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">
+                    Generate PDF
+                </button>
     </div>
 
     <ul class="nav nav-tabs">

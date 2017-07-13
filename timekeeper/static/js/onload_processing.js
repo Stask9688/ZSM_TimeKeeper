@@ -134,7 +134,8 @@ var OnloadProcessing = class {
     }
 
 
-    static get_projects(project_data, timecard_data) {
+    static get_projects(project_data, timecard_data, profile_data) {
+        console.log(profile_data);
         // Unparse serialized data into json format
         let parsed_data = [];
         let timecard_parsed = [];
@@ -146,6 +147,11 @@ var OnloadProcessing = class {
         for (let index = 0; index < timecard_data.length; index++) {
             timecard_data[index]["fields"].pk = timecard_data[index].pk;
             timecard_parsed.push(timecard_data[index]["fields"]);
+        }
+
+        let profileHash = {};
+        for (let i = 0; i < profile_data.length; i++) {
+            profileHash[profile_data[i].pk] = profile_data[i].fields;
         }
         console.log(timecard_parsed);
         console.log(parsed_data);
@@ -204,7 +210,8 @@ var OnloadProcessing = class {
                         for (let i = 0; i < length; i++) {
                             if (timecard_parsed[i]['timecard_project'] === d.pk) {
                                 console.log(timecard_parsed[i]);
-                                total += timecard_parsed[i]['timecard_hours'] * timecard_parsed[i]['timecard_charge'];
+                                total += timecard_parsed[i]['timecard_hours']
+                                    * profileHash[timecard_parsed[i].timecard_owner].hourly;
                             }
                         }
                         return "$ " + (total).toFixed(2);
