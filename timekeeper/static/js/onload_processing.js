@@ -592,7 +592,7 @@ var OnloadProcessing = class {
         let hoursWorkedPerDay = project_filter.dimension["timecard_date"].group().reduceSum(
             function (d) {
                 let income = d.timecard_hours * profileHash[d.timecard_owner].hourly;
-                income += income * (project_data[0].fields.labor_markup/100);
+                income += income * (project_data[0].fields.labor_markup / 100);
                 return income;
             }
         );
@@ -615,7 +615,7 @@ var OnloadProcessing = class {
         let profitChartGroup = project_filter.dimension["timecard_date"].group().reduceSum(
             function (d) {
                 let income = d.timecard_hours * profileHash[d.timecard_owner].hourly;
-                income += income * (project_data[0].fields.labor_markup/100);
+                income += income * (project_data[0].fields.labor_markup / 100);
                 let outlays = d.timecard_hours * profileHash[d.timecard_owner].hourly;
                 let profit = income - outlays;
                 return profit;
@@ -639,9 +639,16 @@ var OnloadProcessing = class {
         profitChart.render();
     }
 
-    static getClientData(timecard_data, project_data) {
+    static getClientData(timecard_data, project_data, profile_data,) {
         console.log(timecard_data);
         console.log(project_data);
+        console.log(profile_data);
+
+        let profileHash = {};
+        for (let i = 0; i < profile_data.length; i++) {
+            profileHash[profile_data[i].pk] = profile_data[i].fields;
+        }
+        console.log(profileHash);
         let master_timecard = [];
         for (let i = 0; i < timecard_data.length; i++) {
             master_timecard[i] = timecard_data[i].fields;
@@ -660,7 +667,9 @@ var OnloadProcessing = class {
         let barChart = dc.barChart("#total_owed");
         let hoursGroup = timecard_filter.dimension["timecard_date"].group().reduceSum(
             function (d) {
-                return d["timecard_charge"] * d.timecard_hours;
+                let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                charge += charge * (projectDataHash[d.timecard_project].labor_markup / 100);
+                return charge;
             }
         );
         barChart
@@ -695,9 +704,11 @@ var OnloadProcessing = class {
                 }
             },
             {
-                label: "Hourly Charge",
+                label: "Task Charge",
                 format: function (d) {
-                    return d.timecard_charge;
+                    let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                    charge += charge * (projectDataHash[d.timecard_project].labor_markup / 100);
+                    return charge;
                 }
             }
         ]);
