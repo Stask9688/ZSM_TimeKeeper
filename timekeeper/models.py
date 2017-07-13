@@ -24,6 +24,8 @@ class Project(models.Model):
     flat_rate = models.BooleanField(default=False)
     running_cost = models.FloatField(default=0)
     employees = models.ManyToManyField(User, related_name="employees")
+    material_markup = models.FloatField(null=True, default=0)
+    labor_markup = models.FloatField(null=True, default=0)
 
     def __str__(self):
         return self.project_name
@@ -74,13 +76,15 @@ class UserProfile(models.Model):
     bank = models.CharField(max_length=20, null=True, blank=True)
     account = models.CharField(max_length=9, null=True, blank=True)
     routing = models.CharField(max_length=9, null=True, blank=True)
-    
+    hourly = models.FloatField(null=True)
+
 
 class ProjectExpenditure(models.Model):
     project_task = models.ForeignKey(ProjectTask, related_name="task")
     date = models.DateField(null=True, blank=True)
     cost = models.FloatField(null=True)
     description = models.TextField(null=True)
+
 
 def create_profile(sender, **kwargs):
     user = kwargs["instance"]

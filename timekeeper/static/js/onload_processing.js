@@ -224,13 +224,23 @@ var OnloadProcessing = class {
     }
 
 
-    static get_data_for_project_detail(timecard_data, user_data, task_data) {
+    static get_data_for_project_detail(timecard_data, user_data, task_data,
+                                       expenditure_data, profile_data, project_data) {
         console.log(timecard_data);
         console.log(task_data);
         console.log(user_data);
+        console.log(expenditure_data);
+        console.log(profile_data);
+        console.log(project_data);
+
         let taskDataHash = {};
         for (let i = 0; i < task_data.length; i++) {
             taskDataHash[task_data[i].pk] = task_data[i].fields;
+        }
+
+        let profileHash = {};
+        for (let i = 0; i < profile_data.length; i++) {
+            profileHash[profile_data[i].pk] = profile_data[i].fields;
         }
         console.log(taskDataHash);
         let master_timecard = [];
@@ -238,7 +248,22 @@ var OnloadProcessing = class {
             master_timecard[i] = timecard_data[i].fields;
             master_timecard[i].pk = timecard_data[i].pk;
         }
+        for (let x = 0; x < expenditure_data.length; x++) {
+            let found = 0;
+            for (let i = 0; i < master_timecard.length; i++) {
+                if (master_timecard[i].timecard_date === expenditure_data[x].fields.date) {
+                    console.log("ADDED");
+                    master_timecard[i].expenditures = expenditure_data[x].fields;
+                    found = 1;
+                    break;
+                }
+            }
+            if (0 === found) {
+                master_timecard.push({expenditures: expenditure_data[x].fields})
+            }
 
+        }
+        console.log(master_timecard);
         // Create crossfilter for project data
         let project_filter = new DataVisualization(master_timecard);
 
@@ -247,58 +272,14 @@ var OnloadProcessing = class {
         project_filter.generateDimension("timecard_date");
         project_filter.generateDimension("timecard_owner");
         project_filter.generateDimension("timecard_task");
+        project_filter.generateDimension("expenditures");
         let custom_dimension = project_filter.ndx.dimension(function (d) {
             return user_data[d.timecard_owner - 1].fields.first_name;
         });
 
-
-        // let tableChart = dc.dataTable("#project_employee_detail");
-        // tableChart.order(d3.ascending)
-        //     .dimension(project_filter.dimension["timecard_date"])
-        //     .group(function (d) {
-        //         //Tables don't need groups like other charts,
-        //         //you can filter on a value, but the table looks ugly.
-        //         //Returning empty string instead
-        //         return "";
-        //     })
-        //     //c
-        //     .columns([
-        //         //Create the columns, specifying the table label
-        //         //as well as the value to display
-        //         {
-        //             label: "Employee",
-        //             format: function (d) {
-        //                 console.log(d);
-        //                 return user_data[d.timecard_owner - 1].fields.first_name + " " +
-        //                     user_data[d.timecard_owner - 1].fields.last_name;
-        //             }
-        //         },
-        //         {
-        //             label: "Date Worked",
-        //             format: function (d) {
-        //                 return d.timecard_date;
-        //             }
-        //         },
-        //         {
-        //             label: "Hours Worked",
-        //             format: function (d) {
-        //                 return d.timecard_hours;
-        //             }
-        //         },
-        //         {
-        //             label: "Day Charge",
-        //             format: function (d) {
-        //                 return d.timecard_charge * d.timecard_hours;
-        //             }
-        //         }
-        //     ]);
-        // tableChart.render();
-
-
         let taskTableChart = dc.dataTable("#task_detail_table");
         taskTableChart.order(d3.ascending).dimension(project_filter.dimension["timecard_task"])
             .group(function (d) {
-                console.log(user_data[d.timecard_owner - 1].fields);
                 return user_data[d.timecard_owner - 1].fields.first_name + " " +
                     user_data[d.timecard_owner - 1].fields.last_name;
             }).columns([{
@@ -313,12 +294,12 @@ var OnloadProcessing = class {
                     return taskDataHash[d.project_task].project_task_title;
                 }
             },
-            {
-                label: "Task Description",
-                format: function (d) {
-                    return taskDataHash[d.project_task].project_task_description;
-                }
-            },
+            // {
+            //     label: "Task Description",
+            //     format: function (d) {
+            //         return taskDataHash[d.project_task].project_task_description;
+            //     }
+            // },
             {
                 label: "Hours Spent",
                 format: function (d) {
@@ -326,18 +307,63 @@ var OnloadProcessing = class {
                 }
             },
             {
-                label: "Running Cost",
+                label: "Labor Cost",
                 format: function (d) {
-                    return d.timecard_hours * d.timecard_charge;
+                    return "$" + d.timecard_hours * profileHash[d.timecard_owner].hourly;
                 }
-            },
+            }
+            // ,
+            // {
+            //     label: "Customer Charge",
+            //     format: function (d) {
+            //         let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+            //         return charge + charge * ((project_data[0].fields.labor_markup) / 100);
+            //     }
+            // },
         ]);
         taskTableChart.render();
+
+        let materialCostTable = dc.dataTable("#material_cost_table");
+        materialCostTable.order(d3.ascending).dimension(project_filter.dimension["expenditures"])
+            .group(function (d) {
+                return ""
+            }).columns([
+            {
+                label: "Date",
+                format: function (d) {
+                    if (d.expenditures === undefined) {
+                        return null;
+                    }
+                    return d.expenditures.date;
+                }
+            },
+            {
+                label: "Cost",
+                format: function (d) {
+                    if (d.expenditures === undefined) {
+                        return null;
+                    }
+                    return "$" + d.expenditures.cost;
+                }
+            }
+        ]);
+        materialCostTable.on("renderlet", function () {
+            let value_list = $("#material_cost_table").find(".dc-table-column._0");
+            console.log(value_list);
+            for (let i = 0; i < value_list.length; i++) {
+                console.log(value_list[i].textContent.length)
+                if (value_list[i].textContent.length < 1) {
+                    console.log("Removing");
+                    $(value_list[i]).parent().remove();
+                }
+            }
+        });
+        materialCostTable.render();
 
         let hoursPerPerson = dc.pieChart("#perPersonHours");
         let hoursPerPersonGroup = custom_dimension.group().reduceSum(
             function (d) {
-                return d.timecard_charge;
+                return d.timecard_hours;
             }
         );
         hoursPerPerson
@@ -364,9 +390,6 @@ var OnloadProcessing = class {
             }
         );
         let total = function (d) {
-
-            console.log(d)
-
             return d.tot;
         };
         let totalHoursWorked = dc.numberDisplay("#total_hours");
@@ -376,12 +399,12 @@ var OnloadProcessing = class {
         let timecardChargeGroup = project_filter.ndx.groupAll().reduce(
             function (p, v) {
                 ++p.n;
-                p.tot += v.timecard_charge * v.timecard_hours;
+                p.tot += v.timecard_hours * profileHash[v.timecard_owner].hourly;
                 return p;
             },
             function (p, v) {
                 --p.n;
-                p.tot -= v.timecard_charge * v.timecard_hours;
+                p.tot -= v.timecard_hours * profileHash[v.timecard_owner].hourly;
                 return p;
             },
             function () {
@@ -409,11 +432,6 @@ var OnloadProcessing = class {
             .xAxis().tickFormat(function (d) {
             return d.substr(8)
         });
-        function sel_stack(i) {
-            return function (d) {
-                return d.value[i];
-            };
-        }
 
         hoursWorked
             .brushOn(true)
@@ -423,8 +441,203 @@ var OnloadProcessing = class {
             .group(hoursWorkedPerDay);
 
         hoursWorked.render();
+
+        let totalChargesChart = dc.lineChart("#total_charges_chart");
+        let totalChargesGroup = project_filter.dimension["timecard_date"].group().reduceSum(
+            function (d) {
+                let total = 0;
+                console.log("orig");
+                console.log(d);
+                for (let i = 0; i < timecard_data.length; i++) {
+                    let this_date = d.timecard_date.split("-");
+                    let other_date = timecard_data[i].fields.timecard_date.split("-");
+                    if (new Date(this_date[0], this_date[1], this_date[2]) >= new Date(other_date[0], other_date[1], other_date[2]) &&
+                        d.timecard_owner === timecard_data[i].fields.timecard_owner) {
+                        total += d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                    }
+
+                }
+                return d.timecard_hours * profileHash[d.timecard_owner].hourly;
+            }
+        );
+        totalChargesChart
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .xAxis().tickFormat(function (d) {
+            return d.substr(8)
+        });
+
+        totalChargesChart
+            .xAxisLabel('Date')
+            .yAxisLabel('Labor Charges')
+            .dimension(project_filter.dimension["timecard_date"])
+            .group(totalChargesGroup).renderArea(true);
+
+        totalChargesChart.render();
     }
 
+    static getExpectedIncome(timecard_data, user_data, task_data,
+                             expenditure_data, profile_data, project_data) {
+        console.log(timecard_data);
+        console.log(task_data);
+        console.log(user_data);
+        console.log(expenditure_data);
+        console.log(profile_data);
+        console.log(project_data);
+
+        let taskDataHash = {};
+        for (let i = 0; i < task_data.length; i++) {
+            taskDataHash[task_data[i].pk] = task_data[i].fields;
+        }
+
+        let profileHash = {};
+        for (let i = 0; i < profile_data.length; i++) {
+            profileHash[profile_data[i].pk] = profile_data[i].fields;
+        }
+        console.log(taskDataHash);
+        let master_timecard = [];
+        for (let i = 0; i < timecard_data.length; i++) {
+            master_timecard[i] = timecard_data[i].fields;
+            master_timecard[i].pk = timecard_data[i].pk;
+        }
+        for (let x = 0; x < expenditure_data.length; x++) {
+            let found = 0;
+            for (let i = 0; i < master_timecard.length; i++) {
+                if (master_timecard[i].timecard_date === expenditure_data[x].fields.date) {
+                    console.log("ADDED");
+                    master_timecard[i].expenditures = expenditure_data[x].fields;
+                    found = 1;
+                    break;
+                }
+            }
+            if (0 === found) {
+                master_timecard.push({expenditures: expenditure_data[x].fields})
+            }
+
+        }
+        console.log(master_timecard);
+        // Create crossfilter for project data
+        let project_filter = new DataVisualization(master_timecard);
+        project_filter.generateDimension("timecard_date");
+        project_filter.generateDimension("expenditures");
+
+        let taskIncomeTable = dc.dataTable("#task_income_table");
+        taskIncomeTable.order(d3.ascending).dimension(project_filter.dimension["timecard_date"])
+            .group(function (d) {
+                return ""
+            }).columns([
+            {
+                label: "Date",
+                format: function (d) {
+                    return d.timecard_date;
+                }
+            },
+            {
+                label: "Task",
+                format: function (d) {
+                    return taskDataHash[d.project_task].project_task_title;
+                }
+            }
+            ,
+            {
+                label: "Charged",
+                format: function (d) {
+                    let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                    charge += charge * (project_data[0].fields.labor_markup / 100);
+                    return "$" + charge;
+                }
+            }
+        ]);
+        taskIncomeTable.render();
+        let materialIncomeTable = dc.dataTable("#material_income_table");
+        materialIncomeTable.order(d3.ascending).dimension(project_filter.dimension["expenditures"])
+            .group(function (d) {
+                return ""
+            }).columns([
+            {
+                label: "Date",
+                format: function (d) {
+                    if (d.expenditures === undefined) {
+                        return null;
+                    }
+                    return d.expenditures.date;
+                }
+            },
+            {
+                label: "Cost",
+                format: function (d) {
+                    if (d.expenditures === undefined) {
+                        return null;
+                    }
+                    let charge = d.expenditures.cost;
+                    charge += charge * (project_data[0].fields.material_markup / 100);
+                    return "$" + charge;
+                }
+            }
+        ]);
+        materialIncomeTable.on("renderlet", function () {
+            let value_list = $("#material_income_table").find(".dc-table-column._0");
+            console.log(value_list);
+            for (let i = 0; i < value_list.length; i++) {
+                console.log(value_list[i].textContent.length);
+                if (value_list[i].textContent.length < 1) {
+                    console.log("Removing");
+                    $(value_list[i]).parent().remove();
+                }
+            }
+        });
+        materialIncomeTable.render();
+
+        let hoursWorked = dc.barChart("#income_chart");
+        let hoursWorkedPerDay = project_filter.dimension["timecard_date"].group().reduceSum(
+            function (d) {
+                let income = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                income += income * (project_data[0].fields.labor_markup/100);
+                return income;
+            }
+        );
+        hoursWorked
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .xAxis().tickFormat(function (d) {
+            return d.substr(8)
+        });
+
+        hoursWorked
+            .brushOn(true)
+            .xAxisLabel('Date')
+            .yAxisLabel('Income per Day')
+            .dimension(project_filter.dimension["timecard_date"])
+            .group(hoursWorkedPerDay);
+
+        hoursWorked.render();
+        let profitChart = dc.lineChart("#profit_chart");
+        let profitChartGroup = project_filter.dimension["timecard_date"].group().reduceSum(
+            function (d) {
+                let income = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                income += income * (project_data[0].fields.labor_markup/100);
+                let outlays = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                let profit = income - outlays;
+                return profit;
+            }
+        );
+        profitChart
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .xAxis().tickFormat(function (d) {
+            return d.substr(8)
+        });
+
+        profitChart
+            .brushOn(true)
+            .xAxisLabel('Date')
+            .yAxisLabel('Income per Day')
+            .dimension(project_filter.dimension["timecard_date"])
+            .group(profitChartGroup);
+        profitChart.y(d3.scale.linear().domain([-30, 70]));
+
+        profitChart.render();
+    }
 
     static getClientData(timecard_data, project_data) {
         console.log(timecard_data);
@@ -476,17 +689,17 @@ var OnloadProcessing = class {
             }
         },
             {
-            label: "Hours Worked",
-            format: function (d) {
-                return d.timecard_hours;
-            }
-        },
+                label: "Hours Worked",
+                format: function (d) {
+                    return d.timecard_hours;
+                }
+            },
             {
-            label: "Hourly Charge",
-            format: function (d) {
-                return d.timecard_charge;
+                label: "Hourly Charge",
+                format: function (d) {
+                    return d.timecard_charge;
+                }
             }
-        }
         ]);
         let custom_dimension = timecard_filter.ndx.dimension(function (d) {
             return projectDataHash[d.timecard_project].project_name;

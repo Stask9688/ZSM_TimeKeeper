@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from reportlab.lib.utils import ImageReader
 
-from .models import Project, Timecard, Client, ProjectTask, UserProfile
+from .models import Project, Timecard, Client, ProjectTask, UserProfile, ProjectExpenditure
 from .forms import UserProfileForm
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
@@ -13,7 +13,6 @@ from io import BytesIO
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import UserProfile
 from .forms import UserProfileForm
 from django.forms.models import inlineformset_factory
 from django.core.exceptions import PermissionDenied
@@ -94,9 +93,11 @@ def timecard(request):
 @user_passes_test(check_permission)
 @login_required
 def project_detail(request, project_pk):
-    project = Project.objects.get(pk=project_pk)
+    project = Project.objects.filter(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     timecards = Timecard.objects.filter(timecard_project=project)
+    expenditures = ProjectExpenditure.objects.filter(project_task__in=tasks)
+    print(expenditures)
     task_totals = {}
     task_total_hours = {}
     relevant_users = []
@@ -112,6 +113,8 @@ def project_detail(request, project_pk):
                 task_total_hours[tc.project_task] + tc.timecard_hours
         relevant_users.append(tc.timecard_owner)
     relevant_users = set(relevant_users)
+    user_profiles = UserProfile.objects.filter(user__in=relevant_users)
+    print(user_profiles)
     for task in tasks:
         if task not in task_totals.keys():
             task_totals[task] = 0
@@ -121,7 +124,9 @@ def project_detail(request, project_pk):
                                                    "totals": task_totals,
                                                    "hours": task_total_hours,
                                                    "timecards": timecards,
-                                                   "users": relevant_users})
+                                                   "users": relevant_users,
+                                                   "profiles":user_profiles,
+                                                   "expenditures":expenditures})
 
 
 @user_passes_test(check_permission)
