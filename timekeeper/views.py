@@ -156,9 +156,11 @@ def client_detail(request, client_pk):
             else:
                 projects_running_cost[project] = projects_running_cost[project] + \
                                                  tc.timecard_hours * tc.timecard_charge
+    project_tasks = ProjectTask.objects.filter(project_task_link__in=projects)
     return render(request, "client_detail.html",
                   {"client": client, "projects": projects, "charges": projects_running_cost,
-                   "timecards": project_timecards, "profile": user_profiles, "user": users_on_project})
+                   "timecards": project_timecards, "profile": user_profiles, "user": users_on_project,
+                   "tasks":project_tasks})
 
 
 @user_passes_test(check_permission)
@@ -166,6 +168,7 @@ def client_detail(request, client_pk):
 def projects(request):
     project_object = Project.objects.all()
     timecard_object = Timecard.objects.all()
+    tasks = ProjectTask.objects.filter(project_task__in=project_object)
     if request.user.groups.filter(name="Manager").exists():
         project_object = project_object.filter(employees__username=request.user)
     users_on_project = []

@@ -756,11 +756,11 @@ var OnloadProcessing = class {
         profitChart.render();
     }
 
-    static getClientData(timecard_data, project_data, profile_data,) {
+    static getClientData(timecard_data, project_data, profile_data, tasks) {
         console.log(timecard_data);
         console.log(project_data);
         console.log(profile_data);
-
+        console.log(tasks)
         let profileHash = {};
         for (let i = 0; i < profile_data.length; i++) {
             profileHash[profile_data[i].pk] = profile_data[i].fields;
@@ -776,7 +776,12 @@ var OnloadProcessing = class {
         for (let i = 0; i < project_data.length; i++) {
             projectDataHash[project_data[i].pk] = project_data[i].fields;
         }
-        console.log(projectDataHash);
+
+        let projectTaskHash = {};
+        for (let i = 0; i < tasks.length; i++) {
+            projectTaskHash[tasks[i].fields.project_task_link] = tasks[i].fields;
+        }
+        console.log(projectTaskHash);
         let timecard_filter = new DataVisualization(master_timecard);
         timecard_filter.generateDimension("timecard_date");
         timecard_filter.generateDimension("timecard_project");
@@ -834,9 +839,10 @@ var OnloadProcessing = class {
             .group(function (d) {
                 return projectDataHash[d.timecard_project].project_name;
             }).columns([{
-            label: "Project Name",
+            label: "Project Task",
             format: function (d) {
-                return projectDataHash[d.timecard_project].project_name;
+                console.log(d.timecard_project)
+                return projectTaskHash[d.timecard_project].project_task_title;
             }
         },
             {

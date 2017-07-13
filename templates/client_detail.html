@@ -25,6 +25,7 @@
 
     <script>OnloadProcessing.getClientData({{ timecards|json_safe }},
         {{ projects|json_safe }},
-        {{ profile|json_safe }});</script>
+        {{ profile|json_safe }},
+        {{ tasks|json_safe }});</script>
 
 {% endblock %}
