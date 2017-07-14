@@ -1,0 +1,1 @@
+[{"model": "timekeeper.projectexpenditure", "pk": 1, "fields": {"project_task": 14, "date": "2017-07-12", "cost": 20.0, "description": "Specialized tools to pry sigils from walls"}}, {"model": "timekeeper.projectexpenditure", "pk": 2, "fields": {"project_task": 13, "date": "2017-07-12", "cost": 50.0, "description": "Sanctified hedge clipping tools"}}]

@@ -24,6 +24,8 @@ SECRET_KEY = '9v3wd@t+jk(5&*&x9ps&pfc$jw))7i1_d2g5^$&tr&ti8hh1-b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+
 ALLOWED_HOSTS = ["*"]
 
 # Application definition

@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import UserProfile
 
 class TimeCardForm(forms.Form):
     project = forms.CharField(max_length=40)

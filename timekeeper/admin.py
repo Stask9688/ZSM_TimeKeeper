@@ -1,14 +1,23 @@
 from django.contrib import admin
-from .models import Project, Client, Timecard, ProjectTask
+from .models import Project, Client, Timecard, ProjectTask, UserProfile, ProjectExpenditure
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.db.models import Q
+
+
+class ProjectExpenditureDetail(admin.ModelAdmin):
+    list_display = ("project_task", "description", "date", "cost",)
 
 
 class ProjectDetail(admin.ModelAdmin):
     list_display = ("project_name", "project_description", "client",
                     "running_cost", "flat_rate")
     filter_horizontal = ('employees',)
+
+
+class UserProfileDetail(admin.ModelAdmin):
+    list_display = (
+        "user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing")
 
 
 class ClientDetail(admin.ModelAdmin):
@@ -85,7 +94,10 @@ class ProjectTaskDetail(admin.ModelAdmin):
         print(project_task_object)
         return project_task_object
 
+
 admin.site.register(Project, ProjectDetail)
 admin.site.register(Client, ClientDetail)
 admin.site.register(Timecard, TimecardDetail)
 admin.site.register(ProjectTask, ProjectTaskDetail)
+admin.site.register(UserProfile, UserProfileDetail)
+admin.site.register(ProjectExpenditure, ProjectExpenditureDetail)
