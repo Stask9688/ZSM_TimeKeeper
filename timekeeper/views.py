@@ -47,7 +47,7 @@ def home(request):
     context = {'latest_timecards': latest_timecards, 'projects': projects}
     if request.user.groups.filter(name="Manager").exists() \
             or request.user.groups.filter(name="Owner").exists():
-        return render(request, "projects.html", context)
+        return HttpResponseRedirect(request, "projects.html", context)
     if request.user.groups.filter(name="Employee").exists():
         return HttpResponseRedirect(request, "/admin/timekeeper/timecard")
     if request.user.groups.filter(name="HR").exists():
@@ -292,11 +292,18 @@ def pdfgenerate(request, project_pk):
     project = Project.objects.get(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     response = HttpResponse(content_type='application/pdf')
+    timecards = Timecard.objects.filter(timecard_project = project)
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
     project = Project.objects.get(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     buffer = BytesIO()
-
+    total_hours = 0
+    total_running_cost = 0
+    for tc in timecards:
+        print(tc.timecard_charge)
+        total_running_cost = tc.timecard_charge * tc.timecard_hours
+        total_hours = tc.timecard_hours
+    print(total_running_cost)
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)
     i = 0
@@ -314,20 +321,19 @@ def pdfgenerate(request, project_pk):
     p.drawString(40, 815, "ZSM Timekeeper Sample Project Detail Form")
     p.drawString(25, 750, "Project: " + project.project_name)
     p.drawString(25, 735, "Project Description: " + project.project_description)
-    p.drawString(25, 720, "Total Hours Remaining: " + str(project.project_hours))
-    p.drawString(25, 695, "Client: " + str(project.client))
-    p.drawString(25, 680, "Client Email: " + str(project.client.email))
-    p.drawString(25, 665, "Client Phone Number: " + str(project.client.phone_number))
+    p.drawString(25, 720, "Total Hours Worked: " + str(total_hours))
+    # p.drawString(25, 705, "Total Running Cost: $", str(int(total_running_cost)))
+    p.drawString(25, 680, "Client: " + str(project.client))
+    p.drawString(25, 665, "Client Email: " + str(project.client.email))
+    p.drawString(25, 650, "Client Phone Number: " + str(project.client.phone_number))
     i = 0
-    position = 640
+    position = 625
     p.drawString(25, position, "Remaining Tasks: ")
     while i != totaltasks:
         position = position - 20
         p.drawString(40, position, "Task Title: " + str(tasks[i].project_task_title))
         position = position - 20
         p.drawString(50, position, "Task Description: " + str(tasks[i].project_task_description))
-        position = position - 20
-        p.drawString(50, position, "Task Hours Remaining: " + str(tasks[i].project_task_hours_remaining))
         i += 1
     pnum = p.getPageNumber()
     p.drawString(500, 25, "Page " + str(pnum))
