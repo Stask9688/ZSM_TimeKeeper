@@ -168,7 +168,6 @@ def client_detail(request, client_pk):
 def projects(request):
     project_object = Project.objects.all()
     timecard_object = Timecard.objects.all()
-    tasks = ProjectTask.objects.filter(project_task__in=project_object)
     if request.user.groups.filter(name="Manager").exists():
         project_object = project_object.filter(employees__username=request.user)
     users_on_project = []
@@ -223,7 +222,6 @@ def project_data(request):
     for project in project_object:
         project_total_time = 0
         timecard_for_project = Timecard.objects.filter(timecard_project=project)
-        tasks = ProjectTask.objects.filter(project_task_link=project)
         for timecard in timecard_for_project:
             project_total_time += timecard.timecard_hours
         Project.objects.filter(project_name=project).update(project_hours=project_total_time)

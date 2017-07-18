@@ -32,7 +32,7 @@ class TimecardDetail(admin.ModelAdmin):
         if obj is None:
             return True
 
-        if obj.timecard_approved != "Pending" and request.user.groups == "Employee":
+        if obj.timecard_approved != "Pending" and request.user.groups.filter(name="Employee").exists():
             return False
 
         if obj.timecard_approved != "Pending" and request.user.groups.filter(name="Manager").exists() and \
@@ -45,6 +45,8 @@ class TimecardDetail(admin.ModelAdmin):
         print(db_field.name)
         if db_field.name == "timecard_approved" and request.user.groups.filter(name="Employee").exists():
             return
+        kwargs['choices'] = (("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected"),)
+        return db_field.formfield(**kwargs)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
 
