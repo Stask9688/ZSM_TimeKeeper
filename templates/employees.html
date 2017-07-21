@@ -1,5 +1,6 @@
-{% extends "base.html" %}
-{% load custom_tags %}
+{% extends "admin/base.html" %}
+{% load custom_tags static i18n%}
+{% block brand-logo %} Employees{% endblock %}
 {% block content %}
     <script>
         var x = {{ employees|json_safe }}

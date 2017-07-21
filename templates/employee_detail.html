@@ -1,21 +1,20 @@
-{% extends "base.html" %}
-{% load custom_tags %}
+{% extends "admin/base.html" %}
+{% load custom_tags static i18n %}
+{% block brand-logo %}{{ employee.first_name }} {{ employee.last_name }}{% endblock %}
+{% block minor-logo %}{{ employee.email }}{% endblock %}
 {% block content %}
-    <div class="col-md-12">
-        <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
-        <h4> {{ employee.email }}</h4>
+    <div class="panel">
+        <div class="col-md-5">
+            <div id="timecard_table" class="col-md-2 table table-striped table-bordered"></div>
+        </div>
+        <div class="col-md-7">
+            <div id="timecard_graph" class="col-md-12"></div>
+            <div id="projects_worked" class="col-md-6"></div>
+            <div id="top_earning_projects" class="col-md-6"></div>
+            <h1 id="total_labor_cost_display" class="col-md-12">Total Pay: </h1>
+            <button class="col-md-offset-3 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
+        </div>
     </div>
-    <div class="col-md-5">
-        <div id="timecard_table" class="col-md-2 table table-striped table-bordered"></div>
-    </div>
-    <div class="col-md-7">
-        <div id="timecard_graph" class="col-md-12"></div>
-        <div id="projects_worked" class="col-md-6"></div>
-        <div id="top_earning_projects" class="col-md-6"></div>
-        <h1 id="total_labor_cost_display" class="col-md-12">Total Pay: </h1>
-        <button class="col-md-offset-3 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
-    </div>
-
 
     <script>OnloadProcessing.generateEmployeeDetail({{ timecard|json_safe }}, {{ project|json_safe }},
         {{ task|json_safe }}, {{ profile|json_safe }});</script>
