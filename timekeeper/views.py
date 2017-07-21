@@ -1,5 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from .models import Project, Timecard, Client, ProjectTask, UserProfile, ProjectExpenditure
 from .forms import UserProfileForm
@@ -292,17 +294,15 @@ def pdfgenerate(request, project_pk):
     project = Project.objects.get(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     response = HttpResponse(content_type='application/pdf')
-    timecards = Timecard.objects.filter(timecard_project = project)
+    timecards = Timecard.objects.filter(timecard_project=project)
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
-    project = Project.objects.get(pk=project_pk)
-    tasks = ProjectTask.objects.filter(project_task_link=project)
+    pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
     buffer = BytesIO()
     total_hours = 0
     total_running_cost = 0
     for tc in timecards:
-        print(tc.timecard_charge)
-        total_running_cost = tc.timecard_charge * tc.timecard_hours
-        total_hours = tc.timecard_hours
+        total_running_cost += tc.timecard_charge * tc.timecard_hours
+        total_hours += tc.timecard_hours
     print(total_running_cost)
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)
@@ -317,29 +317,75 @@ def pdfgenerate(request, project_pk):
     # See the ReportLab documentation for the full list of functionality.
     p.line(0, 800, 800, 800)
     p.line(0, 50, 800, 50)
+    #Header
     p.drawInlineImage("timekeeper\static\img\header.jpg", 5, 805, 30, 30)
-    p.drawString(40, 815, "ZSM Timekeeper Sample Project Detail Form")
-    p.drawString(25, 750, "Project: " + project.project_name)
-    p.drawString(25, 735, "Project Description: " + project.project_description)
-    p.drawString(25, 720, "Total Hours Worked: " + str(total_hours))
-    # p.drawString(25, 705, "Total Running Cost: $", str(int(total_running_cost)))
-    p.drawString(25, 680, "Client: " + str(project.client))
-    p.drawString(25, 665, "Client Email: " + str(project.client.email))
-    p.drawString(25, 650, "Client Phone Number: " + str(project.client.phone_number))
+    p.drawString(40, 815, "ZSM Timekeeper")
+    #Bill To Section
+    p.setFont('Vera', 16)
+    p.drawString(25, 750, "BILL TO: ")
+    p.setFont('Vera', 12)
+    p.drawString(40, 735, str(project.client))
+    p.drawString(40, 720, str(project.client.email))
+    p.drawString(40, 705, str(project.client.phone_number))
+
+    #Horizontol Chart
+    p.setFont('Vera', 14)
+    p.drawString(40, 670, "Project Title: ")
+    p.setFont('Vera', 12)
+    p.drawString(130, 670, str(project.project_name))
+    p.setFont('Vera', 10)
+    p.line(40, 660, 560, 660)
+    p.line(40, 600, 560, 600)
+    p.line(40, 660 , 40, 600)
+    #Box 1
+    p.drawString(78, 650, "Invoice No.")
+    p.line(560, 660, 560, 600)
+    #box 2
+    p.drawString(210, 650, "Invoice Date")
+    p.drawString(210, 610, time.strftime("%m/%d/%Y"))
+    p.line(170, 660, 170, 600)
+    #box 3
+    p.drawString(340, 650, "Project No.")
+    p.drawString(355, 610, str(project_pk))
+    p.line(300, 660, 300, 600)
+    #box 4
+    p.drawString(475, 650, "Charges")
+    p.drawString(485, 610, "$" + str(total_running_cost))
+    p.line(430, 660, 430, 600)
+
+    #p.drawString(25, 500, "Project: " + project.project_name)
+    #p.drawString(25, 445, "Project Description: " + project.project_description)
+    #p.drawString(25, 720, "Total Hours Worked: " + str(total_hours))
+    #p.drawString(25, 705, "Total Running Cost: $", str(int(total_running_cost)))
+    #p.drawString(25, 680, "Client: " + str(project.client))
+    #p.drawString(25, 665, "Client Email: " + str(project.client.email))
+    #p.drawString(25, 650, "Client Phone Number: " + str(project.client.phone_number))
+    p.setFont('Vera', 14)
+    p.drawString(40, 540, "Project Task")
+    p.drawString(240, 540, "Project Description")
+    p.drawString(500, 540, "Charges")
+    p.line(40, 530, 560, 530)
+    p.setFont('Vera', 10)
     i = 0
-    position = 625
-    p.drawString(25, position, "Remaining Tasks: ")
+    position = 515
     while i != totaltasks:
+        p.setFont('Vera', 10)
+        p.drawString(40, position, str(tasks[i].project_task_title))
+        p.setFont('Vera', 8)
+        p.drawString(150, position, str(tasks[i].project_task_description))
         position = position - 20
-        p.drawString(40, position, "Task Title: " + str(tasks[i].project_task_title))
-        position = position - 20
-        p.drawString(50, position, "Task Description: " + str(tasks[i].project_task_description))
+
         i += 1
     pnum = p.getPageNumber()
     p.drawString(500, 25, "Page " + str(pnum))
-
-    # Close the PDF object cleanly.
+    # New Page
     p.showPage()
+
+    # Graph Inputs
+    pnum = p.getPageNumber()
+    p.drawString(500, 25, "Page " + str(pnum))
+
+    # Compiles the PDF
     p.save()
 
     # Get the value of the BytesIO buffer and write it to the response.
