@@ -47,11 +47,11 @@ def home(request):
     context = {'latest_timecards': latest_timecards, 'projects': projects}
     if request.user.groups.filter(name="Manager").exists() \
             or request.user.groups.filter(name="Owner").exists():
-        return render(request, "projects.html", context)
+        return redirect("/projects")
     if request.user.groups.filter(name="Employee").exists():
-        return HttpResponseRedirect(request, "/admin/timekeeper/timecard")
+        return redirect("/admin/timekeeper/timecard")
     if request.user.groups.filter(name="HR").exists():
-        return HttpResponseRedirect(request, "/admin")
+        return redirect("/admin")
 
 
 @user_passes_test(check_permission)
@@ -160,7 +160,7 @@ def client_detail(request, client_pk):
     return render(request, "client_detail.html",
                   {"client": client, "projects": projects, "charges": projects_running_cost,
                    "timecards": project_timecards, "profile": user_profiles, "user": users_on_project,
-                   "tasks":project_tasks})
+                   "tasks": project_tasks})
 
 
 @user_passes_test(check_permission)
