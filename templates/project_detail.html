@@ -1,18 +1,15 @@
 {% extends "admin/base.html" %}
 {% load custom_tags static i18n %}
 {% block brand-logo %} {{ project.first.project_name }}{% endblock %}
+{% block minor-logo %} {{ project.first.project_description }} {% endblock %}
 
 {% block content %}
-    <div class="panel">
-        <div class="col-md-12" style="margin-bottom:10px">
-            <h4>{{ project.first.project_description }}</h4>
-            <h4>{{ project.first.supervisors }}</h4>
-            <button type=button class="btn btn-default"
-                    onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">
-                Generate PDF
-            </button>
-        </div>
 
+    <div class="panel">
+    <button type=button class="btn btn-success" style="float:right"
+            onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">
+        Generate PDF
+    </button>
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#spent_tab">Resource
                 Spent</a></li>

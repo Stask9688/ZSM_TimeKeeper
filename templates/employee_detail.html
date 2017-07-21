@@ -1,11 +1,9 @@
 {% extends "admin/base.html" %}
 {% load custom_tags static i18n %}
 {% block brand-logo %}{{ employee.first_name }} {{ employee.last_name }}{% endblock %}
+{% block minor-logo %}{{ employee.email }}{% endblock %}
 {% block content %}
     <div class="panel">
-        <div class="col-md-12">
-            <h4> {{ employee.email }}</h4>
-        </div>
         <div class="col-md-5">
             <div id="timecard_table" class="col-md-2 table table-striped table-bordered"></div>
         </div>
