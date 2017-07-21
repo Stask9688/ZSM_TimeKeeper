@@ -1,9 +1,10 @@
 {% extends "admin/base.html" %}
-
+{% load custom_tags static i18n%}
+{% block brand-logo %} {{ client.first_name }} {{ client.last_name }}{% endblock %}
 {% load custom_tags %}
 {% block content %}
+    <div class="panel">
     <div class="col-md-12">
-        <h2>{{ client.first_name }} {{ client.last_name }}</h2>
         <h4> {{ client.phone_number }}</h4>
         <h4> {{ client.email }}</h4>
 
@@ -22,7 +23,7 @@
             </button>
         </div>
     </div>
-
+</div>
 
     <script>OnloadProcessing.getClientData({{ timecards|json_safe }},
         {{ projects|json_safe }},
