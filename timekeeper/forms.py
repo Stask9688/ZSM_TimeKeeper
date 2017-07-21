@@ -8,7 +8,8 @@ class TimeCardForm(forms.Form):
     task = forms.CharField(max_length= 100)
     date = forms.DateField()
     hours = forms.IntegerField()
-
+    expenditure = forms.IntegerField()
+    expenditure_desc = forms.CharField(max_length=100)
 
 class UserProfileForm(forms.ModelForm):
     class Meta:

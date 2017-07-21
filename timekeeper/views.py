@@ -86,7 +86,9 @@ def timecard(request):
                                  timecard_task=task,
                                  timecard_date=request.GET.get('date'),
                                  timecard_hours=request.GET.get('hours'),
-                                 timecard_charge=request.GET.get('charge'))
+                                 timecard_charge=request.GET.get('charge'),
+                                 timecard_expenditure=request.GET.get('expenditure'),
+                                 timecard_expenditure_desc=request.GET.get('expenditure_desc'))
             temp_card.save()
             return render(request, "timecard.html", {'invalid_charge': invalid_charge, 'project': project_object,
                                                      "timecard": timecard_object})
@@ -110,11 +112,11 @@ def project_detail(request, project_pk):
     for tc in timecards:
         if tc.project_task not in task_totals.keys():
             task_totals[tc.project_task] = tc.timecard_hours * \
-                                           tc.timecard_charge
+                                           tc.timecard_charge +tc.timecard_expenditure
             task_total_hours[tc.project_task] = tc.timecard_hours
         else:
             task_totals[tc.project_task] = \
-                task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_charge
+                task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_charge + tc.timecard_expenditure
             task_total_hours[tc.project_task] = \
                 task_total_hours[tc.project_task] + tc.timecard_hours
         relevant_users.append(tc.timecard_owner)
@@ -152,10 +154,10 @@ def client_detail(request, client_pk):
         timecards = Timecard.objects.filter(timecard_project=project)
         for tc in timecards:
             if project not in projects_running_cost.keys():
-                projects_running_cost[project] = tc.timecard_hours * tc.timecard_charge
+                projects_running_cost[project] = tc.timecard_hours * tc.timecard_charge + tc.timecard_expenditure
             else:
                 projects_running_cost[project] = projects_running_cost[project] + \
-                                                 tc.timecard_hours * tc.timecard_charge
+                                                 tc.timecard_hours * tc.timecard_charge + tc.timecard_expenditure
     project_tasks = ProjectTask.objects.filter(project_task_link__in=projects)
     return render(request, "client_detail.html",
                   {"client": client, "projects": projects, "charges": projects_running_cost,

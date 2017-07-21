@@ -71,6 +71,10 @@
                 <label for="InputCharge">Input Hourly Charge</label>
                 <input type="number" name="charge" class="form-control" id="InputCharge" placeholder="Charge">
             </div>
+            <div class="form-group">
+                <label for="InputExpend">Input Expenditures</label>
+                <input type="number" name="expend" class="form-control" id="InputExpend" placeholder="Expenditures">
+            </div>
             {% if invalid_charge == True %}
                 <div class="alert alert-danger">
                     Error: Charge entered for flat rate project, timecard not submitted
