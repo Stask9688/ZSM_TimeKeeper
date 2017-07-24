@@ -108,15 +108,15 @@ def project_detail(request, project_pk):
     task_total_hours = {}
     relevant_users = []
     for tc in timecards:
-        if tc.project_task_title not in task_totals.keys():
-            task_totals[tc.project_task_title] = tc.timecard_hours * \
+        if tc.project_task not in task_totals.keys():
+            task_totals[tc.project_task] = tc.timecard_hours * \
                                            tc.timecard_charge
-            task_total_hours[tc.project_task_title] = tc.timecard_hours
+            task_total_hours[tc.project_task] = tc.timecard_hours
         else:
-            task_totals[tc.project_task_title] = \
-                task_totals[tc.project_task_title] + tc.timecard_hours * tc.timecard_charge
-            task_total_hours[tc.project_task_title] = \
-                task_total_hours[tc.project_task_title] + tc.timecard_hours
+            task_totals[tc.project_task] = \
+                task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_charge
+            task_total_hours[tc.project_task] = \
+                task_total_hours[tc.project_task] + tc.timecard_hours
         relevant_users.append(tc.timecard_owner)
     relevant_users = set(relevant_users)
     user_profiles = UserProfile.objects.filter(user__in=relevant_users)

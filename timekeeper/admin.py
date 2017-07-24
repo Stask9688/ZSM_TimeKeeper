@@ -26,7 +26,7 @@ class ClientDetail(admin.ModelAdmin):
 
 class TimecardDetail(admin.ModelAdmin):
     list_display = ("timecard_owner", "timecard_project", 'project_task',
-                    "timecard_date", "timecard_hours", "timecard_approved")
+                    "timecard_date", "timecard_hours","timecard_expenditure", "timecard_approved")
 
     def has_change_permission(self, request, obj=None):
         if obj is None:
