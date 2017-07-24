@@ -29,6 +29,7 @@ class TimecardDetail(admin.ModelAdmin):
                     "timecard_date", "timecard_hours", "timecard_expenditure",
                     "timecard_approved", )
 
+
     def has_change_permission(self, request, obj=None):
         if obj is None:
             return True
