@@ -65,7 +65,6 @@ class Timecard(models.Model):
     timecard_expenditure = models.IntegerField(default=0)
     timecard_expenditure_desc = models.CharField(max_length=100, default="N/A")
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     birthdate = models.DateField(null=True, blank=True)

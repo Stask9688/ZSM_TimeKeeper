@@ -214,8 +214,8 @@ var OnloadProcessing = class {
                                 console.log(timecard_parsed[i]['timecard_hours']);
                                 console.log(timecard_parsed[i]['timecard_expenditure']);
                                 total += timecard_parsed[i]['timecard_hours']
-                                    * profileHash[timecard_parsed[i].timecard_owner].hourly +
-                                    timecard_parsed[i]['timecard_expenditure'];
+                                    * profileHash[timecard_parsed[i].timecard_owner].hourly
+                                    +timecard_parsed[i]['timecard_expenditure'];
                             }
                         }
                         return "$ " + (total).toFixed(2);

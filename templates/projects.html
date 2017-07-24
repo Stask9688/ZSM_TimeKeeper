@@ -1,12 +1,12 @@
-{% extends "base.html" %}
-{% load custom_tags %}
-{% load static %}
+{% extends "admin/base.html" %}
+{% load custom_tags static i18n%}
+{% block brand-logo %} {% trans 'Project' %}{% endblock %}
 {% block content %}
-    <div id="bar_chart" class="col-md-12"></div>
-    <button class="button col-md-offset-6 btn btn-primary" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
-    <table id="project_table" class="table table-striped table-bordered col-md-12">
-    </table>
-
+    <div  class=" col-md-12">
+        <div class="card col-md-12 "><div id="bar_chart" class="card-content col-md-12"></div></div>
+        <button class="button btn btn-primary col-md-offset-6" onclick="dc.filterAll();dc.redrawAll()">Reset</button>
+        <div class="card"><table id="project_table" class="card-content table-striped table-bordered"> </table></div>
+    </div>
     <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>
     <script>OnloadProcessing.get_projects({{ projects|json_safe }},
         {{ timecards|json_safe }}, {{ profiles|json_safe }})</script>
