@@ -172,6 +172,8 @@ def projects(request):
     timecard_object = Timecard.objects.all()
     if request.user.groups.filter(name="Manager").exists():
         project_object = project_object.filter(employees__username=request.user)
+    print("Value: ", timecard_object[0].timecard_expenditure)
+
     users_on_project = []
     for timecard in timecard_object:
         if timecard.timecard_owner.pk not in users_on_project:
