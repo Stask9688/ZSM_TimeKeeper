@@ -47,11 +47,11 @@ def home(request):
     context = {'latest_timecards': latest_timecards, 'projects': projects}
     if request.user.groups.filter(name="Manager").exists() \
             or request.user.groups.filter(name="Owner").exists():
-        return render(request, "projects.html", context)
+        return redirect("/projects")
     if request.user.groups.filter(name="Employee").exists():
-        return HttpResponseRedirect(request, "/admin/timekeeper/timecard")
+        return redirect("/admin/timekeeper/timecard")
     if request.user.groups.filter(name="HR").exists():
-        return HttpResponseRedirect(request, "/admin")
+        return redirect("/admin")
 
 
 @user_passes_test(check_permission)
@@ -108,15 +108,15 @@ def project_detail(request, project_pk):
     task_total_hours = {}
     relevant_users = []
     for tc in timecards:
-        if tc.project_task not in task_totals.keys():
-            task_totals[tc.project_task] = tc.timecard_hours * \
+        if tc.project_task_title not in task_totals.keys():
+            task_totals[tc.project_task_title] = tc.timecard_hours * \
                                            tc.timecard_charge
-            task_total_hours[tc.project_task] = tc.timecard_hours
+            task_total_hours[tc.project_task_title] = tc.timecard_hours
         else:
-            task_totals[tc.project_task] = \
-                task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_charge
-            task_total_hours[tc.project_task] = \
-                task_total_hours[tc.project_task] + tc.timecard_hours
+            task_totals[tc.project_task_title] = \
+                task_totals[tc.project_task_title] + tc.timecard_hours * tc.timecard_charge
+            task_total_hours[tc.project_task_title] = \
+                task_total_hours[tc.project_task_title] + tc.timecard_hours
         relevant_users.append(tc.timecard_owner)
     relevant_users = set(relevant_users)
     user_profiles = UserProfile.objects.filter(user__in=relevant_users)
@@ -160,7 +160,7 @@ def client_detail(request, client_pk):
     return render(request, "client_detail.html",
                   {"client": client, "projects": projects, "charges": projects_running_cost,
                    "timecards": project_timecards, "profile": user_profiles, "user": users_on_project,
-                   "tasks":project_tasks})
+                   "tasks": project_tasks})
 
 
 @user_passes_test(check_permission)

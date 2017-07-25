@@ -31,6 +31,9 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'material',
+    'material.frontend',
+    'material.admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +43,6 @@ INSTALLED_APPS = [
     'timekeeper.apps.TimekeeperConfig',
     'timekeeper.static',
     'smart_selects',
-    'material'
 ]
 
 MIDDLEWARE = [
