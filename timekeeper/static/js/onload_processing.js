@@ -289,6 +289,7 @@ var OnloadProcessing = class {
         console.log(timecard_data);
         console.log(task_data);
         console.log(user_data);
+        console.log(user_data[0].fields.first_name);
         console.log(expenditure_data);
         console.log(profile_data);
         console.log(project_data);
@@ -334,6 +335,9 @@ var OnloadProcessing = class {
         project_filter.generateDimension("timecard_task");
         project_filter.generateDimension("expenditures");
         let custom_dimension = project_filter.ndx.dimension(function (d) {
+            console.log(d.timecard_owner);
+            console.log(user_data);
+            console.log(user_data[d.timecard_owner])
             return user_data[d.timecard_owner - 1].fields.first_name;
         });
 

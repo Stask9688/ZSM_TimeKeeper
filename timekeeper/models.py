@@ -60,9 +60,6 @@ class Timecard(models.Model):
     timecard_expenditure = models.IntegerField(default=0)
     timecard_expenditure_desc = models.CharField(max_length=100, default="N/A")
 
-    def __str__(self):
-        return self.project_task + " " + self.timecard_date
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     birthdate = models.DateField(null=True, blank=True)
