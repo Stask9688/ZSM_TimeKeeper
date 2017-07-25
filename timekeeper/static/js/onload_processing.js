@@ -52,8 +52,7 @@ var OnloadProcessing = class {
                 format: function (d) {
                     return "$ " + (profile_data[0].fields.hourly * d.timecard_hours).toFixed(2);
                 }
-            }
-            ]);
+            }]);
         let height = $(window).height();
 
         tableChart.render();
@@ -136,7 +135,7 @@ var OnloadProcessing = class {
 
 
     static get_projects(project_data, timecard_data, profile_data) {
-        //console.log(profile_data);
+        console.log(profile_data);
         // Unparse serialized data into json format
         let parsed_data = [];
         let timecard_parsed = [];
@@ -154,8 +153,8 @@ var OnloadProcessing = class {
         for (let i = 0; i < profile_data.length; i++) {
             profileHash[profile_data[i].pk] = profile_data[i].fields;
         }
-        //console.log(timecard_parsed);
-        //console.log(parsed_data);
+        console.log(timecard_parsed);
+        console.log(parsed_data);
         // Create crossfilter for project data
         let project_filter = new DataVisualization(parsed_data);
 
@@ -196,7 +195,7 @@ var OnloadProcessing = class {
                         let length = timecard_parsed.length;
                         for (let i = 0; i < length; i++) {
                             if (timecard_parsed[i]['timecard_project'] === d.pk) {
-                                // console.log(timecard_parsed[i]);
+                                console.log(timecard_parsed[i]);
                                 total += timecard_parsed[i]['timecard_hours'];
                             }
                         }
@@ -211,7 +210,6 @@ var OnloadProcessing = class {
                         for (let i = 0; i < length; i++) {
                             if (timecard_parsed[i]['timecard_project'] === d.pk) {
                                 //console.log(timecard_parsed[i]);
-                                console.log(timecard_parsed[i]['timecard_hours']);
                                 console.log(timecard_parsed[i]['timecard_expenditure']);
                                 total += timecard_parsed[i]['timecard_hours']
                                     * profileHash[timecard_parsed[i].timecard_owner].hourly
