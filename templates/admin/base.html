@@ -71,14 +71,14 @@
                         </li>
                     {% endblock %}
                     {% block sidenav_items %}
-                        {% if site_url %}
+                        {% comment %}{% if site_url %}
                             {% block back_link %}
                                 <li class="no-padding"><a class="collapsible-header" href="{{ site_url }}"><i
                                         class="material-icons">arrow_back</i>{% trans 'View site' %}</a></li>
                             {% endblock %}
-                        {% endif %}
+                        {% endif %}{% endcomment %}
                         {% get_app_list request as app_list %}
-                        {% for app in app_list %}
+                        {% comment %}{% for app in app_list %}
                             <li {% if app.active %}class="active"{% endif %}>
                             <ul class="collapsible collapsible-accordion">
                                 <li>
@@ -96,9 +96,14 @@
                                 </li>
 
                             </ul>
-                        {% endfor %}
+                        {% endfor %}{% endcomment %}
                     {% if request.user|has_group:"Owner" or request.user|has_group:"Manager" %}
 
+                        <li>
+
+                            <a href="/admin" class="collapsible-header{% if app.active %} active{% endif %}">
+                                <i class="material-icons">settings</i>Admin</a>
+                        </li>
                         <li>
 
                             <a href="/projects" class="collapsible-header{% if app.active %} active{% endif %}">
@@ -112,7 +117,19 @@
                             <a href="/employees"  class="collapsible-header{% if app.active %} active{% endif %}">
                                 <i class="material-icons admin-appicon admin-modelicon-auth-user"></i>Employees</a>
                         </li>
+                        <li>
+
+                            <a href="/admin/timekeeper/timecard" class="collapsible-header{% if app.active %} active{% endif %}">
+                                <i class="material-icons">assignment_turned</i>Timecards</a>
+                        </li>
                     {% endif %}
+                        {% if request.user|has_group:"Employee" %}
+                            <li>
+
+                            <a href="/admin/timekeeper/timecard" class="collapsible-header{% if app.active %} active{% endif %}">
+                                <i class="material-icons">assignment_turned</i>Timecards</a>
+                        </li>
+                        {% endif %}
                     {% endblock sidenav_items %}
                 </ul>
             {% endif %}

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
+{% load custom_tags static i18n%}
+{% block brand-logo %} {% trans 'Profile' %}{% endblock %}
 {% block content %}
 <html lang="en">
 <head>

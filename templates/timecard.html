@@ -1,6 +1,6 @@
-{% extends "base.html" %}
-{% load static %}
-{% load custom_tags %}
+{% extends "admin/base.html" %}
+{% load custom_tags static i18n%}
+{% block brand-logo %} {% trans 'Timecard' %}{% endblock %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static "css/global.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/timecard.css" %}"/>
