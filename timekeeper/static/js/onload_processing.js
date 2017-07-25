@@ -209,7 +209,8 @@ var OnloadProcessing = class {
                         let length = timecard_parsed.length;
                         for (let i = 0; i < length; i++) {
                             if (timecard_parsed[i]['timecard_project'] === d.pk) {
-                                console.log(timecard_parsed[i]);
+                                //console.log(timecard_parsed[i]);
+                                console.log(timecard_parsed[i]['timecard_expenditure']);
                                 total += timecard_parsed[i]['timecard_hours']
                                     * profileHash[timecard_parsed[i].timecard_owner].hourly
                                     +timecard_parsed[i]['timecard_expenditure'];
