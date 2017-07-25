@@ -377,6 +377,7 @@ var OnloadProcessing = class {
                     return "$ " + d.timecard_expenditure.toFixed(2);
                 }
             }
+
             // ,
             // {
             //     label: "Customer Charge",

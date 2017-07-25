@@ -13,7 +13,7 @@ class Client(models.Model):
     phone_number = models.CharField(max_length=14)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name + "" + self.last_name
 
 
 class Project(models.Model):
@@ -57,8 +57,9 @@ class Timecard(models.Model):
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)
     timecard_approved = models.CharField(max_length=8, choices=approval_choices, default="Pending")
-    timecard_expenditure = models.IntegerField(default=0, blank=True, null=True)
+    timecard_expenditure = models.IntegerField(default=0)
     timecard_expenditure_desc = models.CharField(max_length=100, default="N/A")
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
