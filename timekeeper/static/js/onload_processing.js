@@ -370,6 +370,7 @@ var OnloadProcessing = class {
                     return "$" + d.timecard_hours * profileHash[d.timecard_owner].hourly;
                 }
             }
+
             // ,
             // {
             //     label: "Customer Charge",

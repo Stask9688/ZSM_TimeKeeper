@@ -62,6 +62,8 @@ class Timecard(models.Model):
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)
     timecard_approved = models.CharField(max_length=8, choices=approval_choices, default="Pending")
+    timecard_expenditure = models.IntegerField(default=0)
+    timecard_expenditure_desc = models.CharField(max_length=100, default="N/A")
 
 
 class UserProfile(models.Model):

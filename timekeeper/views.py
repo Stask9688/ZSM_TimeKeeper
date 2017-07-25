@@ -1,3 +1,6 @@
+import random
+from array import array
+
 from django.shortcuts import render, HttpResponse, redirect
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
@@ -294,16 +297,26 @@ def pdfgenerate(request, project_pk):
     project = Project.objects.get(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     response = HttpResponse(content_type='application/pdf')
-    timecards = Timecard.objects.filter(timecard_project=project)
+    timecards = Timecard.objects.filter(timecard_project=project_pk)
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
     pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
     buffer = BytesIO()
-    total_hours = 0
-    total_running_cost = 0
+    task_totals = {}
+    task_total_hours = {}
+    total_cost = 0;
     for tc in timecards:
-        total_running_cost += tc.timecard_charge * tc.timecard_hours
-        total_hours += tc.timecard_hours
-    print(total_running_cost)
+        if tc.project_task not in task_totals.keys():
+            task_totals[tc.project_task] = tc.timecard_hours * \
+                                           tc.timecard_owner.profile.hourly
+            task_total_hours[tc.project_task] = tc.timecard_hours
+        else:
+            task_totals[tc.project_task] = \
+                task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_owner.profile.hourly + tc.timecard_expenditure
+            task_total_hours[tc.project_task] = \
+                task_total_hours[tc.project_task] + tc.timecard_hours
+
+
+
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)
     i = 0
@@ -312,7 +325,10 @@ def pdfgenerate(request, project_pk):
     while i < len(tasks):
         i += 1
         totaltasks += 1
-
+    i = 0
+    while i != totaltasks:
+        total_cost += task_totals[tasks[i]]
+        i += 1
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
     p.line(0, 800, 800, 800)
@@ -339,6 +355,7 @@ def pdfgenerate(request, project_pk):
     p.line(40, 660 , 40, 600)
     #Box 1
     p.drawString(78, 650, "Invoice No.")
+    p.drawString(78, 610, str(random.randint(0, 99999999)))
     p.line(560, 660, 560, 600)
     #box 2
     p.drawString(210, 650, "Invoice Date")
@@ -350,19 +367,12 @@ def pdfgenerate(request, project_pk):
     p.line(300, 660, 300, 600)
     #box 4
     p.drawString(475, 650, "Charges")
-    p.drawString(485, 610, "$" + str(total_running_cost))
+    p.drawString(485, 610, "$" + str(total_cost))
     p.line(430, 660, 430, 600)
 
-    #p.drawString(25, 500, "Project: " + project.project_name)
-    #p.drawString(25, 445, "Project Description: " + project.project_description)
-    #p.drawString(25, 720, "Total Hours Worked: " + str(total_hours))
-    #p.drawString(25, 705, "Total Running Cost: $", str(int(total_running_cost)))
-    #p.drawString(25, 680, "Client: " + str(project.client))
-    #p.drawString(25, 665, "Client Email: " + str(project.client.email))
-    #p.drawString(25, 650, "Client Phone Number: " + str(project.client.phone_number))
     p.setFont('Vera', 14)
     p.drawString(40, 540, "Project Task")
-    p.drawString(240, 540, "Project Description")
+    p.drawString(240, 540, "Project Hours")
     p.drawString(500, 540, "Charges")
     p.line(40, 530, 560, 530)
     p.setFont('Vera', 10)
@@ -371,11 +381,10 @@ def pdfgenerate(request, project_pk):
     while i != totaltasks:
         p.setFont('Vera', 10)
         p.drawString(40, position, str(tasks[i].project_task_title))
-        p.setFont('Vera', 8)
-        p.drawString(150, position, str(tasks[i].project_task_description))
+        p.drawString(280, position, str(task_total_hours[tasks[i]]))
+        p.drawString(500, position, "$" + str(task_totals[tasks[i]]))
         position = position - 20
-
-        i += 1
+        i+=1
     pnum = p.getPageNumber()
     p.drawString(500, 25, "Page " + str(pnum))
     # New Page
