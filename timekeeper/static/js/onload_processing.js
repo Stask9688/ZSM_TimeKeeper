@@ -378,6 +378,7 @@ var OnloadProcessing = class {
                     return "$ " + d.timecard_expenditure.toFixed(2);
                 }
             }
+
             // ,
             // {
             //     label: "Customer Charge",
@@ -389,7 +390,7 @@ var OnloadProcessing = class {
         ]);
 
         taskTableChart.on("renderlet", function () {
-            let projects = $("tbody");
+            let projects = $("tbody:first");
             let overall_hours = 0;
             let overall_labor = 0;
             let overall_expend = 0;
