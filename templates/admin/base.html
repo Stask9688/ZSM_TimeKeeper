@@ -14,7 +14,6 @@
     <script type="text/javascript" src="{% static "js/onload_processing.js" %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-theme.min.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/dc.min.css" %}"/>
     {% block head %}
         <meta charset="utf-8">
@@ -39,6 +38,8 @@
             </script>
             <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
             <script type="text/javascript">window.__admin_utc_offset__ = "{% filter escapejs %}{% now "Z" %}{% endfilter %}";</script>
+               <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
+
             {% if user.is_authenticated %}
                 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>{% endif %}
             {{ media.js }}

@@ -13,15 +13,18 @@ class ProjectDetail(admin.ModelAdmin):
     list_display = ("project_name", "project_description", "client",
                     "running_cost", "flat_rate")
     filter_horizontal = ('employees',)
+    search_fields = ['project_name', 'project_description', 'client__first_name', 'client__last_name']
 
 
 class UserProfileDetail(admin.ModelAdmin):
     list_display = (
         "user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing", "hourly")
 
+    search_fields = ['user__username']
+
     def get_readonly_fields(self, request, obj=None):
         if obj and request.user.groups.filter(name="Employee").exists():  # when editing an object
-            return ['ssn', 'birthdate', 'hourly']
+            return ['user', 'ssn', 'birthdate', 'hourly']
         return self.readonly_fields
 
     def get_queryset(self, request):
@@ -31,13 +34,18 @@ class UserProfileDetail(admin.ModelAdmin):
         else:
             return UserProfile.objects.all()
 
+
 class ClientDetail(admin.ModelAdmin):
+    search_fields = ['last_name', 'first_name', 'email', 'phone_number']
     list_display = ("last_name", "first_name", "email", "phone_number")
 
 
 class TimecardDetail(admin.ModelAdmin):
     list_display = ("timecard_owner", "timecard_project", 'project_task',
-                    "timecard_date", "timecard_hours","timecard_approved")
+                    "timecard_date", "timecard_hours", "timecard_approved")
+
+    search_fields = ['timecard_owner__username', 'timecard_project__project_name',
+                     'project_task__project_task_title']
 
     def has_change_permission(self, request, obj=None):
         if obj is None:
@@ -97,6 +105,9 @@ class ProjectTaskDetail(admin.ModelAdmin):
     list_display = ("project_task_link", "project_task_title",
                     "project_task_description", "project_task_hours_remaining")
 
+    search_fields = ['project_task_link__project_name', 'project_task_title',
+                     'project_task_description']
+
     def get_queryset(self, request):
         project_object = Project.objects.filter(employees__username=request.user)
         print(project_object)
@@ -107,7 +118,8 @@ class ProjectTaskDetail(admin.ModelAdmin):
         print(project_task_object)
         return project_task_object
 
-#class UserDe
+
+# class UserDe
 
 admin.site.register(Project, ProjectDetail)
 admin.site.register(Client, ClientDetail)

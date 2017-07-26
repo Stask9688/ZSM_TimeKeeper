@@ -52,13 +52,14 @@ class Timecard(models.Model):
     approval_choices = ((P, "Pending"), (A, "Approved"), (R, "Rejected"),)
     timecard_owner = models.ForeignKey(User, null=True)
     timecard_project = models.ForeignKey(Project, null=False, default=1)
-    project_task = models.ForeignKey(ProjectTask, null = True)
+    project_task = models.ForeignKey(ProjectTask, null=True)
     timecard_date = models.DateField()
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)
     timecard_approved = models.CharField(max_length=8, choices=approval_choices, default="Pending")
     timecard_expenditure = models.IntegerField(default=0)
     timecard_expenditure_desc = models.CharField(max_length=100, default="N/A")
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')

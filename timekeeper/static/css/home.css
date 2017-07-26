@@ -37,7 +37,9 @@ table{
 .bar:hover{
     cursor:pointer;
 }
-
+.right-panel{
+    display:block;
+}
 #content-pane{
     margin-top:20px;
 }
