@@ -166,6 +166,8 @@ var OnloadProcessing = class {
         //Initialize table chart to be rendered on component with id=project_table
         let tableChart = dc.dataTable("#project_table");
         tableChart.order(d3.ascending)
+
+            .size(10)
             .dimension(project_filter.dimension["pk"])
             .group(function (d) {
                 //Tables don't need groups like other charts,
@@ -195,7 +197,6 @@ var OnloadProcessing = class {
                         let length = timecard_parsed.length;
                         for (let i = 0; i < length; i++) {
                             if (timecard_parsed[i]['timecard_project'] === d.pk) {
-                                console.log(timecard_parsed[i]);
                                 total += timecard_parsed[i]['timecard_hours'];
                             }
                         }
@@ -236,16 +237,17 @@ var OnloadProcessing = class {
                 return d["project_hours"];
             }
         );
-        let barChart = dc.barChart(" #bar_chart");
+        let barChart = dc.barChart("#bar_chart");
+        console.log(timecard_parsed[timecard_parsed.length-1].timecard_project)
         barChart
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .brushOn(false)
+            .x(d3.scale.linear().domain([1,13]))
+            .xUnits(dc.units.integers)
             .xAxisLabel('Project ID')
             .yAxisLabel('Hours Worked')
             .dimension(project_filter.dimension["pk"])
             .group(hoursGroup);
 
+        barChart.brushOn(true);
         //Dcjs tables add a row on render, we'll remove it
         //via jquery
         tableChart.on('postRender', function () {
@@ -354,12 +356,6 @@ var OnloadProcessing = class {
                     return taskDataHash[d.project_task].project_task_title;
                 }
             },
-            // {
-            //     label: "Task Description",
-            //     format: function (d) {
-            //         return taskDataHash[d.project_task].project_task_description;
-            //     }
-            // },
             {
                 label: "Hours Spent",
                 format: function (d) {
@@ -378,15 +374,6 @@ var OnloadProcessing = class {
                     return "$ " + d.timecard_expenditure.toFixed(2);
                 }
             }
-
-            // ,
-            // {
-            //     label: "Customer Charge",
-            //     format: function (d) {
-            //         let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
-            //         return charge + charge * ((project_data[0].fields.labor_markup) / 100);
-            //     }
-            // },
         ]);
 
         taskTableChart.on("renderlet", function () {

@@ -18,7 +18,12 @@ class ProjectDetail(admin.ModelAdmin):
 class UserProfileDetail(admin.ModelAdmin):
     list_display = (
         "user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing")
-
+    def get_queryset(self, request):
+        print(request.user)
+        if request.user.groups.filter(name="Employee").exists():
+            return UserProfile.objects.filter(user=request.user)
+        else:
+            return UserProfile.objects.all()
 
 class ClientDetail(admin.ModelAdmin):
     list_display = ("last_name", "first_name", "email", "phone_number")
@@ -96,6 +101,7 @@ class ProjectTaskDetail(admin.ModelAdmin):
         print(project_task_object)
         return project_task_object
 
+#class UserDe
 
 admin.site.register(Project, ProjectDetail)
 admin.site.register(Client, ClientDetail)

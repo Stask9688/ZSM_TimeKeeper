@@ -8,7 +8,7 @@
         <div class="card"><table id="project_table" class="card-content table-striped table-bordered"> </table></div>
     </div>
     <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>
-    <script>console.log( {{ timecards|json_safe }});
+    <script>
         OnloadProcessing.get_projects({{ projects|json_safe }},
         {{ timecards|json_safe }}, {{ profiles|json_safe }})</script>
 {% endblock %}
