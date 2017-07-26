@@ -17,7 +17,13 @@ class ProjectDetail(admin.ModelAdmin):
 
 class UserProfileDetail(admin.ModelAdmin):
     list_display = (
-        "user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing")
+        "user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing", "hourly")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj and request.user.groups.filter(name="Employee").exists():  # when editing an object
+            return ['ssn', 'birthdate', 'hourly']
+        return self.readonly_fields
+
     def get_queryset(self, request):
         print(request.user)
         if request.user.groups.filter(name="Employee").exists():
