@@ -54,7 +54,7 @@ var OnloadProcessing = class {
                 }
             }]);
         let height = $(window).height();
-
+        tableChart.size(6);
         tableChart.render();
         $("#timecard_table").height(height - 200);
         let barChart = dc.barChart("#timecard_graph");
@@ -64,6 +64,7 @@ var OnloadProcessing = class {
             }
         );
         barChart
+            .brushOn(true)
             .x(d3.scale.ordinal())
             .xUnits(dc.units.ordinal)
             .xAxis().tickFormat(function (d) {
@@ -375,7 +376,7 @@ var OnloadProcessing = class {
                 }
             }
         ]);
-
+        taskTableChart.size();
         taskTableChart.on("renderlet", function () {
             let projects = $("tbody:first");
             let overall_hours = 0;

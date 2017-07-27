@@ -52,7 +52,7 @@ def home(request):
     context = {'latest_timecards': latest_timecards, 'projects': projects}
     if request.user.groups.filter(name="Manager").exists() \
             or request.user.groups.filter(name="Owner").exists():
-        return redirect("/projects")
+        return redirect("/admin")
     if request.user.groups.filter(name="Employee").exists():
         return redirect("/admin/timekeeper/timecard")
     if request.user.groups.filter(name="HR").exists():
@@ -306,18 +306,27 @@ def pdfgenerate(request, project_pk):
     pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
     buffer = BytesIO()
     task_totals = {}
+    labor_totals = {}
+    expenditure_totals = {}
     task_total_hours = {}
-    total_cost = 0;
+    total_cost = 0
     for tc in timecards:
         if tc.project_task not in task_totals.keys():
             task_totals[tc.project_task] = tc.timecard_hours * \
                                            tc.timecard_owner.profile.hourly
             task_total_hours[tc.project_task] = tc.timecard_hours
+            labor_totals[tc.project_task] = tc.timecard_hours * \
+                                           tc.timecard_owner.profile.hourly
+            expenditure_totals[tc.project_task] = tc.timecard_expenditure
         else:
+
             task_totals[tc.project_task] = \
                 task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_owner.profile.hourly + tc.timecard_expenditure
             task_total_hours[tc.project_task] = \
                 task_total_hours[tc.project_task] + tc.timecard_hours
+        labor_totals[tc.project_task] = labor_totals[tc.project_task] + tc.timecard_hours * \
+                                        tc.timecard_owner.profile.hourly
+        expenditure_totals[tc.project_task] = expenditure_totals[tc.project_task]+tc.timecard_expenditure
 
 
 
@@ -370,14 +379,16 @@ def pdfgenerate(request, project_pk):
     p.drawString(355, 610, str(project_pk))
     p.line(300, 660, 300, 600)
     #box 4
-    p.drawString(475, 650, "Charges")
+    p.drawString(460, 650, "Project Charges")
     p.drawString(485, 610, "$" + str(total_cost))
     p.line(430, 660, 430, 600)
 
-    p.setFont('Vera', 14)
+    p.setFont('Vera', 11)
     p.drawString(40, 540, "Project Task")
-    p.drawString(240, 540, "Project Hours")
-    p.drawString(500, 540, "Charges")
+    p.drawString(200, 540, "Project Hours")
+    p.drawString(300, 540, "Labor")
+    p.drawString(375, 540, "Material")
+    p.drawString(470, 540, "Total Charges")
     p.line(40, 530, 560, 530)
     p.setFont('Vera', 10)
     i = 0
@@ -385,8 +396,10 @@ def pdfgenerate(request, project_pk):
     while i != totaltasks:
         p.setFont('Vera', 10)
         p.drawString(40, position, str(tasks[i].project_task_title))
-        p.drawString(280, position, str(task_total_hours[tasks[i]]))
-        p.drawString(500, position, "$" + str(task_totals[tasks[i]]))
+        p.drawString(200, position, str(task_total_hours[tasks[i]]))
+        p.drawString(300, position, "$" + str(labor_totals[tasks[i]])+"0")
+        p.drawString(375, position, "$" + str(expenditure_totals[tasks[i]])+".00")
+        p.drawString(500, position, "$" + str(task_totals[tasks[i]])+"0")
         position = position - 20
         i+=1
     pnum = p.getPageNumber()
