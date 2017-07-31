@@ -53,10 +53,13 @@ def home(request):
     if request.user.groups.filter(name="Manager").exists() \
             or request.user.groups.filter(name="Owner").exists():
         return redirect("/admin")
-    if request.user.groups.filter(name="Employee").exists():
+    elif request.user.groups.filter(name="Employee").exists():
         return redirect("/admin/timekeeper/timecard")
-    if request.user.groups.filter(name="HR").exists():
+    elif request.user.groups.filter(name="HR").exists():
         return redirect("/admin")
+    else:
+        return redirect("/logout")
+
 
 
 @user_passes_test(check_permission)

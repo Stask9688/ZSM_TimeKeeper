@@ -38,7 +38,7 @@
             </script>
             <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
             <script type="text/javascript">window.__admin_utc_offset__ = "{% filter escapejs %}{% now "Z" %}{% endfilter %}";</script>
-               <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
+            <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
 
             {% if user.is_authenticated %}
                 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>{% endif %}
@@ -81,23 +81,24 @@
                         {% get_app_list request as app_list %}
                         {% for app in app_list %}
                             {% if app.name != "Frontend" %}
-                            <li {% if app.active %}class="active"{% endif %}>
-                            <ul class="collapsible collapsible-accordion">
-                                <li>
-                                    <a class="collapsible-header{% if app.active %} active{% endif %}">{{ app.app_icon }} {{ app.name|truncatechars:23 }}</a>
-                                    <div class="collapsible-body" {% if app.active %}style="display:block"{% endif %}>
-                                        <ul>
-                                            {% for model in app.models %}
-                                                <li class="{% if model.active %}active{% endif %}">
-                                                    <a href="{{ model.admin_url }}">{% trans model.name %}</a>
-                                                </li>
-                                            {% endfor %}
+                                <li {% if app.active %}class="active"{% endif %}>
+                                <ul class="collapsible collapsible-accordion">
+                                    <li>
+                                        <a class="collapsible-header{% if app.active %} active{% endif %}">{{ app.app_icon }} {{ app.name|truncatechars:23 }}</a>
+                                        <div class="collapsible-body"
+                                             {% if app.active %}style="display:block"{% endif %}>
+                                            <ul>
+                                                {% for model in app.models %}
+                                                    <li class="{% if model.active %}active{% endif %}">
+                                                        <a href="{{ model.admin_url }}">{% trans model.name %}</a>
+                                                    </li>
+                                                {% endfor %}
 
-                                        </ul>
-                                    </div>
-                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
 
-                            </ul>
+                                </ul>
                             {% endif %}
                         {% endfor %}
                     {% if request.user|has_group:"Owner" or request.user|has_group:"Manager" %}
@@ -112,10 +113,18 @@
                                 <i class="material-icons admin-appicon admin-modelicon-djstripe-customer"></i>Clients</a>
                         </li>
                         <li>
-                            <a href="/employees"  class="collapsible-header{% if app.active %} active{% endif %}">
+                            <a href="/employees" class="collapsible-header{% if app.active %} active{% endif %}">
                                 <i class="material-icons admin-appicon admin-modelicon-auth-user"></i>Employees</a>
                         </li>
                     {% endif %}
+                        <li class="hidden-lg hidden-md">
+                            <a class="collapsible-header" href="{% url 'admin:password_change' %}">{% trans 'Change password' %}
+                                <i class="material-icons admin-appicon admin-modelicon-axes-accessattempt" style="float:left!important"></i></a>
+                        </li>
+                        <li class="hidden-lg hidden-md">
+                            <a href="{% url 'admin:logout' %}" data-turbolinks="false"
+                               class="collapsible-header">{% trans "Log out" %}
+                                <i class="material-icons right" style="float:left!important">exit_to_app</i></a></li>
                     {% endblock sidenav_items %}
                 </ul>
             {% endif %}
@@ -132,7 +141,7 @@
                             {% block page_title %}
                                 <a href="/" class="page-title">
                                     {% block brand-logo %}{% trans 'Administration' %}{% endblock %}</a>
-                                    <h6>{% block minor-logo %}{% endblock %}</h6>
+                                <h6>{% block minor-logo %}{% endblock %}</h6>
                             {% endblock %}
                         </div>
                         <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -148,10 +157,10 @@
                                     </li>
                                 {% endif %}
                                 {% if user.is_authenticated %}
-                                    <li><a href="{% url 'admin:logout' %}" data-turbolinks="false"><i
+                                    <li ><a href="{% url 'admin:logout' %}" data-turbolinks="false"><i
                                             class="material-icons right">exit_to_app</i>{% trans "Log out" %}</a></li>
                                 {% else %}
-                                    <li><a href="{% url 'admin:login' %}" data-turbolinks="false"><i
+                                    <li ><a href="{% url 'admin:login' %}" data-turbolinks="false"><i
                                             class="material-icons right">lock_open</i>{% trans "Log in" %}</a></li>
                                 {% endif %}
                             {% endblock %}
