@@ -6,13 +6,15 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-                        <button type=button class="btn btn-success col-xs-2" style="float:right"
+                        <button type=button class="btn btn-success col-xs-2" style="float:left"
                     onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">
                 Generate PDF
             </button>
+             <a > <button class="col-md-offset-5 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">
+                            Reset
+                        </button></a>
             <ul class="nav nav-tabs col-xs-4">
-                <li class="active"><a data-toggle="tab" href="#spent_tab">Resource
-                    Spent</a></li>
+                <li class="active"><a data-toggle="tab" href="#spent_tab" >Resource Spent</a></li>
                 <li><a data-toggle="tab" href="#income_tab">Expected Income</a></li>
             </ul>
 
@@ -32,12 +34,11 @@
                             </div>
                             <div id="perPersonHours" class="col-md-4"></div>
                             <div class="col-md-6"></div>
-                            <h1 id="total_hours" class="col-md-offset-1 col-md-3">Total hours: </h1>
-                            <h1 id="total_charges" class="col-md-offset-1 col-md-3">Total charges: </h1>
+                            <h5 id="total_hours" class="col-md-offset-1 col-md-3">Total Hours: <br></h5>
+
+                            <h5 id="total_charges" class="col-md-offset-1 col-md-3"> Total Balance: </h5>
                         </div>
-                        <button class="col-md-offset-9 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">
-                            Reset
-                        </button>
+
 
                     </div>
                 </div>
@@ -55,9 +56,6 @@
                                 <div id="profit_chart" style="width:100%"></div>
                             </div>
                         </div>
-                        <button class="col-md-offset-9 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">
-                            Reset
-                        </button>
 
                     </div>
                 </div>
