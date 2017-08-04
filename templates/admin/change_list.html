@@ -80,6 +80,8 @@
         {% csrf_token %}
         <div class="left-panel
 
+
+
                 {% if action_form or cl.date_hierarchy or cl.list_filter or cl.search_fields %}{% else %} wide{% endif %}">
             {% if cl.date_hierarchy or cl.list_filter or cl.search_fields %}
                 <div class="card filters-card">
@@ -128,12 +130,19 @@
     </form>
 
     {% if has_add_permission %}
-        {% url cl.opts|admin_urlname:'add' as add_url %}
-        <div class="fixed-action-btn">
-            <a class="btn-floating btn-large waves-effect waves-light red z-depth-2"
-               href="{% add_preserved_filters add_url is_popup to_field %}">
-                <i class="large material-icons">add</i>
-            </a>
+        <div class="">
+            {% url cl.opts|admin_urlname:'add' as add_url %}
+            <div class="fixed-action-btn ">
+                <a class="btn-floating btn-large waves-effect waves-light red z-depth-2"
+                   href="{% add_preserved_filters add_url is_popup to_field %}">
+                    <i class="large material-icons">add</i>
+                </a>
+            </div>
+            <div>
+                <a class="btn-floating btn-large waves-effect waves-light blue z-depth-2"
+                   href='{% url opts|admin_urlname:"import" %}' class="import_link">
+                    <i class="large material-icons">file_upload</i></a>
+            </div>
         </div>
     {% endif %}
 

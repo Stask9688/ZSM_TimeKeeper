@@ -3,17 +3,27 @@ from .models import Project, Client, Timecard, ProjectTask, UserProfile, Project
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.db.models import Q
+from import_export import resources
+from import_export.admin import ImportExportActionModelAdmin
 
 
 class ProjectExpenditureDetail(admin.ModelAdmin):
     list_display = ("project_task", "description", "date", "cost",)
 
 
-class ProjectDetail(admin.ModelAdmin):
+
+class ProjectResource(resources.ModelResource):
+    class Meta:
+        model = Project
+
+
+class ProjectDetail(ImportExportActionModelAdmin):
     list_display = ("project_name", "project_description", "client",
                     "running_cost", "flat_rate")
     filter_horizontal = ('employees',)
     search_fields = ['project_name', 'project_description', 'client__first_name', 'client__last_name']
+    resource_class = ProjectResource
+
 
 
 class UserProfileDetail(admin.ModelAdmin):

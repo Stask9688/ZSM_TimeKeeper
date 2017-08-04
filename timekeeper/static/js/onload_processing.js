@@ -378,7 +378,7 @@ var OnloadProcessing = class {
         ]);
         taskTableChart.size();
         taskTableChart.on("renderlet", function () {
-            let projects = $("tbody:first");
+            let projects = $("table:first>tbody");
             let overall_hours = 0;
             let overall_labor = 0;
             let overall_expend = 0;
@@ -389,6 +389,7 @@ var OnloadProcessing = class {
                 let total_expend = 0;
                 let row_list = $(projects[i]).find(".dc-table-row");
                 let hours_list = $(projects[i]).find(".dc-table-column._1");
+                console.log(row_list.length);
                 for (let x = 0; x < row_list.length; x++) {
                     console.log($(row_list[x]).children("._2"));
                     total_hours += parseFloat($(row_list[x]).children("._2")[0].textContent);
