@@ -47,7 +47,6 @@ urlpatterns = [
                   url(r'^chaining/', include('smart_selects.urls')),
                   url(r'^accounts/update/(?P<pk>[\-\w]+)/$', views.edit_user, name='account_update'),
                   url(r'^accounts/profile/', views.home, name='user_profile'),
-                  url(r'^export/xls/$', views.export_users_xls, name='export_users_xls'),
 
                   #url(r'', include(frontend_urls)),
 
