@@ -1,20 +1,10 @@
 from django.contrib import admin
-from .models import Project, Client, Timecard, ProjectTask, UserProfile, ProjectExpenditure
+from .models import Project, Client, Timecard, ProjectTask, UserProfile
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.db.models import Q
-from import_export import resources
 from import_export.admin import ImportExportActionModelAdmin
-
-
-class ProjectExpenditureDetail(admin.ModelAdmin):
-    list_display = ("project_task", "description", "date", "cost",)
-
-
-
-class ProjectResource(resources.ModelResource):
-    class Meta:
-        model = Project
+from .admin_import import ProjectResource, TimecardResource
 
 
 class ProjectDetail(ImportExportActionModelAdmin):
@@ -25,8 +15,7 @@ class ProjectDetail(ImportExportActionModelAdmin):
     resource_class = ProjectResource
 
 
-
-class UserProfileDetail(admin.ModelAdmin):
+class UserProfileDetail(ImportExportActionModelAdmin):
     list_display = (
         "user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing", "hourly")
 
@@ -45,17 +34,19 @@ class UserProfileDetail(admin.ModelAdmin):
             return UserProfile.objects.all()
 
 
-class ClientDetail(admin.ModelAdmin):
+class ClientDetail(ImportExportActionModelAdmin):
     search_fields = ['last_name', 'first_name', 'email', 'phone_number']
     list_display = ("last_name", "first_name", "email", "phone_number")
 
 
-class TimecardDetail(admin.ModelAdmin):
+class TimecardDetail(ImportExportActionModelAdmin):
     list_display = ("timecard_owner", "timecard_project", 'project_task',
                     "timecard_date", "timecard_hours", "timecard_approved")
 
     search_fields = ['timecard_owner__username', 'timecard_project__project_name',
                      'project_task__project_task_title']
+
+    resource_class = TimecardResource
 
     def has_change_permission(self, request, obj=None):
         if obj is None:
@@ -111,7 +102,7 @@ class TimecardDetail(admin.ModelAdmin):
         return Timecard.objects.all()
 
 
-class ProjectTaskDetail(admin.ModelAdmin):
+class ProjectTaskDetail(ImportExportActionModelAdmin):
     list_display = ("project_task_link", "project_task_title",
                     "project_task_description", "project_task_hours_remaining")
 
@@ -136,4 +127,3 @@ admin.site.register(Client, ClientDetail)
 admin.site.register(Timecard, TimecardDetail)
 admin.site.register(ProjectTask, ProjectTaskDetail)
 admin.site.register(UserProfile, UserProfileDetail)
-admin.site.register(ProjectExpenditure, ProjectExpenditureDetail)

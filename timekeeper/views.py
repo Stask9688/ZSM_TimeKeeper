@@ -6,7 +6,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from .models import Project, Timecard, Client, ProjectTask, UserProfile, ProjectExpenditure
+from .models import Project, Timecard, Client, ProjectTask, UserProfile
 from .forms import UserProfileForm
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
@@ -61,7 +61,6 @@ def home(request):
         return redirect("/logout")
 
 
-
 @user_passes_test(check_permission)
 @login_required
 def clients(request):
@@ -110,8 +109,6 @@ def project_detail(request, project_pk):
     project = Project.objects.filter(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     timecards = Timecard.objects.filter(timecard_project=project)
-    expenditures = ProjectExpenditure.objects.filter(project_task__in=tasks)
-    print(expenditures)
     task_totals = {}
     task_total_hours = {}
     relevant_users = []
@@ -120,7 +117,7 @@ def project_detail(request, project_pk):
         print(temp_task)
         if temp_task not in task_totals.keys():
             task_totals[temp_task] = tc.timecard_hours * \
-                                           tc.timecard_charge
+                                     tc.timecard_charge
             task_total_hours[temp_task] = tc.timecard_hours
         else:
             task_totals[temp_task] = \
@@ -141,8 +138,7 @@ def project_detail(request, project_pk):
                                                    "hours": task_total_hours,
                                                    "timecards": timecards,
                                                    "users": relevant_users,
-                                                   "profiles": user_profiles,
-                                                   "expenditures": expenditures})
+                                                   "profiles": user_profiles})
 
 
 @user_passes_test(check_permission)
@@ -319,19 +315,18 @@ def pdfgenerate(request, project_pk):
                                            tc.timecard_owner.profile.hourly
             task_total_hours[tc.project_task] = tc.timecard_hours
             labor_totals[tc.project_task] = tc.timecard_hours * \
-                                           tc.timecard_owner.profile.hourly
+                                            tc.timecard_owner.profile.hourly
             expenditure_totals[tc.project_task] = tc.timecard_expenditure
         else:
 
             task_totals[tc.project_task] = \
-                task_totals[tc.project_task] + tc.timecard_hours * tc.timecard_owner.profile.hourly + tc.timecard_expenditure
+                task_totals[
+                    tc.project_task] + tc.timecard_hours * tc.timecard_owner.profile.hourly + tc.timecard_expenditure
             task_total_hours[tc.project_task] = \
                 task_total_hours[tc.project_task] + tc.timecard_hours
         labor_totals[tc.project_task] = labor_totals[tc.project_task] + tc.timecard_hours * \
-                                        tc.timecard_owner.profile.hourly
-        expenditure_totals[tc.project_task] = expenditure_totals[tc.project_task]+tc.timecard_expenditure
-
-
+                                                                        tc.timecard_owner.profile.hourly
+        expenditure_totals[tc.project_task] = expenditure_totals[tc.project_task] + tc.timecard_expenditure
 
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)
@@ -349,10 +344,10 @@ def pdfgenerate(request, project_pk):
     # See the ReportLab documentation for the full list of functionality.
     p.line(0, 800, 800, 800)
     p.line(0, 50, 800, 50)
-    #Header
+    # Header
     p.drawInlineImage("timekeeper\static\img\header.jpg", 5, 805, 30, 30)
     p.drawString(40, 815, "ZSM Timekeeper")
-    #Bill To Section
+    # Bill To Section
     p.setFont('Vera', 16)
     p.drawString(25, 750, "BILL TO: ")
     p.setFont('Vera', 12)
@@ -360,7 +355,7 @@ def pdfgenerate(request, project_pk):
     p.drawString(40, 720, str(project.client.email))
     p.drawString(40, 705, str(project.client.phone_number))
 
-    #Horizontol Chart
+    # Horizontol Chart
     p.setFont('Vera', 14)
     p.drawString(40, 670, "Project Title: ")
     p.setFont('Vera', 12)
@@ -368,20 +363,20 @@ def pdfgenerate(request, project_pk):
     p.setFont('Vera', 10)
     p.line(40, 660, 560, 660)
     p.line(40, 600, 560, 600)
-    p.line(40, 660 , 40, 600)
-    #Box 1
+    p.line(40, 660, 40, 600)
+    # Box 1
     p.drawString(78, 650, "Invoice No.")
     p.drawString(78, 610, str(random.randint(0, 99999999)))
     p.line(560, 660, 560, 600)
-    #box 2
+    # box 2
     p.drawString(210, 650, "Invoice Date")
     p.drawString(210, 610, time.strftime("%m/%d/%Y"))
     p.line(170, 660, 170, 600)
-    #box 3
+    # box 3
     p.drawString(340, 650, "Project No.")
     p.drawString(355, 610, str(project_pk))
     p.line(300, 660, 300, 600)
-    #box 4
+    # box 4
     p.drawString(460, 650, "Project Charges")
     p.drawString(485, 610, "$" + str(total_cost))
     p.line(430, 660, 430, 600)
@@ -400,11 +395,11 @@ def pdfgenerate(request, project_pk):
         p.setFont('Vera', 10)
         p.drawString(40, position, str(tasks[i].project_task_title))
         p.drawString(200, position, str(task_total_hours[tasks[i]]))
-        p.drawString(300, position, "$" + str(labor_totals[tasks[i]])+"0")
-        p.drawString(375, position, "$" + str(expenditure_totals[tasks[i]])+".00")
-        p.drawString(500, position, "$" + str(task_totals[tasks[i]])+"0")
+        p.drawString(300, position, "$" + str(labor_totals[tasks[i]]) + "0")
+        p.drawString(375, position, "$" + str(expenditure_totals[tasks[i]]) + ".00")
+        p.drawString(500, position, "$" + str(task_totals[tasks[i]]) + "0")
         position = position - 20
-        i+=1
+        i += 1
     pnum = p.getPageNumber()
     p.drawString(500, 25, "Page " + str(pnum))
     # New Page

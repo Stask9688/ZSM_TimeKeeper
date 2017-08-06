@@ -76,13 +76,6 @@ class UserProfile(models.Model):
     hourly = models.FloatField(null=True)
 
 
-class ProjectExpenditure(models.Model):
-    project_task = models.ForeignKey(ProjectTask, related_name="task")
-    date = models.DateField(null=True, blank=True)
-    cost = models.FloatField(null=True)
-    description = models.TextField(null=True)
-
-
 def create_profile(sender, **kwargs):
     user = kwargs["instance"]
     if kwargs["created"]:
