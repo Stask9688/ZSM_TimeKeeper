@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.db.models import Q
 from import_export.admin import ImportExportActionModelAdmin
-from .admin_import import ProjectResource, TimecardResource
+from .admin_import import ProjectResource, TimecardResource, UserProfileResource, \
+    ClientProfileResource, ProjectTaskResource
 
 
 class ProjectDetail(ImportExportActionModelAdmin):
@@ -20,6 +21,8 @@ class UserProfileDetail(ImportExportActionModelAdmin):
         "user", "birthdate", "address", "city", "state", "zip", "phone", "ssn", "bank", "account", "routing", "hourly")
 
     search_fields = ['user__username']
+
+    resource_class = UserProfileResource
 
     def get_readonly_fields(self, request, obj=None):
         if obj and request.user.groups.filter(name="Employee").exists():  # when editing an object
@@ -37,6 +40,7 @@ class UserProfileDetail(ImportExportActionModelAdmin):
 class ClientDetail(ImportExportActionModelAdmin):
     search_fields = ['last_name', 'first_name', 'email', 'phone_number']
     list_display = ("last_name", "first_name", "email", "phone_number")
+    resource_class = ClientProfileResource
 
 
 class TimecardDetail(ImportExportActionModelAdmin):
@@ -108,6 +112,8 @@ class ProjectTaskDetail(ImportExportActionModelAdmin):
 
     search_fields = ['project_task_link__project_name', 'project_task_title',
                      'project_task_description']
+
+    resource_class = ProjectTaskResource
 
     def get_queryset(self, request):
         project_object = Project.objects.filter(employees__username=request.user)
