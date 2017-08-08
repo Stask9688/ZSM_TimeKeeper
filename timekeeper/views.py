@@ -42,7 +42,7 @@ def check_permission(user):
 
 def logout_view(request):
     logout(request)
-    return render(request, "admin/logged_out.html")
+    return render(request, "admin/login.html")
 
 
 @login_required
