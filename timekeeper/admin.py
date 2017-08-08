@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Client, Timecard, ProjectTask, UserProfile, ProjectExpenditure
+from .models import Project, Client, Timecard, ProjectTask, UserProfile
 from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.db.models import Q
@@ -104,4 +104,4 @@ admin.site.register(Client, ClientDetail)
 admin.site.register(Timecard, TimecardDetail)
 admin.site.register(ProjectTask, ProjectTaskDetail)
 admin.site.register(UserProfile, UserProfileDetail)
-admin.site.register(ProjectExpenditure, ProjectExpenditureDetail)
+
