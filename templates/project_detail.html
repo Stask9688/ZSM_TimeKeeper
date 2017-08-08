@@ -4,12 +4,39 @@
 {% block minor-logo %} {{ project.first.project_description }} {% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/project_detail.css" %}"/>
     <div class="container-fluid">
         <div class="row">
-                        <button type=button class="btn btn-success col-xs-2" style="float:right"
-                    onclick="window.location='/pdfgenerate/{{ project.first.pk }}';">
-                Generate PDF
-            </button>
+            <body>
+            <button id="myBtn">Generate PDF</button>
+
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-title">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <p>Enter A Date Range for Invoice</p>
+                    </div>
+                    <form action="/pdfgenerate/">
+                    <div class="modal-body">
+                        <input type="hidden" id="projectInput" name="project" value="">
+                        Start:
+                        <input type="date" name="start">
+                        End:
+                        <input type="date" name="end">
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit">
+                    </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                OnloadProcessing.get_URL_PDF({{  project|json_safe}})
+                OnloadProcessing.get_PDFModal();
+            </script>
+            </body>
+
             <ul class="nav nav-tabs col-xs-4">
                 <li class="active"><a data-toggle="tab" href="#spent_tab">Resource
                     Spent</a></li>

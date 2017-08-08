@@ -14,7 +14,7 @@
         <h4>{{ title }}</h4>
         
         <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
-            <input type="hidden" name="next" value='' />
+            <input type="hidden" name="next" value="{{ next }}" />
             {% if 'username' in form.fields %}
                 {% form %}
                     {% part form.username prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}

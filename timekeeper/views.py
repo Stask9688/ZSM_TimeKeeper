@@ -7,7 +7,6 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from .models import Project, Timecard, Client, ProjectTask, UserProfile
-from .forms import UserProfileForm
 from django.contrib.auth.models import User
 from reportlab.pdfgen import canvas
 from django.core import serializers
@@ -18,7 +17,6 @@ from io import BytesIO
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import UserProfileForm
 from django.forms.models import inlineformset_factory
 from django.core.exceptions import PermissionDenied
 import time
@@ -295,12 +293,18 @@ def employee_detail(request, employee_pk):
 
 
 @login_required
-def pdfgenerate(request, project_pk):
+def pdfgenerate(request):
     # Create the HttpResponse object with the appropriate PDF headers.
-    project = Project.objects.get(pk=project_pk)
+    pk1 = request.GET.get('project', '')
+    start = request.GET.get('start','')
+    end = request.GET.get('end', '')
+    print(pk1)
+    print(start)
+    print(end)
+    project = Project.objects.get(pk=pk1)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     response = HttpResponse(content_type='application/pdf')
-    timecards = Timecard.objects.filter(timecard_project=project_pk)
+    timecards = Timecard.objects.filter(timecard_project=pk1, timecard_date__range=(start,end))
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
     pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
     buffer = BytesIO()
@@ -374,7 +378,7 @@ def pdfgenerate(request, project_pk):
     p.line(170, 660, 170, 600)
     # box 3
     p.drawString(340, 650, "Project No.")
-    p.drawString(355, 610, str(project_pk))
+    p.drawString(355, 610, str(pk1))
     p.line(300, 660, 300, 600)
     # box 4
     p.drawString(460, 650, "Project Charges")

@@ -1,5 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_urls admin_static admin_modify material_form material_admin %}
+{% load custom_tags %}
 
 {% block extrahead %}
     {{ block.super }}
@@ -41,6 +42,20 @@
                     {% endif %}
 
                     {% block change_form %}
+                        {% comment %}{% for item in opts.fields %}
+                            {{ item }}{{ " " }} {{ item|to_class_name }}
+                            {% if 'ForeignKey' in item|to_class_name|stringformat:"s"  %}
+                                {{ "hello " }}{{ opt.item }}
+                                <div class="form-group">
+                                <label for="new">Select:</label>
+                                    {% for x in opts.item.all %}
+                                        <option>{{ x }}{{ "hello" }}</option>
+                                    {% endfor %}
+                                <select class="form-control" id="Project" name="project">
+                                </select>
+                                </div>
+                            {% endif %}
+                        {% endfor %}{% endcomment %}
                         {% fieldset_layout adminform inline_admin_formsets as layout %}
                         {% form form=adminform.form layout=layout %}{% endform %}
                         {% prepopulated_fields_js %}
