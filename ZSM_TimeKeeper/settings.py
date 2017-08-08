@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'timekeeper.apps.TimekeeperConfig',
     'timekeeper.static',
     'smart_selects',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -124,5 +125,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "timekeeper", "static")]
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = '/home/'
+LOGIN_REDIRECT_URL = '/accounts/profile/'
 FIXTURE_DIRS = [os.path.join(BASE_DIR, 'Fixtures')]
+
+FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
+                        "django_excel.TemporaryExcelFileUploadHandler")

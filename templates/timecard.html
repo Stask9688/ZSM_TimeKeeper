@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
-{% load custom_tags static i18n%}
-{% block brand-logo %} {% trans 'Timecard' %}{% endblock %}
+{% load static %}
+{% load custom_tags %}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static "css/global.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/timecard.css" %}"/>
@@ -70,10 +70,6 @@
             <div class="form-group">
                 <label for="InputCharge">Input Hourly Charge</label>
                 <input type="number" name="charge" class="form-control" id="InputCharge" placeholder="Charge">
-            </div>
-            <div class="form-group">
-                <label for="InputExpend">Input Expenditures</label>
-                <input type="number" name="expend" class="form-control" id="InputExpend" placeholder="Expenditures">
             </div>
             {% if invalid_charge == True %}
                 <div class="alert alert-danger">

@@ -295,18 +295,12 @@ def employee_detail(request, employee_pk):
 
 
 @login_required
-def pdfgenerate(request):
+def pdfgenerate(request, project_pk):
     # Create the HttpResponse object with the appropriate PDF headers.
-    pk1 = request.GET.get('project', '')
-    start = request.GET.get('start','')
-    end = request.GET.get('end', '')
-    print(pk1)
-    print(start)
-    print(end)
-    project = Project.objects.get(pk=pk1)
+    project = Project.objects.get(pk=project_pk)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     response = HttpResponse(content_type='application/pdf')
-    timecards = Timecard.objects.filter(timecard_project=pk1, timecard_date__range=(start,end))
+    timecards = Timecard.objects.filter(timecard_project=project_pk)
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
     pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
     buffer = BytesIO()
@@ -380,7 +374,7 @@ def pdfgenerate(request):
     p.line(170, 660, 170, 600)
     # box 3
     p.drawString(340, 650, "Project No.")
-    p.drawString(355, 610, str(pk1))
+    p.drawString(355, 610, str(project_pk))
     p.line(300, 660, 300, 600)
     # box 4
     p.drawString(460, 650, "Project Charges")

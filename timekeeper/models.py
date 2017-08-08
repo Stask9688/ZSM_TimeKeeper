@@ -51,8 +51,8 @@ class Timecard(models.Model):
     R = "Rejected"
     approval_choices = ((P, "Pending"), (A, "Approved"), (R, "Rejected"),)
     timecard_owner = models.ForeignKey(User, null=True)
-    timecard_project = models.ForeignKey(Project, null=False, default=1, related_name="projects")
-    project_task = models.ForeignKey(ProjectTask, null=True, related_name="tasks")
+    timecard_project = models.ForeignKey(Project, null=False, default=1)
+    project_task = models.ForeignKey(ProjectTask, null=True)
     timecard_date = models.DateField()
     timecard_hours = models.IntegerField(default=0)
     timecard_charge = models.FloatField(default=0)

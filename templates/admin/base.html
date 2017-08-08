@@ -9,12 +9,10 @@
     <script type="text/javascript" src="{% static "js/d3.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/crossfilter.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/dc.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/ajax_requests.js" %}"></script>
     <script type="text/javascript" src="{% static "js/data_visualization.js" %}"></script>
     <script type="text/javascript" src="{% static "js/onload_processing.js" %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-theme.min.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/dc.min.css" %}"/>
     {% block head %}
         <meta charset="utf-8">
@@ -39,6 +37,8 @@
             </script>
             <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
             <script type="text/javascript">window.__admin_utc_offset__ = "{% filter escapejs %}{% now "Z" %}{% endfilter %}";</script>
+            <link rel="stylesheet" type="text/css" href="{% static "css/home.css" %}"/>
+
             {% if user.is_authenticated %}
                 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>{% endif %}
             {{ media.js }}
@@ -58,52 +58,50 @@
                                 <img class="background" src="{% static 'material/imgs/sidenav.svg' %}">
                                 {% block userphoto %}
                                     {% if user.photo.url %}
-                                        <a href="#"><img class="circle" src="{{ user.photo.url }}"></a>
+                                        <a href="/home"><img class="circle" src="{{ user.photo.url }}"></a>
                                     {% else %}
-                                        <a href="#"><img class="circle" src="{% static 'material/imgs/user.png' %}"></a>
+                                        <a href="/home"><img class="circle" src="{% static 'material/imgs/user.png' %}"></a>
                                     {% endif %}
                                 {% endblock %}
-                                <a href="#"><span
+                                <a href="/home"><span
                                         class="white-text name">{{ request.user.get_username|title }}</span></a>
-                                <a href="#"><span class="white-text email">{{ request.user.email }}</span></a>
+                                <a href="/home"><span class="white-text email">{{ request.user.email }}</span></a>
                             </div>
 
                         </li>
                     {% endblock %}
                     {% block sidenav_items %}
-                        {% comment %}{% if site_url %}
+                        {% if site_url %}
                             {% block back_link %}
                                 <li class="no-padding"><a class="collapsible-header" href="{{ site_url }}"><i
                                         class="material-icons">arrow_back</i>{% trans 'View site' %}</a></li>
                             {% endblock %}
-                        {% endif %}{% endcomment %}
+                        {% endif %}
                         {% get_app_list request as app_list %}
-                        {% comment %}{% for app in app_list %}
-                            <li {% if app.active %}class="active"{% endif %}>
-                            <ul class="collapsible collapsible-accordion">
-                                <li>
-                                    <a class="collapsible-header{% if app.active %} active{% endif %}">{{ app.app_icon }} {{ app.name|truncatechars:23 }}</a>
-                                    <div class="collapsible-body" {% if app.active %}style="display:block"{% endif %}>
-                                        <ul>
-                                            {% for model in app.models %}
-                                                <li class="{% if model.active %}active{% endif %}">
-                                                    <a href="{{ model.admin_url }}">{% trans model.name %}</a>
-                                                </li>
-                                            {% endfor %}
+                        {% for app in app_list %}
+                            {% if app.name != "Frontend" %}
+                                <li {% if app.active %}class="active"{% endif %}>
+                                <ul class="collapsible collapsible-accordion">
+                                    <li>
+                                        <a class="collapsible-header{% if app.active %} active{% endif %}">{{ app.app_icon }} {{ app.name|truncatechars:23 }}</a>
+                                        <div class="collapsible-body"
+                                             {% if app.active %}style="display:block"{% endif %}>
+                                            <ul>
+                                                {% for model in app.models %}
+                                                    <li class="{% if model.active %}active{% endif %}">
+                                                        <a href="{{ model.admin_url }}">{% trans model.name %}</a>
+                                                    </li>
+                                                {% endfor %}
 
-                                        </ul>
-                                    </div>
-                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
 
-                            </ul>
-                        {% endfor %}{% endcomment %}
+                                </ul>
+                            {% endif %}
+                        {% endfor %}
                     {% if request.user|has_group:"Owner" or request.user|has_group:"Manager" %}
 
-                        <li>
-
-                            <a href="/admin" class="collapsible-header{% if app.active %} active{% endif %}">
-                                <i class="material-icons">settings</i>Admin</a>
-                        </li>
                         <li>
 
                             <a href="/projects" class="collapsible-header{% if app.active %} active{% endif %}">
@@ -114,22 +112,18 @@
                                 <i class="material-icons admin-appicon admin-modelicon-djstripe-customer"></i>Clients</a>
                         </li>
                         <li>
-                            <a href="/employees"  class="collapsible-header{% if app.active %} active{% endif %}">
+                            <a href="/employees" class="collapsible-header{% if app.active %} active{% endif %}">
                                 <i class="material-icons admin-appicon admin-modelicon-auth-user"></i>Employees</a>
                         </li>
-                        <li>
-
-                            <a href="/admin/timekeeper/timecard" class="collapsible-header{% if app.active %} active{% endif %}">
-                                <i class="material-icons">assignment_turned</i>Timecards</a>
-                        </li>
                     {% endif %}
-                        {% if request.user|has_group:"Employee" %}
-                            <li>
-
-                            <a href="/admin/timekeeper/timecard" class="collapsible-header{% if app.active %} active{% endif %}">
-                                <i class="material-icons">assignment_turned</i>Timecards</a>
+                        <li class="hidden-lg hidden-md">
+                            <a class="collapsible-header" href="{% url 'admin:password_change' %}">{% trans 'Change password' %}
+                                <i class="material-icons admin-appicon admin-modelicon-axes-accessattempt" style="float:left!important"></i></a>
                         </li>
-                        {% endif %}
+                        <li class="hidden-lg hidden-md">
+                            <a href="{% url 'admin:logout' %}" data-turbolinks="false"
+                               class="collapsible-header">{% trans "Log out" %}
+                                <i class="material-icons right" style="float:left!important">exit_to_app</i></a></li>
                     {% endblock sidenav_items %}
                 </ul>
             {% endif %}
@@ -146,7 +140,7 @@
                             {% block page_title %}
                                 <a href="/" class="page-title">
                                     {% block brand-logo %}{% trans 'Administration' %}{% endblock %}</a>
-                                    <h6>{% block minor-logo %}{% endblock %}</h6>
+                                <h6>{% block minor-logo %}{% endblock %}</h6>
                             {% endblock %}
                         </div>
                         <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -162,10 +156,10 @@
                                     </li>
                                 {% endif %}
                                 {% if user.is_authenticated %}
-                                    <li><a href="{% url 'admin:logout' %}" data-turbolinks="false"><i
+                                    <li ><a href="{% url 'admin:logout' %}" data-turbolinks="false"><i
                                             class="material-icons right">exit_to_app</i>{% trans "Log out" %}</a></li>
                                 {% else %}
-                                    <li><a href="{% url 'admin:login' %}" data-turbolinks="false"><i
+                                    <li ><a href="{% url 'admin:login' %}" data-turbolinks="false"><i
                                             class="material-icons right">lock_open</i>{% trans "Log in" %}</a></li>
                                 {% endif %}
                             {% endblock %}
