@@ -43,7 +43,7 @@ urlpatterns = [
                   url(r'^project_from_client/(?P<client_pk>\d+)$', views.project_from_client),
                   url(r'^project_detail_dcjs/(?P<project_pk>\d+)$', views.project_detail_dcjs),
                   url(r'^timecard_data', views.timecard_data),
-                  url(r'^pdfgenerate/(?P<project_pk>\d+)$', views.pdfgenerate),
+                  url(r'^pdfgenerate/$', views.pdfgenerate),
                   url(r'^chaining/', include('smart_selects.urls')),
                    url(r'^accounts/update/(?P<pk>[\-\w]+)/$', views.edit_user, name='account_update'),
                   url(r'^accounts/profile/', TemplateView.as_view(template_name='profile.html'), name='user_profile'),

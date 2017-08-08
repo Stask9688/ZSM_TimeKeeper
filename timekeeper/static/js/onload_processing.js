@@ -960,4 +960,28 @@ var OnloadProcessing = class {
 
     }
 
+    static get_PDFModal(){
+        var modal = document.getElementById('myModal');
+        var btn = document.getElementById("myBtn");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    }
+
+    static get_URL_PDF(project_data){
+        console.log(project_data);
+        var test = project_data[0].pk;
+        console.log(test);
+        document.getElementById("projectInput").value = test;
+    }
+
 };
