@@ -42,23 +42,22 @@
                     {% endif %}
 
                     {% block change_form %}
-                        {% comment %}{% for item in opts.fields %}
+                        {% for item in opts.fields %}
                             {{ item }}{{ " " }} {{ item|to_class_name }}
                             {% if 'ForeignKey' in item|to_class_name|stringformat:"s"  %}
-                                {{ "hello " }}{{ opt.item }}
                                 <div class="form-group">
                                 <label for="new">Select:</label>
                                     {% for x in opts.item.all %}
-                                        <option>{{ x }}{{ "hello" }}</option>
+                                        <option>{{ "hello" }}</option>
                                     {% endfor %}
                                 <select class="form-control" id="Project" name="project">
                                 </select>
                                 </div>
                             {% endif %}
-                        {% endfor %}{% endcomment %}
-                        {% fieldset_layout adminform inline_admin_formsets as layout %}
+                        {% endfor %}
+                        {% comment %}{% fieldset_layout adminform inline_admin_formsets as layout %}
                         {% form form=adminform.form layout=layout %}{% endform %}
-                        {% prepopulated_fields_js %}
+                        {% prepopulated_fields_js %}{% endcomment %}
                     {% endblock %}
                     {% block after_related_objects %}{% endblock %}
                 </div>

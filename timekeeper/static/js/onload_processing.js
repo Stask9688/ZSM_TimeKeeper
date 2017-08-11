@@ -1,6 +1,29 @@
 /**
  * Created by Stas on 6/28/2017.
  */
+function findMax(timecard_list, profileHash){
+    let max = 0;
+    var array = {"a":"b"};
+
+    for (var x in timecard_list) {
+        array[timecard_list[x].fields.timecard_date] = 0;
+    };
+
+    for (var x in timecard_list) {
+        console.log(timecard_list[x].fields.timecard_owner);
+        console.log(profileHash[timecard_list[x].fields.timecard_owner].hourly);
+        let temp = timecard_list[x].fields.timecard_hours * profileHash[timecard_list[x].fields.timecard_owner].hourly;
+        array[timecard_list[x].fields.timecard_date] += temp;
+    };
+    let fMax = 0;
+    for (var y in array){
+        if(array[y] > fMax){
+            fMax = array[y];
+        }
+    };
+    return fMax;
+}
+
 var OnloadProcessing = class {
 
     static generateEmployeeDetail(timecard_data, project_data, task_data, profile_data) {
@@ -485,9 +508,9 @@ var OnloadProcessing = class {
         let total = function (d) {
             return d.tot;
         };
-        let totalHoursWorked = dc.numberDisplay("#total_hours");
+        /*let totalHoursWorked = dc.numberDisplay("#total_hours");
         totalHoursWorked.group(timecardHoursGroup).dimension(project_filter.dimension["timecard_date"]).valueAccessor(total);
-        totalHoursWorked.render();
+        totalHoursWorked.render();*/
 
         let timecardChargeGroup = project_filter.ndx.groupAll().reduce(
             function (p, v) {
@@ -504,9 +527,9 @@ var OnloadProcessing = class {
                 return {n: 0, tot: 0};
             }
         );
-        let chargesTotal = dc.numberDisplay("#total_charges");
+        /*let chargesTotal = dc.numberDisplay("#total_charges");
         chargesTotal.group(timecardChargeGroup).dimension(project_filter.dimension["timecard_date"]).valueAccessor(total);
-        chargesTotal.render();
+        chargesTotal.render();*/
 
 
         let hoursWorked = dc.barChart("#project_progress_chart");
@@ -587,6 +610,7 @@ var OnloadProcessing = class {
         for (let i = 0; i < profile_data.length; i++) {
             profileHash[profile_data[i].pk] = profile_data[i].fields;
         }
+        var maxCharge = findMax(timecard_data, profileHash);
         console.log(taskDataHash);
         let master_timecard = [];
         for (let i = 0; i < timecard_data.length; i++) {
@@ -644,8 +668,11 @@ var OnloadProcessing = class {
                 label: "Expected Profit",
                 format: function (d) {
                     let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                    console.log(charge)
+                    console.log(project_data[0].fields.labor_markup / 100);
+                    console.log("expenditure"+ d.timecard_expenditure);
                     charge += charge * (project_data[0].fields.labor_markup / 100);
-                    return "$" + (charge - (d.timecard_hours * profileHash[d.timecard_owner].hourly));
+                    return "$" + (charge - (d.timecard_expenditure));
                 }
             }
         ]);
@@ -738,8 +765,11 @@ var OnloadProcessing = class {
             function (d) {
                 let income = d.timecard_hours * profileHash[d.timecard_owner].hourly;
                 income += income * (project_data[0].fields.labor_markup / 100);
-                let outlays = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                let outlays = d.timecard_expenditure;
                 let profit = income - outlays;
+                console.log(profit);
+
+
                 return profit;
             }
         );
@@ -757,7 +787,7 @@ var OnloadProcessing = class {
             .yAxisLabel('Income per Day')
             .dimension(project_filter.dimension["timecard_date"])
             .group(profitChartGroup);
-        profitChart.y(d3.scale.linear().domain([-30, 70]));
+        profitChart.y(d3.scale.linear().domain([0, maxCharge+20]));
 
         profitChart.render();
     }
@@ -973,5 +1003,7 @@ var OnloadProcessing = class {
         console.log(test);
         document.getElementById("projectInput").value = test;
     }
+
+
 
 };
