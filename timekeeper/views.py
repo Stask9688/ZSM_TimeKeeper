@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 from array import array
 
@@ -110,7 +111,20 @@ def project_detail(request, project_pk):
     task_totals = {}
     task_total_hours = {}
     relevant_users = []
+    min_date = datetime.strptime("2017-01-01", "%Y-%d-%M")
+    max_date = datetime.strptime("2017-01-01", "%Y-%d-%M")
+
+    if timecards is not None:
+        min_date = timecards[0].timecard_date
+        max_date = timecards[0].timecard_date
+
     for tc in timecards:
+        if tc.timecard_date > max_date:
+            max_date = tc.timecard_date
+
+        if tc.timecard_date < min_date:
+            min_date = tc.timecard_date
+
         temp_task = tc.project_task.project_task_title
         print(temp_task)
         if temp_task not in task_totals.keys():
@@ -130,13 +144,16 @@ def project_detail(request, project_pk):
         if task not in task_totals.keys():
             task_totals[task] = 0
             task_total_hours[task] = 0
+
     return render(request, "project_detail.html", {"project": project,
                                                    "tasks": tasks,
                                                    "totals": task_totals,
                                                    "hours": task_total_hours,
                                                    "timecards": timecards,
                                                    "users": relevant_users,
-                                                   "profiles": user_profiles})
+                                                   "profiles": user_profiles,
+                                                   "minDate": min_date.isoformat(),
+                                                   "maxDate": max_date.isoformat()})
 
 
 @user_passes_test(check_permission)
@@ -161,6 +178,7 @@ def client_detail(request, client_pk):
                 projects_running_cost[project] = projects_running_cost[project] + \
                                                  tc.timecard_hours * tc.timecard_charge
     project_tasks = ProjectTask.objects.filter(project_task_link__in=projects)
+
     return render(request, "client_detail.html",
                   {"client": client, "projects": projects, "charges": projects_running_cost,
                    "timecards": project_timecards, "profile": user_profiles, "user": users_on_project,
@@ -296,7 +314,7 @@ def employee_detail(request, employee_pk):
 def pdfgenerate(request):
     # Create the HttpResponse object with the appropriate PDF headers.
     pk1 = request.GET.get('project', '')
-    start = request.GET.get('start','')
+    start = request.GET.get('start', '')
     end = request.GET.get('end', '')
     print(pk1)
     print(start)
@@ -304,7 +322,8 @@ def pdfgenerate(request):
     project = Project.objects.get(pk=pk1)
     tasks = ProjectTask.objects.filter(project_task_link=project)
     response = HttpResponse(content_type='application/pdf')
-    timecards = Timecard.objects.filter(timecard_project=pk1, timecard_date__range=(start,end))
+    timecards = Timecard.objects.filter(timecard_project=pk1, timecard_date__range=(start, end))
+    print(timecards)
     response['Content-Disposition'] = 'attachment; filename="SampleInvoice.pdf"'
     pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
     buffer = BytesIO()
@@ -331,7 +350,7 @@ def pdfgenerate(request):
         labor_totals[tc.project_task] = labor_totals[tc.project_task] + tc.timecard_hours * \
                                                                         tc.timecard_owner.profile.hourly
         expenditure_totals[tc.project_task] = expenditure_totals[tc.project_task] + tc.timecard_expenditure
-
+        print("task totals: ",task_totals)
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)
     i = 0
@@ -341,8 +360,14 @@ def pdfgenerate(request):
         i += 1
         totaltasks += 1
     i = 0
-    while i != totaltasks:
-        total_cost += task_totals[tasks[i]]
+    while i < totaltasks:
+        try:
+            print("tasks",tasks)
+            print("task_totals",task_totals)
+            print("third: ",task_totals[tasks[i]])
+            total_cost += task_totals[tasks[i]]
+        except:
+            i += i
         i += 1
     # Draw things on the PDF. Here's where the PDF generation happens.
     # See the ReportLab documentation for the full list of functionality.
@@ -421,36 +446,3 @@ def pdfgenerate(request):
     buffer.close()
     response.write(pdf)
     return response
-
-
-@login_required
-def edit_user(request, pk):
-    user = User.objects.get(pk=pk)
-    user_form = UserProfileForm(instance=user)
-
-    ProfileInlineFormset = inlineformset_factory(User, UserProfile, fields=('address', 'city', 'state'
-                                                                            , 'zip', 'phone', 'bank', 'account',
-                                                                            'routing'))
-    formset = ProfileInlineFormset(instance=user)
-
-    if request.user.is_authenticated() and request.user.id == user.id:
-        if request.method == "POST":
-            user_form = UserProfileForm(request.POST, request.FILES, instance=user)
-            formset = ProfileInlineFormset(request.POST, request.FILES, instance=user)
-
-            if user_form.is_valid():
-                created_user = user_form.save(commit=False)
-                formset = ProfileInlineFormset(request.POST, request.FILES, instance=created_user)
-
-                if formset.is_valid():
-                    # created_user.save()
-                    formset.save()
-                    return HttpResponseRedirect('/accounts/profile/')
-
-        return render(request, "account_update.html", {
-            "noodle": pk,
-            "noodle_form": user_form,
-            "formset": formset,
-        })
-    else:
-        raise PermissionDenied

@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/project_detail.css" %}"/>
     <div class="container-fluid">
         <div class="row">
-            <button id="myBtn">Generate PDF</button>
 
             <div id="myModal" class="modal">
                 <div class="modal-content">
@@ -20,9 +19,10 @@
                         <div class="modal-body">
                             <input type="hidden" id="projectInput" name="project" value="">
                             Start:
-                            <input type="date" name="start">
+                            <input type="date" name="start" value="{{ minDate }}">
                             End:
-                            <input type="date" name="end">
+                            <input type="date" name="end" value="{{ maxDate }}">
+
                         </div>
                         <div class="modal-footer">
                             <input type="submit">
@@ -31,7 +31,10 @@
                 </div>
             </div>
             <ul class="nav nav-tabs col-xs-4">
-                <li class="active" onclick="console.log('swag');"><a data-toggle="tab" href="#spent_tab">Resource Spent</a></li>
+
+
+                <li class="active" onclick="console.log('swag');"><a data-toggle="tab" href="#spent_tab">Resource
+                    Spent</a></li>
                 <li><a data-toggle="tab" href="#income_tab">Expected Income</a></li>
             </ul>
 
@@ -45,10 +48,15 @@
                             <div class="col-md-12">
                                 <div id="total_charges_chart" style="width:100%"></div>
                             </div>
+                            <div class="col-md-offset-7">
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#myModal">
+                                    Generate PDF
+                                </button>
 
-                        <button class="col-md-offset-9 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">
-                            Reset
-                        </button>
+                                <button class="btn btn-info" onclick="dc.filterAll();dc.redrawAll()">Reset
+                                </button>
+                            </div>
                         </div>
                         <div id="perPersonHours" class="col-md-4"></div>
                         <div class="col-md-12">
@@ -60,17 +68,17 @@
                 </div>
                 <div id="income_tab" class="tab-pane fade col-xs-12">
 
-                        <div class="col-md-12">
-                                <div id="income_chart" class="col-md-6"></div>
-                                <div id="profit_chart" class="col-md-6"></div>
-                        </div>
+                    <div class="col-md-12">
+                        <div id="income_chart" class="col-md-6"></div>
+                        <div id="profit_chart" class="col-md-6"></div>
+                    </div>
 
-                        <div class="col-md-12">
-                            <table id="task_income_table" class="table table-striped table-bordered"></table>
-                        </div>
-                        <button class="col-md-offset-9 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">
-                            Reset
-                        </button>
+                    <div class="col-md-12">
+                        <table id="task_income_table" class="table table-striped table-bordered"></table>
+                    </div>
+                    <button class="col-md-offset-9 button btn btn-info" onclick="dc.filterAll();dc.redrawAll()">
+                        Reset
+                    </button>
 
                 </div>
 
@@ -88,9 +96,8 @@
                 {{ tasks|json_safe }}, {{ expenditures|json_safe}}, {{ profiles|json_safe }},
                 {{ project|json_safe }});
     </script>
-    <script>
+        <script>
         OnloadProcessing.get_URL_PDF({{  project|json_safe}})
-        OnloadProcessing.get_PDFModal();
     </script>
 
 {% endblock %}

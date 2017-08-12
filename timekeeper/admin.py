@@ -110,7 +110,7 @@ class TimecardDetail(ImportExportActionModelAdmin):
 
 
 class ProjectTaskDetail(ImportExportActionModelAdmin):
-    list_display = ("project_task_link", "project_task_title",
+    list_display = ("pk","project_task_link", "project_task_title",
                     "project_task_description", "project_task_hours_remaining")
 
     search_fields = ['project_task_link__project_name', 'project_task_title',

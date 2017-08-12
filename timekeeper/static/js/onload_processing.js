@@ -96,7 +96,6 @@ var OnloadProcessing = class {
                 }
             }]);
         let height = $(window).height();
-     //  tableChart.size(6);
         tableChart.render();
         $("#timecard_table").height(height - 200);
         let barChart = dc.barChart("#timecard_graph");
