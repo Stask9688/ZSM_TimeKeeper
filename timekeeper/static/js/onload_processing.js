@@ -97,7 +97,7 @@ var OnloadProcessing = class {
             }]);
         let height = $(window).height();
         tableChart.render();
-        $("#timecard_table").height(height - 200);
+        $("#timecard_table").height(height - 300);
         let barChart = dc.barChart("#timecard_graph");
         let hoursGroup = timecard_filter.dimension["timecard_date"].group().reduceSum(
             function (d) {
@@ -874,11 +874,24 @@ var OnloadProcessing = class {
             profileHash[profile_data[i].pk] = profile_data[i].fields;
         }
         console.log(profileHash);
+
         let master_timecard = [];
+                let minDate = new Date(timecard_data[0].fields.timecard_date);
+        let maxDate = new Date(timecard_data[0].fields.timecard_date);
+
+
         for (let i = 0; i < timecard_data.length; i++) {
             master_timecard[i] = timecard_data[i].fields;
             master_timecard[i].pk = timecard_data[i].pk;
+            master_timecard[i].timecard_date = new Date(master_timecard[i].timecard_date);
+            if (minDate > master_timecard[i].timecard_date) {
+                minDate = master_timecard[i].timecard_date;
+            }
+            if (maxDate < master_timecard[i].timecard_date) {
+                maxDate = master_timecard[i].timecard_date;
+            }
         }
+
 
         let projectDataHash = {};
         for (let i = 0; i < project_data.length; i++) {
@@ -903,11 +916,11 @@ var OnloadProcessing = class {
             }
         );
         barChart
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxis().tickFormat(function (d) {
-            return d.substr(6).replace("-", "/")
-        });
+            .brushOn(true)
+            .x(d3.time.scale().domain([minDate, maxDate]))
+            .xUnits(function () {
+                return 60;
+            });
 
         barChart
             .brushOn(true)
@@ -926,11 +939,12 @@ var OnloadProcessing = class {
             }
         );
         totalCost
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxis().tickFormat(function (d) {
-            return d.substr(6).replace("-", "/")
-        });
+            .brushOn(true)
+            .x(d3.time.scale().domain([minDate, maxDate]))
+            .xUnits(function () {
+                return 60;
+            })
+            .xAxis();
 
         totalCost
             .renderArea(true)
