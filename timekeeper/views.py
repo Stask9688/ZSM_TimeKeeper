@@ -374,7 +374,6 @@ def pdfgenerate(request):
     p.line(0, 800, 800, 800)
     p.line(0, 50, 800, 50)
     # Header
-    p.drawInlineImage("timekeeper\static\img\header.jpg", 5, 805, 30, 30)
     p.drawString(40, 815, "ZSM Timekeeper")
     # Bill To Section
     p.setFont('Vera', 16)
