@@ -198,6 +198,10 @@ var OnloadProcessing = class {
         console.log(timecard_parsed);
         console.log(parsed_data);
         let numberOfProjects = parsed_data.length;
+        let project_list = [];
+        for (let i = 0; i <numberOfProjects;i++){
+            project_list[i] = parsed_data[i].pk;
+        }
         // Create crossfilter for project data
         let project_filter = new DataVisualization(parsed_data);
 
@@ -283,7 +287,7 @@ var OnloadProcessing = class {
         let barChart = dc.barChart("#bar_chart");
         console.log(timecard_parsed[timecard_parsed.length - 1].timecard_project)
         barChart
-            .x(d3.scale.linear().domain([1, numberOfProjects]))
+            .x(d3.scale.linear().domain([1, numberOfProjects +1]))
             .xUnits(dc.units.integers)
             .xAxisLabel('Project ID')
             .yAxisLabel('Hours Worked')
@@ -391,8 +395,10 @@ var OnloadProcessing = class {
         let custom_dimension = project_filter.ndx.dimension(function (d) {
             console.log(d.timecard_owner);
             console.log(user_data);
-            console.log(user_data[d.timecard_owner])
+            console.log(user_data[d.timecard_owner]);
+            console.log(user_data.length)
             return user_data[d.timecard_owner - 1].fields.first_name;
+
         });
 
         let taskTableChart = dc.dataTable("#task_detail_table");

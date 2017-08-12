@@ -5,11 +5,8 @@ from django.core.urlresolvers import resolve
 from django.db.models import Q
 from import_export.admin import ImportExportActionModelAdmin
 from .admin_import import ProjectResource, TimecardResource, UserProfileResource, \
-    ClientProfileResource, ProjectTaskResource, UserResource
+    ClientProfileResource, ProjectTaskResource
 
-
-class User(ImportExportActionModelAdmin):
-    resource_class = UserResource
 
 class ProjectDetail(ImportExportActionModelAdmin):
     list_display = ("project_name", "project_description", "client",
@@ -80,10 +77,21 @@ class TimecardDetail(ImportExportActionModelAdmin):
         if db_field.name == "timecard_owner":
             if request.user.groups.filter(name="Employee").exists():
                 print(request.user)
-                kwargs["queryset"] = \
-                    User.objects.filter(username=request.user)
+                kwargs["queryset"] = User.objects.filter(username=request.user)
+
+        if db_field.name == "timecard_project":
+            if request.user.groups.filter(name="Employee").exists() or \
+                    request.user.groups.filter(name="Manager").exists():
+                project_object = Project.objects.filter(employees__username=request.user)
+                kwargs["queryset"] = project_object
 
         if db_field.name == "project_task":
+            if request.user.groups.filter(name="Employee").exists() or \
+                    request.user.groups.filter(name="Manager").exists():
+                project_object = Project.objects.filter(employees__username=request.user)
+                project_task_object = ProjectTask.objects.filter(project_task_link__in=project_object)
+                kwargs["queryset"] = project_task_object
+
             print(resolve(request.path_info).args)
             print(resolve(request.path_info).args is ())
             if resolve(request.path_info).args is ():
@@ -110,7 +118,7 @@ class TimecardDetail(ImportExportActionModelAdmin):
 
 
 class ProjectTaskDetail(ImportExportActionModelAdmin):
-    list_display = ("pk","project_task_link", "project_task_title",
+    list_display = ("pk", "project_task_link", "project_task_title",
                     "project_task_description", "project_task_hours_remaining")
 
     search_fields = ['project_task_link__project_name', 'project_task_title',

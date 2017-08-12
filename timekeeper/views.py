@@ -139,6 +139,8 @@ def project_detail(request, project_pk):
         relevant_users.append(tc.timecard_owner)
     relevant_users = set(relevant_users)
     user_profiles = UserProfile.objects.filter(user__in=relevant_users)
+    relevant_users = User.objects.all()
+    user_profiles = UserProfile.objects.all()
     print(user_profiles)
     for task in tasks:
         if task not in task_totals.keys():
@@ -192,7 +194,6 @@ def projects(request):
     timecard_object = Timecard.objects.all()
     if request.user.groups.filter(name="Manager").exists():
         project_object = project_object.filter(employees__username=request.user)
-    print("Value: ", timecard_object[0].timecard_expenditure)
 
     users_on_project = []
     for timecard in timecard_object:
