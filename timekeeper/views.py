@@ -347,9 +347,9 @@ def pdfgenerate(request):
                     tc.project_task] + tc.timecard_hours * tc.timecard_owner.profile.hourly + tc.timecard_expenditure
             task_total_hours[tc.project_task] = \
                 task_total_hours[tc.project_task] + tc.timecard_hours
-        labor_totals[tc.project_task] = labor_totals[tc.project_task] + tc.timecard_hours * \
-                                                                        tc.timecard_owner.profile.hourly
-        expenditure_totals[tc.project_task] = expenditure_totals[tc.project_task] + tc.timecard_expenditure
+            labor_totals[tc.project_task] = labor_totals[tc.project_task] + tc.timecard_hours * \
+                                                                            tc.timecard_owner.profile.hourly
+            expenditure_totals[tc.project_task] = expenditure_totals[tc.project_task] + tc.timecard_expenditure
         print("task totals: ",task_totals)
     # Create the PDF object, using the BytesIO object as its "file."
     p = canvas.Canvas(buffer)

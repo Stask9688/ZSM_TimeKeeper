@@ -107,7 +107,7 @@ var OnloadProcessing = class {
         barChart
             .brushOn(true)
             .x(d3.time.scale().domain([minDate, maxDate]))
-                        .xUnits(function () {
+            .xUnits(function () {
                 return 60;
             })
 
@@ -170,7 +170,7 @@ var OnloadProcessing = class {
         $(window).resize(function () {
             barChart.resetSvg();
             barChart.render()
-                        dc.redrawAll();
+            dc.redrawAll();
 
         });
     }
@@ -410,6 +410,7 @@ var OnloadProcessing = class {
             {
                 label: "Task Name",
                 format: function (d) {
+
                     return taskDataHash[d.project_task].project_task_title;
                 }
             },
@@ -588,7 +589,7 @@ var OnloadProcessing = class {
 
         hoursWorked
             .xUnits(function () {
-                return 60;
+                return 40;
             })
             .mouseZoomable(true)
             .brushOn(true)
@@ -656,14 +657,29 @@ var OnloadProcessing = class {
         var maxCharge = findMax(timecard_data, profileHash);
         console.log(taskDataHash);
         let master_timecard = [];
+
+        let minDate = new Date(timecard_data[0].fields.timecard_date);
+        let maxDate = new Date(timecard_data[0].fields.timecard_date);
+
+
         for (let i = 0; i < timecard_data.length; i++) {
             master_timecard[i] = timecard_data[i].fields;
             master_timecard[i].pk = timecard_data[i].pk;
+            master_timecard[i].timecard_date = new Date(master_timecard[i].timecard_date);
+            if (minDate > master_timecard[i].timecard_date) {
+                minDate = master_timecard[i].timecard_date;
+            }
+            if (maxDate < master_timecard[i].timecard_date) {
+                maxDate = master_timecard[i].timecard_date;
+            }
         }
         for (let x = 0; x < expenditure_data.length; x++) {
             let found = 0;
             for (let i = 0; i < master_timecard.length; i++) {
-                if (master_timecard[i].timecard_date === expenditure_data[x].fields.date) {
+                let date = master_timecard[i].timecard_date.getFullYear() + "/" +
+                    1 + master_timecard[i].timecard_date.getMonth() + "/" +
+                    master_timecard[i].timecard_date.getDate();
+                if (date === expenditure_data[x].fields.date) {
                     console.log("ADDED");
                     master_timecard[i].expenditures = expenditure_data[x].fields;
                     found = 1;
@@ -689,12 +705,15 @@ var OnloadProcessing = class {
             {
                 label: "Date",
                 format: function (d) {
-                    return d.timecard_date;
+                    let date = d.timecard_date.getMonth() + 1 + "/" + d.timecard_date.getDate() + "/" + d.timecard_date.getFullYear();
+
+                    return date;
                 }
             },
             {
                 label: "Task",
                 format: function (d) {
+                    console.log(d.project_task);
                     return taskDataHash[d.project_task].project_task_title;
                 }
             }
@@ -711,11 +730,12 @@ var OnloadProcessing = class {
                 label: "Expected Profit",
                 format: function (d) {
                     let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
-                    console.log(charge)
+                    let cost = d.timecard_hours * profileHash[d.timecard_owner].hourly;
+                    console.log(charge);
                     console.log(project_data[0].fields.labor_markup / 100);
                     console.log("expenditure" + d.timecard_expenditure);
                     charge += charge * (project_data[0].fields.labor_markup / 100);
-                    return "$" + (charge - (d.timecard_expenditure));
+                    return "$" + (charge - cost);
                 }
             }
         ]);
@@ -787,12 +807,16 @@ var OnloadProcessing = class {
                 return income;
             }
         );
+
+
+        minDate.setDate(minDate.getDate() - 1);
+        maxDate.setDate(maxDate.getDate() + 1);
+
         hoursWorked
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxis().tickFormat(function (d) {
-            return d.substr(6).replace("-", "/");
-        });
+            .x(d3.time.scale().domain([minDate, maxDate]))
+            .xUnits(function () {
+                return 40;
+            });
 
         hoursWorked
             .brushOn(true)
@@ -816,11 +840,10 @@ var OnloadProcessing = class {
         );
         profitChart
             .renderArea(true)
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxis().tickFormat(function (d) {
-            return d.substr(6).replace("-", "/");
-        });
+            .x(d3.time.scale().domain([minDate, maxDate]))
+            .xUnits(function () {
+                return 40;
+            });
 
         profitChart
             .brushOn(true)
@@ -833,7 +856,7 @@ var OnloadProcessing = class {
         taskIncomeTable.render();
         hoursWorked.render();
         profitChart.render();
-        $(".nav.nav-tabs>li:eq(1)").on("click",function(){
+        $(".nav.nav-tabs>li:eq(1)").on("click", function () {
             hoursWorked.resetSvg();
             profitChart.resetSvg();
             hoursWorked.render();

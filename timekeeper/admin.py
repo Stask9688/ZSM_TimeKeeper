@@ -119,6 +119,8 @@ class ProjectTaskDetail(ImportExportActionModelAdmin):
     resource_class = ProjectTaskResource
 
     def get_queryset(self, request):
+        if request.user.groups.filter(name="Owner").exists():
+            return ProjectTask.objects.all()
         project_object = Project.objects.filter(employees__username=request.user)
         print(project_object)
         project_name = []
@@ -126,6 +128,7 @@ class ProjectTaskDetail(ImportExportActionModelAdmin):
             project_name.append(project)
         project_task_object = ProjectTask.objects.filter(project_task_link__in=project_name)
         print(project_task_object)
+
         return project_task_object
 
 
