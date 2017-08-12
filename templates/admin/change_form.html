@@ -18,7 +18,7 @@
 {% endblock %}
 
 
-{% block content %}
+{% block main_content %}
     <div class="wide change-form">
         <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post"
               id="{{ opts.model_name }}_form">
@@ -42,7 +42,7 @@
                     {% endif %}
 
                     {% block change_form %}
-                        {% for item in opts.fields %}
+{% comment %}                        {% for item in opts.fields %}
                             {{ item }}{{ " " }} {{ item|to_class_name }}
                             {% if 'ForeignKey' in item|to_class_name|stringformat:"s"  %}
                                 <div class="form-group">
@@ -54,10 +54,10 @@
                                 </select>
                                 </div>
                             {% endif %}
-                        {% endfor %}
-                        {% comment %}{% fieldset_layout adminform inline_admin_formsets as layout %}
+                        {% endfor %}{% endcomment %}
+                        {% fieldset_layout adminform inline_admin_formsets as layout %}
                         {% form form=adminform.form layout=layout %}{% endform %}
-                        {% prepopulated_fields_js %}{% endcomment %}
+                        {% prepopulated_fields_js %}
                     {% endblock %}
                     {% block after_related_objects %}{% endblock %}
                 </div>
