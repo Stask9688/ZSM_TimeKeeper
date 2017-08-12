@@ -1,26 +1,29 @@
 /**
  * Created by Stas on 6/28/2017.
  */
-function findMax(timecard_list, profileHash){
+function findMax(timecard_list, profileHash) {
     let max = 0;
-    var array = {"a":"b"};
+    var array = {"a": "b"};
 
     for (var x in timecard_list) {
         array[timecard_list[x].fields.timecard_date] = 0;
-    };
+    }
+    ;
 
     for (var x in timecard_list) {
         console.log(timecard_list[x].fields.timecard_owner);
         console.log(profileHash[timecard_list[x].fields.timecard_owner].hourly);
         let temp = timecard_list[x].fields.timecard_hours * profileHash[timecard_list[x].fields.timecard_owner].hourly;
         array[timecard_list[x].fields.timecard_date] += temp;
-    };
+    }
+    ;
     let fMax = 0;
-    for (var y in array){
-        if(array[y] > fMax){
+    for (var y in array) {
+        if (array[y] > fMax) {
             fMax = array[y];
         }
-    };
+    }
+    ;
     return fMax;
 }
 
@@ -179,6 +182,7 @@ var OnloadProcessing = class {
         }
         console.log(timecard_parsed);
         console.log(parsed_data);
+        let numberOfProjects = parsed_data.length;
         // Create crossfilter for project data
         let project_filter = new DataVisualization(parsed_data);
 
@@ -238,7 +242,7 @@ var OnloadProcessing = class {
                                 console.log(timecard_parsed[i]['timecard_expenditure']);
                                 total += timecard_parsed[i]['timecard_hours']
                                     * profileHash[timecard_parsed[i].timecard_owner].hourly
-                                    +timecard_parsed[i]['timecard_expenditure'];
+                                    + timecard_parsed[i]['timecard_expenditure'];
                             }
                         }
                         return "$ " + (total).toFixed(2);
@@ -262,9 +266,9 @@ var OnloadProcessing = class {
             }
         );
         let barChart = dc.barChart("#bar_chart");
-        console.log(timecard_parsed[timecard_parsed.length-1].timecard_project)
+        console.log(timecard_parsed[timecard_parsed.length - 1].timecard_project)
         barChart
-            .x(d3.scale.linear().domain([1,13]))
+            .x(d3.scale.linear().domain([1, numberOfProjects]))
             .xUnits(dc.units.integers)
             .xAxisLabel('Project ID')
             .yAxisLabel('Hours Worked')
@@ -330,10 +334,19 @@ var OnloadProcessing = class {
             profileHash[profile_data[i].pk] = profile_data[i].fields;
         }
         console.log(taskDataHash);
+        let minDate = new Date(timecard_data[0].fields.timecard_date);
+        let maxDate = new Date(timecard_data[0].fields.timecard_date);
         let master_timecard = [];
         for (let i = 0; i < timecard_data.length; i++) {
             master_timecard[i] = timecard_data[i].fields;
             master_timecard[i].pk = timecard_data[i].pk;
+            master_timecard[i].timecard_date = new Date(master_timecard[i].timecard_date);
+            if (master_timecard[i].timecard_date < minDate) {
+                minDate = master_timecard[i].timecard_date;
+            }
+            if (master_timecard[i].timecard_date > maxDate) {
+                maxDate = master_timecard[i].timecard_date;
+            }
         }
         for (let x = 0; x < expenditure_data.length; x++) {
             let found = 0;
@@ -375,7 +388,8 @@ var OnloadProcessing = class {
             }).columns([{
             label: "Date",
             format: function (d) {
-                return d.timecard_date;
+                let date = d.timecard_date.getMonth() + 1 + "/" + d.timecard_date.getDate() + "/" + d.timecard_date.getFullYear();
+                return date;
             }
         },
             {
@@ -401,6 +415,12 @@ var OnloadProcessing = class {
                 format: function (d) {
                     return "$ " + d.timecard_expenditure.toFixed(2);
                 }
+            },
+            {
+                label: "Totals",
+                format: function (d) {
+                    return "$ " + (d.timecard_hours * profileHash[d.timecard_owner].hourly +d.timecard_expenditure).toFixed(2);
+                }
             }
         ]);
         taskTableChart.size();
@@ -425,7 +445,8 @@ var OnloadProcessing = class {
                 }
 
                 $(projects[i]).append("<tr class='row_total'><td><b>Totals:</b></td><td><b class='_1'></b></td><td><b class='_2'>" + total_hours +
-                    "</b></td><td><b class='_3'>$" + total_labor + "</b></td><td><b class='_4'>$" + total_expend + "</b></tr>")
+                    "</b></td><td><b class='_3'>$" + total_labor + "</b></td><td><b class='_4'>$" + total_expend + "</b></td>" +
+                    "<td><b class='_5'>$" + (total_expend + total_labor) + "</b></td></tr>")
             }
             let row_totals = $("#task_detail_table>tbody>.row_total");
             console.log(row_totals.length)
@@ -435,10 +456,12 @@ var OnloadProcessing = class {
                 overall_expend += parseFloat($(row_totals[i]).find("._4")[0].textContent.substr(1));
             }
             $("#task_detail_table > tbody:last").append("<tr class='row_total'><td><b>Overall:</b></td><td><b></b></td><td><b>" + overall_hours +
-                "</b></td><td><b>$" + overall_labor + "</b></td><td><b>$" + overall_expend  + "</b></td></tr>");
+                "</b></td><td><b>$" + overall_labor + "</b></td><td><b>$" + overall_expend + "</b></td>" +
+                "<td><b>$" + (overall_expend +overall_labor) + "</b></td></tr>");
         });
         taskTableChart.render();
 
+        $("#task_detail_table").height("100px");
         let materialCostTable = dc.dataTable("#material_cost_table");
         materialCostTable.order(d3.ascending).dimension(project_filter.dimension["expenditures"])
             .group(function (d) {
@@ -538,14 +561,20 @@ var OnloadProcessing = class {
                 return d.timecard_hours;
             }
         );
+
+
+        minDate.setDate(minDate.getDate() - 1);
+        maxDate.setDate(maxDate.getDate() + 1);
         hoursWorked
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxis().tickFormat(function (d) {
-            return d.substr(8)
-        });
+            .x(d3.time.scale().domain([minDate, maxDate]));
+        hoursWorked
+            .yAxis().tickFormat(d3.format("s"));
 
         hoursWorked
+            .xUnits(function () {
+                return 80;
+            })
+            .mouseZoomable(true)
             .brushOn(true)
             .xAxisLabel('Date')
             .yAxisLabel('Hours Worked')
@@ -554,40 +583,38 @@ var OnloadProcessing = class {
 
         hoursWorked.render();
 
-        let totalChargesChart = dc.lineChart("#total_charges_chart");
-        let totalChargesGroup = project_filter.dimension["timecard_date"].group().reduceSum(
-            function (d) {
-                let total = 0;
-                for (let i = 0; i < timecard_data.length; i++) {
-                    let this_date = d.timecard_date.split("-");
-                    let other_date = timecard_data[i].fields.timecard_date.split("-");
-                    if (new Date(this_date[0], this_date[1], this_date[2]) >= new Date(other_date[0], other_date[1], other_date[2]) &&
-                        d.timecard_owner === timecard_data[i].fields.timecard_owner) {
-                        total += d.timecard_hours * profileHash[d.timecard_owner].hourly;
-                    }
-
-                }
-                return d.timecard_hours * profileHash[d.timecard_owner].hourly;
-            }
-        );
-        totalChargesChart
-            .x(d3.scale.ordinal())
-            .xUnits(dc.units.ordinal)
-            .xAxis().tickFormat(function (d) {
-            return d.substr(8)
-        });
-
-        totalChargesChart
-            .xAxisLabel('Date')
-            .yAxisLabel('Labor Charges')
-            .dimension(project_filter.dimension["timecard_date"])
-            .group(totalChargesGroup).renderArea(true);
-
-        totalChargesChart.render();
+        // let totalChargesChart = dc.lineChart("#total_charges_chart");
+        // let totalChargesGroup = project_filter.dimension["timecard_date"].group().reduceSum(
+        //     function (d) {
+        //         let total = 0;
+        //         for (let i = 0; i < timecard_data.length; i++) {
+        //             if (d.timecard_date >= timecard_data[i].fields.timecard_date &&
+        //                 d.timecard_owner === timecard_data[i].fields.timecard_owner) {
+        //                 total += d.timecard_hours * profileHash[d.timecard_owner].hourly;
+        //             }
+        //
+        //         }
+        //         return d.timecard_hours * profileHash[d.timecard_owner].hourly;
+        //     }
+        // );
+        // totalChargesChart
+        //     .x(d3.scale.ordinal())
+        //     .xUnits(dc.units.ordinal)
+        //     .xAxis().tickFormat(function (d) {
+        //     return d.substr(8)
+        // });
+        //
+        // totalChargesChart
+        //     .xAxisLabel('Date')
+        //     .yAxisLabel('Labor Charges')
+        //     .dimension(project_filter.dimension["timecard_date"])
+        //     .group(totalChargesGroup).renderArea(true);
+        //
+        // totalChargesChart.render();
         $(window).resize(function () {
             hoursPerPerson.resetSvg();
             hoursWorked.resetSvg();
-            totalChargesChart.resetSvg();
+            // totalChargesChart.resetSvg();
             dc.renderAll()
         });
     }
@@ -670,7 +697,7 @@ var OnloadProcessing = class {
                     let charge = d.timecard_hours * profileHash[d.timecard_owner].hourly;
                     console.log(charge)
                     console.log(project_data[0].fields.labor_markup / 100);
-                    console.log("expenditure"+ d.timecard_expenditure);
+                    console.log("expenditure" + d.timecard_expenditure);
                     charge += charge * (project_data[0].fields.labor_markup / 100);
                     return "$" + (charge - (d.timecard_expenditure));
                 }
@@ -787,7 +814,7 @@ var OnloadProcessing = class {
             .yAxisLabel('Income per Day')
             .dimension(project_filter.dimension["timecard_date"])
             .group(profitChartGroup);
-        profitChart.y(d3.scale.linear().domain([0, maxCharge+20]));
+        profitChart.y(d3.scale.linear().domain([0, maxCharge + 20]));
 
         profitChart.render();
     }
@@ -980,30 +1007,29 @@ var OnloadProcessing = class {
 
     }
 
-    static get_PDFModal(){
+    static get_PDFModal() {
         var modal = document.getElementById('myModal');
         var btn = document.getElementById("myBtn");
         var span = document.getElementsByClassName("close")[0];
-        btn.onclick = function() {
+        btn.onclick = function () {
             modal.style.display = "block";
         }
-        span.onclick = function() {
+        span.onclick = function () {
             modal.style.display = "none";
         }
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
     }
 
-    static get_URL_PDF(project_data){
+    static get_URL_PDF(project_data) {
         console.log(project_data);
         var test = project_data[0].pk;
         console.log(test);
         document.getElementById("projectInput").value = test;
     }
-
 
 
 };

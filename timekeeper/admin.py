@@ -5,8 +5,11 @@ from django.core.urlresolvers import resolve
 from django.db.models import Q
 from import_export.admin import ImportExportActionModelAdmin
 from .admin_import import ProjectResource, TimecardResource, UserProfileResource, \
-    ClientProfileResource, ProjectTaskResource
+    ClientProfileResource, ProjectTaskResource, UserResource
 
+
+class User(ImportExportActionModelAdmin):
+    resource_class = UserResource
 
 class ProjectDetail(ImportExportActionModelAdmin):
     list_display = ("project_name", "project_description", "client",

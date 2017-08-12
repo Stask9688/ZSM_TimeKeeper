@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'timekeeper.apps.TimekeeperConfig',
     'timekeeper.static',
-    'smart_selects',
     'import_export',
 ]
 
