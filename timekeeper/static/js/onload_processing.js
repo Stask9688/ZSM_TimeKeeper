@@ -94,6 +94,13 @@ var OnloadProcessing = class {
                 format: function (d) {
                     return "$ " + (d.timecard_expenditure).toFixed(2);
                 }
+
+            },
+            {
+                label: "Daily Total",
+                format: function (d) {
+                    return "$ " + (d.timecard_expenditure + (profile_data[0].fields.hourly * d.timecard_hours)).toFixed(2);
+                }
             }]);
         let height = $(window).height();
         tableChart.render();
